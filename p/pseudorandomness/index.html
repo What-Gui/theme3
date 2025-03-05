@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Pseudorandomness Reading: Katz-Lindell Section 3.3, Boneh-Shoup Chapter 31\nThe nature of randomness has troubled philosophers, scientists, statisticians and laypeople for many years.2 Over the years people have given different answers to the question of what does it mean for data to be random, and what is the nature of probability. The movements of the planets initially looked random and arbitrary, but then early astronomers managed to find order and make some predictions on them. Similarly, we have made great advances in predicting the weather and will probably continue to do so.\n">
+<title>Pseudorandomness</title>
+
+<link rel='canonical' href='http://localhost:1313/p/pseudorandomness/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Pseudorandomness">
+<meta property='og:description' content="Pseudorandomness Reading: Katz-Lindell Section 3.3, Boneh-Shoup Chapter 31\nThe nature of randomness has troubled philosophers, scientists, statisticians and laypeople for many years.2 Over the years people have given different answers to the question of what does it mean for data to be random, and what is the nature of probability. The movements of the planets initially looked random and arbitrary, but then early astronomers managed to find order and make some predictions on them. Similarly, we have made great advances in predicting the weather and will probably continue to do so.\n">
+<meta property='og:url' content='http://localhost:1313/p/pseudorandomness/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Pseudorandomness">
+<meta name="twitter:description" content="Pseudorandomness Reading: Katz-Lindell Section 3.3, Boneh-Shoup Chapter 31\nThe nature of randomness has troubled philosophers, scientists, statisticians and laypeople for many years.2 Over the years people have given different answers to the question of what does it mean for data to be random, and what is the nature of probability. The movements of the planets initially looked random and arbitrary, but then early astronomers managed to find order and make some predictions on them. Similarly, we have made great advances in predicting the weather and will probably continue to do so.\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#unpredictability-an-alternative-approach-for-proving-the-length-extension-theorem">Unpredictability: an alternative approach for proving the length extension theorem</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#stream-ciphers">Stream ciphers</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#what-do-pseudorandom-generators-actually-look-like">What do pseudorandom generators actually look like?</a>
+      <ol>
+        <li><a href="#attempt-0-the-counter-generator">Attempt 0: The counter generator</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#attempt-1-the-linear-checksum--linear-feedback-shift-register-lfsr">Attempt 1: The linear checksum / linear feedback shift register (LFSR)</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#from-insecurity-to-security">From insecurity to security</a></li>
+        <li><a href="#attempt-2-linear-congruential-generators-with-dropped-bits">Attempt 2: Linear Congruential Generators with dropped bits</a></li>
+      </ol>
+    </li>
+    <li><a href="#successful-examples">Successful examples</a>
+      <ol>
+        <li><a href="#case-study-1-subset-sum-generator">Case Study 1: Subset Sum Generator</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#case-study-2-rc4">Case Study 2: RC4</a></li>
+        <li><a href="#case-study-3-blum-blum-and-shub">Case Study 3: Blum, Blum and Shub</a></li>
+      </ol>
+    </li>
+    <li><a href="#non-constructive-existence-of-pseudorandom-generators">Non-constructive existence of pseudorandom generators</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/pseudorandomness/">Pseudorandomness</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    33 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="pseudorandomness">Pseudorandomness
+</h1><p><strong>Reading:</strong> Katz-Lindell Section 3.3, Boneh-Shoup Chapter 3<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>The nature of randomness has troubled philosophers, scientists, statisticians
+and laypeople for many years.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> Over the years people have given different
+answers to the question of what does it mean for data to be random, and what is
+the nature of probability. The movements of the planets initially looked random
+and arbitrary, but then early astronomers managed to find <em>order</em> and make
+some <em>predictions</em> on them. Similarly, we have made great advances in predicting
+the weather and will probably continue to do so.</p>
+<p>So, while these days it seems as if the event of whether or not it will rain a week from today
+is <em>random</em>, we could imagine that in the future we will be able to predict the weather accurately.
+Even the canonical notion of a random experiment -tossing a coin -
+<a class="link" href="http://statweb.stanford.edu/~susan/papers/headswithJ.pdf"  target="_blank" rel="noopener"
+    >might not be as random as you&rsquo;d think</a>:
+the second toss will have the same result as the first one with about a 51% chance.
+(Though <a class="link" href="https://www.stat.berkeley.edu/~aldous/Real-World/coin_tosses.html"  target="_blank" rel="noopener"
+    >see also this experiment</a>.)
+It is conceivable that at some point someone would discover some function $F$
+that, given the first 100 coin tosses by any given person, can predict the value of the
+101$^{st}$.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>In all these examples, the physics underlying the event, whether it&rsquo;s the
+planets&rsquo; movement, the weather, or coin tosses, did not change but only
+our powers to predict them.
+So to a large extent, <em>randomness is a function of
+the observer</em>, or in other words</p>
+<blockquote>
+<p><em>If a quantity is hard to compute, it might as well be random.</em></p>
+</blockquote>
+<p>Much of cryptography is about trying to make this intuition more formal, and
+harnessing it to build secure systems. The basic object we want is the
+following:</p>
+<p>::: {.definition title=&ldquo;Pseudorandom generator (concrete)&rdquo; #prgdefconcrete}
+A function $G:{{0,1}}^n\rightarrow{{0,1}}^\ell$ is a $(T,\epsilon)$ <em>pseudorandom generator</em> if $G(U_n) \approx_{T,\epsilon} U_\ell$ where $U_t$ denotes the uniform distribution on ${{0,1}}^t$.
+:::</p>
+<p>That is, $G$ is a $(T,\epsilon)$ pseudorandom generator if no circuit of at most $T$ gates can distinguish with bias better than $\epsilon$ between the output of $G$ (on a random input) and a uniformly random string of the same length.
+Spelling this out fully, this means that for every function $D:{0,1}^\ell \rightarrow {0,1}$ computable using at most $T$ operations,</p>
+<p>$$\left| \Pr_{x \leftarrow_R {0,1}^n}[ D(G(x))=1 ] - \Pr_{y \leftarrow_R {0,1}^\ell}[ D(y)=1 ] \right| &lt; \epsilon;.$$</p>
+<p>As we did for the case of encryption, we will typically use <em>asymptotic terms</em> to describe cryptographic pseudorandom generator. We say that $G$ is simply a pseudorandom generator if it is efficiently computable and it is
+$(p(n),1/p(n))$-pseudorandom generator for every polynomial $p(\cdot)$.
+In other words, we define pseudorandom generators as follows:</p>
+<p>::: {.definition title=&ldquo;Pseudorandom generator&rdquo; #prgdef}
+Let $G:{0,1}^* \rightarrow {0,1}^*$ be some function computable in polynomial time.
+We say that $G$ is a <em>pseudorandom generator</em> with length function $\ell:\N \rightarrow \N$ (where $\ell(n)&gt;n$) if</p>
+<ul>
+<li>
+<p>For every $x\in {0,1}^*$, $|G(x)| = \ell(|x|)$.</p>
+</li>
+<li>
+<p>For every polynomial $p(\cdot)$ and sufficiently large $n$, if $D:{0,1}^{\ell(n)} \rightarrow {0,1}$ is computable by at most $p(n)$ operations, then</p>
+</li>
+</ul>
+<p>$$\left| \Pr[D(G(U_n))=1] - \Pr[ D(U_\ell)=1] \right| &lt; \tfrac{1}{p(n)} \label{prgdefeq}$$
+:::</p>
+<p>Another way to say it, is that a polynomial-time computable function $G$ mapping $n$ bits strings to $\ell(n)&gt;n$ bit strings is a pseudo-random generator if the two distributions $G(U_n)$ and $U_{\ell(n)}$ are <em>computationally indistinguishable</em>.</p>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>This definition (as is often the case in cryptography) is a bit long, but the concept of a pseudorandom generator is central to cryptography, and so you should take your time and make sure you understand it.
+Intuitively, a function $G$ is a pseudorandom generator if <strong>(1)</strong> it expands its input (mapping $n$ bits to $n+1$ or more) and <strong>(2)</strong> we cannot distinguish between the output $G(x)$ for $x$ a short (i.e., $n$ bit long) random string, often known as the <em>seed</em> of the pseudorandom generator, and a truly random long (i.e., of length $\ell(n)$) string chosen uniformly at random from ${0,1}^{\ell(n)}$.</p>
+<p><img src="/figure/prg_def.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="A function $G:\{0,1\}^n \rightarrow \{0,1\}^{\ell(n)}$ is a pseudorandom generator if $G(x)$ for a random short $x \leftarrow_R \{0,1\}^n$ is computationally indistinguishable from a long truly random $y \leftarrow_R \{0,1\}^{\ell(n)}$."
+	
+	
+>{#prgdeffig}</p>
+<p>Note that the requirement that $\ell&gt;n$ is crucial to make this notion
+non-trivial, as for $\ell=n$ the function $G(x)=x$ clearly satisfies that
+$G(U_n)$ is identical to (and hence in particular indistinguishable from) the distribution
+$U_n$.
+(Make sure that you understand this last statement!)
+However, for $\ell&gt;n$ this is no longer trivial at all. In particular, if we didn&rsquo;t
+restrict the running time of $Eve$ then no such pseudo-random generator would
+exist:</p>
+<blockquote>
+<h1 id="breakprglem">
+</h1></blockquote>
+<p>Suppose that $G:{{0,1}}^n\rightarrow{{0,1}}^{n+1}$. Then there
+exists an (inefficient) algorithm $Eve:{{0,1}}^{n+1}\rightarrow{{0,1}}$ such
+that ${\mathbb{E}}[ Eve(G(U_n)) ]=1$ but ${\mathbb{E}}[ Eve(U_{n+1})] \leq 1/2$.</p>
+<blockquote>
+<h1 id="heading-1">
+</h1></blockquote>
+<p>On input $y\in{{0,1}}^{n+1}$, consider the algorithm $Eve$ that goes over all possible
+$x\in{{0,1}}^n$ and will output $1$ if and only if $y=G(x)$ for some $x$.
+Clearly ${\mathbb{E}}[ Eve(G(U_n)) ] =1$.
+However, the set $S ={ G(x) : x\in {{0,1}}^n }$ on which Eve outputs $1$ has size at most $2^n$, and hence a
+random $y{\leftarrow_{\tiny R}} U_{n+1}$ will fall in $S$ with probability at most
+$1/2$.</p>
+<p>It is not hard to show that if $P=NP$ then the above algorithm Eve can be made
+efficient.
+In particular, at the moment we do not know how to <em>prove</em>
+the existence of pseudorandom generators. Nevertheless we believe that pseudorandom generators exist
+and hence we make the following conjecture:</p>
+<blockquote>
+<p><strong>Conjecture (The PRG conjecture):</strong> For every $n$, there exists a pseudorandom
+generator $G$ mapping $n$ bits to $n+1$ bits.^[The name &ldquo;The PRG conjecture&rdquo; is non-standard. In the literature this is known as the conjecture of existence of pseudorandom generators. This is a weaker form of &ldquo;The Optimal PRG Conjecture&rdquo; presented in my <a class="link" href="https://goo.gl/G7bU4M"  target="_blank" rel="noopener"
+    >intro to theoretical CS lecture notes</a> since the PRG conjecture only posits the existence of pseudorandom generators with arbitrary polynomial blowup, as opposed to an exponential blowup posited in the optimal PRG conjecture.]</p>
+</blockquote>
+<p>As was the case for the cipher conjecture, and any other conjecture, there are two natural questions
+regarding the PRG conjecture: why should we believe it and why should we care. Fortunately, the answer to the first question is simple:
+it is known that the cipher conjecture <em>implies</em> the PRG conjecture, and hence if we believe the former we should believe the latter.
+(The proof is highly non-trivial and we may not get to see it in this course.)
+As for the second question, we will see that the PRG conjecture implies a great number of useful cryptographic tools, including the cipher conjecture (i.e., the two conjectures are in fact equivalent).
+We start by showing that once we can get to an output that is one bit longer than the input, we can in fact obtain any polynomial number of bits.</p>
+<blockquote>
+<h1 id="lengthextendprgthm">
+</h1></blockquote>
+<p>Suppose that the PRG conjecture is
+true. Then for every polynomial $t(n)$, there exists a pseudorandom generator
+mapping $n$ bits to $t(n)$ bits.</p>
+<p><img src="/figure/length-extension-prg.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Length extension for pseudorandom generators"
+	
+	
+>{#lengthextendprgfig}</p>
+<p>::: {.proof data-ref=&ldquo;lengthextendprgthm&rdquo;}
+The proof of this theorem is very similar to the length extension theorem for
+ciphers, and in fact this theorem can be used to give an alternative proof for the former theorem.</p>
+<p>The construction is illustrated in <a class="link" href="" >lengthextendprgfig</a>{.ref}.
+We are given a pseudorandom generator $G&rsquo;$ mapping $n$ bits into $n+1$ bits and need to construct a pseudorandom generator $G$ mapping $n$ bits to $t=t(n)$
+bits for some polynomial $t(\cdot)$. The idea is that we maintain a state of $n$ bits, which are originally our input seed<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> $s_0$, and at the $i^{th}$ step we use $G&rsquo;$
+to map $s_{i-1}$ to the $n+1$-long bit string $(s_i,y_i)$, output $y_i$ and keep $s_i$ as our new state.
+To prove the security of this construction
+we need to show that the distribution $G(U_n) = (y_1,\ldots,y_t)$ is computationally indistinguishable from the uniform distribution $U_t$. As usual, we will use the hybrid argument.
+For $i\in{0,\ldots,t}$ we define $H_i$ to be the distribution where the first $i$ bits chosen uniformly at random, whereas the last $t-i$ bits are computed as above.
+Namely, we choose $s_i$ at random in ${0,1}^n$ and continue the computation of $y_{i+1},\ldots,y_t$ from the state $s_i$.
+Clearly $H_0=G(U_n)$ and $H_t=U_t$ and hence by the triangle inequality it suffices to prove that $H_i \approx H_{i+1}$ for all $i\in{0,\ldots,t-1}$.
+We illustrate these two hybrids in <a class="link" href="" >lengthextendhybridfig</a>{.ref}.</p>
+<p><img src="/figure/length-extension-prg-hybrid.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Hybrids $H_i$ and $H_{i&#43;1}$&mdash; dotted boxes refer to values that are chosen independently and uniformly at random"
+	
+	
+>{#lengthextendhybridfig}</p>
+<p>Now suppose otherwise that there exists some adversary $Eve$ such that $\left| \E[Eve(H_i)] - \E[Eve(H_{i+1})] \right| \geq \epsilon$ for some non-negligible $\epsilon$.
+From $Eve$, we will design an adversary $Eve&rsquo;$ breaking the security of the pseudorandom generator $G&rsquo;$ (see <a class="link" href="" >reductionlengthextendfig</a>{.ref}).</p>
+<p><img src="/figure/length-extension-prg-adversary.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Building an adversary $Eve&rsquo;$ for $G&rsquo;$ from an adversary $Eve$ distinguishing $H_i$ and $H_{i&#43;1}$. The boxes marked with questions marks are those that are random or pseudorandom depending on whether we are in $H_i$ or $H_{i&#43;1}$. Everything inside the dashed red lines is simulated by $Eve&rsquo;$ that gets as input the $n&#43;1$-bit string $(s_{i&#43;1},y_{i&#43;1})$."
+	
+	
+>{#reductionlengthextendfig}</p>
+<p>On input a string $y$ of length $n+1$, $Eve&rsquo;$ will interpret $y$ as $(s_{i+1},y_{i+1})$ where $s_{i+1} \in {0,1}^n$. She then chooses $y_1,\ldots,y_i$ randomly and compute $y_{i+2},\ldots,y_t$ as in our pseudorandom generator&rsquo;s construction. $Eve&rsquo;$ will then feed $(y_1,\ldots,y_t)$ to $Eve$ and output whatever $Eve$ does. Clearly, $Eve&rsquo;$ is efficient if $Eve$ is. Moreover, one can see that if
+$y$ was random then $Eve&rsquo;$ is feeding $Eve$ with an input distributed according to $H_{i+1}$ while if $y$ was of the form $G(s)$ for a random $s$ then $Eve&rsquo;$ will feed $Eve$
+with an input distributed according to $H_i$. Hence we get that $| \E[ Eve&rsquo;(G&rsquo;(U_n))] - \E[Eve&rsquo;(U_{n+1})] | \geq \epsilon$ contradicting the security of $G&rsquo;$.
+:::</p>
+<p>::: {.remark title=&ldquo;Pseudorandom generators in practice&rdquo; #prgpractice}
+The proof of <a class="link" href="" >lengthextendprgthm</a>{.ref} is indicative of many practical constructions of pseudorandom generators.
+In many operating systems and programming environments, pseudorandom generators work as follows:</p>
+<ol>
+<li>
+<p>Upon initialization, the system obtains an initial <em>seed</em> of randomness $x_0 \in {0,1}^n$ (where often $n$ is something like $128$ or $256$).</p>
+</li>
+<li>
+<p>At the $t$-th call to a function such as `rand&rsquo; to obtain new randomness, the system uses some underlying pseudorandom generator $G&rsquo;:{0,1}^n \rightarrow {0,1}^{n+m}$ to let $x&rsquo;|y = G&rsquo;(x_{t-1})$, updates $x_t = x&rsquo;$ and outputs $y$.</p>
+</li>
+</ol>
+<p>There are often some additional complications on how to obtain this seed from some &ldquo;unpredictable&rdquo; or &ldquo;high entropy&rdquo; observations (which can sometimes include network latency, user typing and mouse patterns, and more), and whether the state of the system is periodically &ldquo;refreshed&rdquo; using additional observations.
+:::</p>
+<h3 id="unpredictability-an-alternative-approach-for-proving-the-length-extension-theorem">Unpredictability: an alternative approach for proving the length extension theorem
+</h3><p>The notion that being random is the same as being &ldquo;unpredictable&rdquo;, as discussed at the beginning of this chapter, can be formalized as follows.</p>
+<p>::: {.definition title=&ldquo;Unpredictable function&rdquo; #unpreddef}
+An efficiently computable function $G:{0,1}^* \rightarrow {0,1}^*$ is <em>unpredictable</em> if, for any $n$, $1\le i&lt;\ell(n)$ and polynomially-sized circuit $P$, $$\Pr_{y\leftarrow G(U_n)}[P(y_1,\ldots,y_{i-1}) = y_i] \le \frac12+negl(n).$$ Here, $\ell(n)$ is the length function of $G$ and $y\leftarrow G(U_n)$ denotes that $y$ is a random output of $G$. In other words, no polynomial-sized circuit can predict the next bit of the output of $G$ given the previous bits significantly better than guessing.
+:::</p>
+<p>We now show that the condition for a function $G$ to be unpredictable is equivalent to the condition for it to be a secure PRG.
+Please make sure you follow the proof,  because it is an important theorem, and because it is another example of a canonical cryptographic proof.</p>
+<blockquote>
+<h1 id="unpredequiv">
+</h1></blockquote>
+<p>Let $G:{0,1}^* \rightarrow {0,1}^*$ be a function with length function $\ell(n)$, then $G$ is a secure PRG iff it is unpredictable.</p>
+<p>::: {.proof data-ref=&ldquo;unpredequiv&rdquo;}
+For the forward direction, suppose for contradiction that there exists some $i$ and some circuit $P$ can predict $y_i$ given $y_1,\ldots,y_{i-1}$ with probability $p\ge \frac12+\epsilon(n)$ for non-negligible $\epsilon$. Consider the adversary $Eve$ that, given a string $y$, runs the circuit $P$ on $y_1,\ldots,y_{i-1}$, checks if the output is equal to $y_i$ and if so output 1.</p>
+<p>If $y=G(x)$ for a uniform $x$, then $P$ succeeds with probability $p$. If $y$ is uniformly random, then we can imagine that the bit $y_i$ is generated <em>after</em> $P$ finished its calculation. The bit $y_i$ is $0$ or $1$ with equal probability, so $P$ succeeds with probability $\frac12$. Since $Eve$ outputs 1 when $P$ succeeds,$$\left| \Pr[Eve(G(U_n))=1] - \Pr[ Eve(U_\ell)=1] \right|=|p-\frac12|\ge \epsilon(n),$$ a contradiction.</p>
+<p>For the backward direction, let $G$ be an unpredictable function. Let $H_i$ be the distribution where the first $i$ bits come from $G(U_n)$ while the last $\ell-i$ bits are all random. Notice that $H_0=U_\ell$ and $H_\ell=G(U_n)$, so it suffices to show that $H_{i-1} \approx H_{i}$ for all $i$.</p>
+<p>Suppose $H_{i-1} \not\approx H_{i}$ for some $i$, i.e. there exists some $Eve$ and non-negligible $\epsilon$ such that $$\Pr[Eve(H_{i})=1]-\Pr[Eve(H_{i-1})=1]&gt;\epsilon(n).$$ Consider the program $P$ that, on input $(y_1,\ldots,y_{i-1})$, picks the bits $\hat y_{i},\ldots, \hat y_\ell$ uniformly at random. Then, $P$ calls $Eve$ on the generated input. If $Eve$ outputs $1$ then $P$ outputs $\hat y_{i}$, and otherwise it outputs $1-\hat y_{i}$.</p>
+<p>The string $(y_1,\ldots,y_{i-1}, \hat y_i,\ldots,\hat y_\ell)$ has the same distribution as $H_{i-1}$. However, conditioned on $\hat y_i=y_i$, the string has distribution equal to $H_{i}$. Let $p$ be the probability that $Eve$ outputs $1$ if $\hat y_i=y_i$ and $q$ be the same probability when $\hat y_i\neq y_i$, then we get $$p-\frac12(p+q)=\Pr[Eve(H_{i})=1]-\Pr[Eve(H_{i-1})=1]&gt;\epsilon(n).$$ Therefore, the probability $P$ outputs the correct value is equal to $\frac12p+\frac12(1-q)=\frac12+\epsilon(n)$, a contradiction.
+:::</p>
+<p>The definition of unpredictability is useful because many of our candidates for pseudorandom generators appeal to the unpredictability definition in their proofs. For example, the Blum-Blum-Shub generator we will see later in the chapter is proved to be unpredictable if the &ldquo;quadratic residuosity problem&rdquo; is hard. It is also nice to know that our intuition at the beginning of the chapter can be formalized.</p>
+<h2 id="stream-ciphers">Stream ciphers
+</h2><p>We now show a connection between pseudorandom generators and encryption schemes:</p>
+<blockquote>
+<h1 id="PRGandcipherthm">
+</h1></blockquote>
+<p>If the PRG conjecture is true then so is the cipher conjecture.</p>
+<p>It turns out that the converse direction is also true, and hence
+these two conjectures are <em>equivalent</em>. We will probably not show the
+(quite non-trivial) proof of this fact in this course. (We might show a
+weaker version though.)</p>
+<p>::: {.proof data-ref=&ldquo;PRGandcipherthm&rdquo;}
+Recall that the <em>one time pad</em> is a perfectly secure cipher but its only problem was that to encrypt an
+$n+1$ long message it needed an $n+1$ long bit key. Now using a pseudorandom
+generator, we can map an $n$-bit long key into an $n+1$-bit long string that
+looks random enough that we could use it as a key for the one-time pad. That is,
+our cipher will look as follows:</p>
+<p>$$
+E_k(m) = G(k) \oplus m
+$$</p>
+<p>and</p>
+<p>$$
+D_k(c) = G(k) \oplus c
+$$</p>
+<p>Just like in the one time pad, $D_k(E_k(m)) = G(k) \oplus G(k) \oplus m = m$.
+Moreover, the encryption and decryption algorithms are clearly efficient. We will prove security
+of this encryption by showing the stronger claim that $E_{U_n}(m)\approx U_{n+1}$ for any $m$.</p>
+<p>Notice that $U_{n+1}=U_{n+1}\oplus m$, as we showed in the security of the one-time pad.
+Suppose that for some non-negligible $\epsilon=\epsilon(n)&gt;0$ there is an efficient adversary $Eve&rsquo;$ such
+that</p>
+<p>$$
+\left| {\mathbb{E}}[ Eve&rsquo;(G(U_n)\oplus m)] - {\mathbb{E}}[ Eve&rsquo;(U_{n+1}\oplus m) ] \right| \geq \epsilon.
+$$</p>
+<p>Then the adversary $Eve$ defined as $Eve(y) = Eve&rsquo;(y\oplus m)$ would be also efficient. Furthermore, if $y$
+is pseudorandom then $Eve(y)=Eve&rsquo;(G(U_n)\oplus m)$ and if $y$ is uniformly random then $Eve(y)=Eve&rsquo;(U_{n+1}\oplus m)$.
+Then, $Eve$ can distinguish the two distributions with advantage $\epsilon$, a contradiction.
+:::</p>
+<p>If the PRG outputs $t(n)$ bits instead of $n+1$ then we automatically
+get an encryption scheme with $t(n)$ long message length. In fact, in practice
+if we use the length extension for PRG&rsquo;s, we don&rsquo;t need to decide on the length
+of messages in advance. Every time we need to encrypt another bit (or another
+block) $m_i$ of the message, we run the basic PRG to update our state and obtain
+some new randomness $y_i$ that we can XOR with the message and output. Such
+constructions are known as <em>stream ciphers</em> in the literature. In much
+of the practical literature, the name <em>stream cipher</em> is used both for the
+pseudorandom generator itself as well as for the encryption scheme that is
+obtained by combining it with the one-time pad.</p>
+<p>::: {.remark title=&ldquo;Using pseudorandom generators for coin tossing over the phone&rdquo; #cointossingphonerm}
+The following is a cute application of pseudorandom generators. Alice and Bob want to toss a fair coin over the phone. They use a pseudorandom generator $G:{0,1}^n\rightarrow{0,1}^{3n}$.</p>
+<ol>
+<li>Alice will send $z\leftarrow_R{0,1}^{3n}$ to Bob \</li>
+<li>Bob picks $s\leftarrow_R{0,1}^n$ and $b \leftarrow_R {0,1}$. If $b=0$ then Bob sends $y=G(s)$ and if $b=1$ he sends $y=G(s)\oplus z$. In other words, $y = G(s) \oplus b\cdot z$ where $b\cdot z$ is the vector $(b\cdot z_1,\ldots, b\cdot z_{3n})$.</li>
+<li>Alice then picks a random $b&rsquo;\leftarrow_R{0,1}$ and sends it to Bob. \</li>
+<li>Bob sends to Alice the string $s$ and $b$. Alice verifies that indeed $y= G(s) \oplus b \cdot z$.  Otherwise Alice aborts.</li>
+<li>The output of the protocol is $b \oplus b&rsquo;$.</li>
+</ol>
+<p>It can be shown that (assuming the protocol is completed) the output is a random coin, which neither Alice or Bob can control or predict with more than negligible advantage over half.
+Trying to formalize this and prove it is an excellent exercise.
+Two main components in the proofs are:</p>
+<ul>
+<li>
+<p>With probability $1-negl(n)$ over $z \leftarrow_R {0,1}^{3n}$, the sets $S_0 = { G(x) | x\in {0,1}^n }$ and $S_1 = { G(x) \oplus z | x\in {0,1}^n }$ will be disjoint. Hence by choosing $z$ at random, Alice can ensure that Bob is <em>committed</em> to the choice of $b$ after sending $y$.</p>
+</li>
+<li>
+<p>For every $z$, both the distribution $G(U_n)$ and $G(U_n)\oplus z$ are pseudorandom. This can be shown to imply that no matter what string $z$ Alice chooses, she cannot predict $b$ from the string $y$ sent by Bob with probability better than $1/2 + negl(n)$. Hence her choice of $b&rsquo;$ will be essentially independent of $b$.
+:::</p>
+</li>
+</ul>
+<h2 id="what-do-pseudorandom-generators-actually-look-like">What do pseudorandom generators actually look like?
+</h2><p>So far we have made the conjectures that objects such as ciphers and
+pseudorandom generators <em>exist</em>, without giving any hint as to how they would
+actually look like. (Though we have examples such as the Caesar cipher, Vigenere, and Enigma of what secure ciphers <em>don&rsquo;t</em> look like.)
+As mentioned above, we do not know how to <em>prove</em> that
+any particular function is a pseudorandom generator.
+However, there are quite simple <em>candidates</em> (i.e., functions that are conjectured to be secure pseudorandom generators), though care must be taken in constructing them.
+We now consider candidates for functions that maps $n$ bits
+to $n+1$ bits (or more generally $n+c$ for some constant $c$ ) and look at least
+somewhat &ldquo;randomish&rdquo;.
+As these constructions are typically used as a basic
+component for obtaining a longer length PRG via the length extension theorem (<a class="link" href="" >lengthextendprgthm</a>{.ref}), we
+will think of these pseudorandom generators as mapping a string $s\in{0,1}^n$
+representing the current state into a string $s’\in{0,1}^n$ representing the new
+state as well as a string $b\in{0,1}^c$ representing the current output. See also
+Section 6.1 in Katz-Lindell and (for greater depth) Sections 3.6-3.9 in the
+Boneh-Shoup book.</p>
+<h3 id="attempt-0-the-counter-generator">Attempt 0: The counter generator
+</h3><p>To get started, let&rsquo;s look at an example of an obviously bogus pseudorandom generator.
+We define the &ldquo;counter pseudorandom generator&rdquo; $G:{0,1}^n \rightarrow {0,1}^{n+1}$ as follows.
+$G(s)=(s&rsquo;,b)$ where $s&rsquo; = s + 1 \mod 2^n$ (treating $s$ and $s&rsquo;$ as numbers in ${0,\ldots,2^n-1}$) and $b$ is the least significant digit of $s&rsquo;$.
+It&rsquo;s a great exercise to work out why this is <em>not</em> a secure pseudorandom generator.</p>
+<blockquote>
+<h1 id="heading-2">
+</h1></blockquote>
+<p>You should really pause here and make sure you see why the &ldquo;counter pseudorandom generator&rdquo; is not a secure pseudorandom generator. Show that this is true even if we replace the least significant digit by the $k$-th digit for every $0 \leq k &lt; n$.</p>
+<h3 id="attempt-1-the-linear-checksum--linear-feedback-shift-register-lfsr">Attempt 1: The linear checksum / linear feedback shift register (LFSR)
+</h3><p>LFSR can be thought of as the &ldquo;mother&rdquo; (or maybe more like the sick great-uncle) of all pseudorandom generators.
+One of the simplest ways to generate a &ldquo;randomish&rdquo; extra digit given an $n$ digit
+number is to use a <em>checksum</em> - some linear combination of the digits, with a canonical example being the <a class="link" href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check"  target="_blank" rel="noopener"
+    >cyclic redundancy check</a> or CRC.^[CRC are often used to generate a &ldquo;control digit&rdquo; to detect mistypes of credit card or social security card number. This has very different goals than its use for pseudorandom generators, though there are some common intuitions behind the two usages.]
+This motivates the notion of a <em>linear feedback shift register generator</em> (LFSR): if the current state is $s\in{0,1}^n$ then the output is $f(s)$ where $f$ is a linear function (modulo 2) and the new state is obtained by right shifting the previous state and putting $f(s)$ at the leftmost location.
+That is, $s&rsquo;_1 = f(s)$ and $s&rsquo;<em>i = s</em>{i-1}$ for $i\in{2,\ldots,n}$.</p>
+<p>LFSR&rsquo;s have several good properties- if the function $f(\cdot)$ is chosen properly then they can have very long <em>periods</em>
+(i.e., it can take an exponential number of steps until the state repeats itself), though that also holds for the simple &ldquo;counter&rdquo; generator we saw above.
+They also have the property that every individual bit is equal to $0$ or $1$ with probability exactly half (the counter generator also shares this property).</p>
+<p>A more interesting property is that (if the function is selected properly) every two coordinates are independent from one another.
+That is, there is some super-polynomial function $t(n)$ (in fact $t(n)$ can be exponential in $n$) such that if $\ell \neq \ell&rsquo; \in {0,\ldots, t(n) }$, then if we look at the two random variables corresponding to the $\ell$-th and $\ell&rsquo;$-th output of the generator (where randomness is the initial state) then they are distributed like two independent random coins. (This is non-trivial to show, and depends on the choice of $f$ - it is a challenging but useful exercise to work this out.)
+The counter generator fails badly at this condition: the least significant bits between two consecutive states always flip.</p>
+<p>There is a more general notion of a <em>linear generator</em> where the new state can be any invertible linear transformation of the previous state. That is, we interpret the state $s$ as an element of $\Z_q^t$ for some integers $q,t$,<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup> and let $s�?=F(s)$ and the output $b=G(s)$ where $F:\Z_q^t\rightarrow\Z_q^t$ and $G:\Z_q^t\rightarrow\Z_q$ are invertible linear transformations (modulo $q$).
+This includes as a special case the <em>linear congruential generator</em> where $t=1$ and the map $F(s)$ corresponds to taking $as \pmod{q}$ where $a$ is number co-prime to $q$.</p>
+<p>All these generators are unfortunately insecure due to the great bane of
+cryptography- the <em>Gaussian elimination algorithm</em> which students typically encounter in any linear algebra class.^[Despite the name, the algorithm goes at least as far back as the Chinese <em>Jiuzhang Suanshu</em> manuscript, circa 150 B.C.]</p>
+<blockquote>
+<h1 id="gaussianelimthm">
+</h1></blockquote>
+<p>There is a polynomial time algorithm to solve
+$m$ linear equations in $n$ variables (or to certify no solution exists) over
+any ring.</p>
+<p>Despite its seeming simplicity and ubiquity, Gaussian elimination (and some generalizations and related algorithms such as Euclid’s extended g.c.d algorithm and the LLL lattice reduction algorithm) has been used time and again to break candidate cryptographic constructions.
+In particular, if we look at the first $n$ outputs of a linear generator
+$b_1,\ldots,b_n$ then we can write linear equations in the unknown initial state
+of the form $f_1(s)=b_1,\ldots,f_n(s)=b_n$ where the $f_i$&rsquo;s are known linear
+functions.
+Either those functions are <em>linearly independent</em>, in which case we
+can solve the equations to get the unique solution for the original state $s$
+and from which point we can predict all outputs of the generator, or they are
+dependent, which means that we can predict some of the outputs even without
+recovering the original state.
+Either way, the generator is $<em>\sharp !$’ed (where
+$</em> \sharp !$ refers to whatever verb you prefer to use when your system is broken).
+See also this <a class="link" href="http://alumni.cs.ucr.edu/~jsun/random-number.pdf"  target="_blank" rel="noopener"
+    >1977 paper</a>
+of James Reed.</p>
+<blockquote>
+<h1 id="nocryptoprgs">
+</h1></blockquote>
+<p>The above means that it is a bad idea to use a linear checksum as a
+pseudorandom generator in a cryptographic application, and in fact in any
+adversarial setting (e.g., one shouldn&rsquo;t hope that an attacker would not be able
+to reverse engineer the algorithm<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup> that computes the control digit of a credit card
+number). However, that does not mean that there are no legitimate cases
+where linear generators can be used
+. In a setting where the application is not adversarial and you have an ability to <em>test</em> if the generator is actually successful, it
+might be reasonable to use such insecure non-cryptographic generators.
+They tend to be more efficient (though often not by much) and hence are often the default
+option in many programming environments such as the <code>C rand()</code> command. (In
+fact, the real bottleneck in using cryptographic pseudorandom generators is
+often the generation of <em>entropy</em> for their seed, as discussed in the previous
+lecture, and not their actual running time.)</p>
+<h3 id="from-insecurity-to-security">From insecurity to security
+</h3><p>It is often the case that we want to &ldquo;fix&rdquo; a broken cryptographic primitive, such as a pseudorandom generator, to make it secure.
+At the moment this is still more of an art than a science, but there are some principles that cryptographers have used to try to make this more principled.
+The main intuition is that there are certain properties of computational problems that make them more amenable to algorithms (i.e., &ldquo;easier&rdquo;) and when we want to make
+the problems useful for cryptography (i.e., &ldquo;hard&rdquo;) we often seek variants that don&rsquo;t possess these properties. The following table illustrates some examples of such properties.
+(These are not formal statements, but rather is intended to give some intuition )</p>
+<p>Easy           Hard</p>
+<hr>
+<p>Continuous     Discrete
+Convex         Non-convex
+Linear         Non-linear (degree $\geq 2$)
+Noiseless      Noisy
+Local          Global
+Shallow        Deep
+Low degree     High degree</p>
+<p>Many cryptographic constructions can be thought of as trying to transform an easy problem into a hard one by moving from the left to the right column of this table.</p>
+<p>The <strong>discrete logarithm problem</strong> is the discrete version of the continuous real logarithm problem.
+The <strong>learning with errors problem</strong> can be thought of as the noisy version of the linear equations problem (or the discrete version of least squares minimization).
+When constructing <strong>block ciphers</strong> we often have <em>mixing</em> transformation to ensure that the dependency structure between different bits is <em>global</em>, <em>S-boxes</em> to ensure <em>non-linearity</em>, and many <em>rounds</em> to ensure <em>deep</em> structure and <em>large algebraic degree</em>.</p>
+<p>This also works in the other direction.
+Many algorithmic and machine learning advances work by embedding a discrete problem in a continuous convex one.
+Some attacks on cryptographic objects can be thought of as trying to recover some of the structure (e.g., by embedding modular arithmetic in the real line or &ldquo;linearizing&rdquo; non linear equations).</p>
+<h3 id="attempt-2-linear-congruential-generators-with-dropped-bits">Attempt 2: Linear Congruential Generators with dropped bits
+</h3><p>One approach that is widely used in implementations of pseudorandom generators is to take a linear generator such as the
+linear congruential generators described above, and use for the output a &ldquo;chopped&rdquo; version of the linear function and drop some of the
+least significant bits. The operation of dropping these bits is non-linear and hence the attack above does not immediately apply.
+Nevertheless, it turns out this attack can be generalized to handle this case, and hence even with dropped bits Linear Congruential Generators are completely insecure
+and should be used (if at all) only in applications such as simulations where there is no adversary.
+Section 3.7.1 in the Boneh-Shoup book describes one attack against such generators that uses the notion of
+<em>lattice algorithms</em> that we will encounter later in this course in very different contexts.</p>
+<h2 id="successful-examples">Successful examples
+</h2><p>Let&rsquo;s now describe some <em>successful</em> (at least per current knowledge) pseudorandom generators:</p>
+<h3 id="case-study-1-subset-sum-generator">Case Study 1: Subset Sum Generator
+</h3><p>Here is an extremely simple generator that is yet still secure<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup> as far as we know.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># seed is a list of 40 zero/one values</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># output is a 48 bit integer</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">subset_sum_gen</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">  <span class="n">modulo</span> <span class="o">=</span> <span class="mh">0x1000000</span>
+</span></span><span class="line"><span class="cl">  <span class="n">constants</span> <span class="o">=</span> <span class="p">[</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x3D6EA1</span><span class="p">,</span> <span class="mh">0x1E2795</span><span class="p">,</span> <span class="mh">0xC802C6</span><span class="p">,</span> <span class="mh">0xBF742A</span><span class="p">,</span> <span class="mh">0x45FF31</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x53A9D4</span><span class="p">,</span> <span class="mh">0x927F9F</span><span class="p">,</span> <span class="mh">0x70E09D</span><span class="p">,</span> <span class="mh">0x56F00A</span><span class="p">,</span> <span class="mh">0x78B494</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x9122E7</span><span class="p">,</span> <span class="mh">0xAFB10C</span><span class="p">,</span> <span class="mh">0x18C2C8</span><span class="p">,</span> <span class="mh">0x8FF050</span><span class="p">,</span> <span class="mh">0x0239A3</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x02E4E0</span><span class="p">,</span> <span class="mh">0x779B76</span><span class="p">,</span> <span class="mh">0x1C4FC2</span><span class="p">,</span> <span class="mh">0x7C5150</span><span class="p">,</span> <span class="mh">0x81E05E</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x154647</span><span class="p">,</span> <span class="mh">0xB80E68</span><span class="p">,</span> <span class="mh">0xA042E5</span><span class="p">,</span> <span class="mh">0xE20269</span><span class="p">,</span> <span class="mh">0xD3B7F3</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0xCC5FB9</span><span class="p">,</span> <span class="mh">0x0BFC55</span><span class="p">,</span> <span class="mh">0x847AE0</span><span class="p">,</span> <span class="mh">0x8CFDF8</span><span class="p">,</span> <span class="mh">0xE304B7</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x869ACE</span><span class="p">,</span> <span class="mh">0xB4CDAB</span><span class="p">,</span> <span class="mh">0xC8E31F</span><span class="p">,</span> <span class="mh">0x00EDC7</span><span class="p">,</span> <span class="mh">0xC50541</span><span class="p">,</span>  
+</span></span><span class="line"><span class="cl">     <span class="mh">0x0D6DDD</span><span class="p">,</span> <span class="mh">0x695A2F</span><span class="p">,</span> <span class="mh">0xA81062</span><span class="p">,</span> <span class="mh">0x0123CA</span><span class="p">,</span> <span class="mh">0xC6C5C3</span> <span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># return the modular sum of the constants</span>
+</span></span><span class="line"><span class="cl">  <span class="c1"># corresponding to ones in the seed</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="o">%</span> <span class="n">modulo</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="n">constants</span><span class="p">,</span><span class="n">seed</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>The seed to this generator is an array <code>seed</code> of 40 bits, with 40 hardwired constants each 48 bits long (these constants were generated at random, but are fixed once and for all, and are not kept secret and hence are not
+considered part of the secret random seed).
+The output is simply
+$$\sum_{i=1}^{40} \texttt{seed}[i]\texttt{constants}[i] \pmod{2^{48}}$$
+and hence expands the $40$ bit input into a $48$ bit output.</p>
+<p>This generator is loosely motivated by the &ldquo;subset sum&rdquo; computational problem, which is NP hard. However, since NP hardness is a <em>worst case</em> notion of complexity, it does not imply security for pseudorandom generators, which requires hardness of an <em>average case</em> variant.
+To get some intuition for its security, we can work out why (given that it seems to be linear) we cannot break it by simply using Gaussian elimination.</p>
+<blockquote>
+<h1 id="heading-3">
+</h1></blockquote>
+<p>This is an excellent point for you to stop and try to answer this question on your own.</p>
+<p>Given the known constants and known output, figuring out the set of potential seeds can be thought of as solving a <em>single</em> equation in 40 variables.
+However, this equation is clearly overdetermined, and will have a solution regardless of whether the observed value is indeed an output of the generator, or it is chosen uniformly at random.</p>
+<p>More concretely, we can use linear-equation solving to compute (given the known constants $c_1,\ldots,c_{40} \in \Z_{2^{48}}$ and the output $y \in \Z_{2^{48}}$) the linear subspace $V$ of all vectors $(s_1,\ldots,s_{40}) \in (\Z_{2^{48}})^{40}$ such that $\sum s_i c_i = y \pmod{2^{48}}$.
+But, regardless of whether $y$ was generated at random from $\Z_{2^{48}}$, or $y$ was generated as an output of the generator, the subspace $V$ will always have the same dimension (specifically, since it is formed by a single linear equation over $40$ variables, the dimension will be $39$.)
+To break the generator we seem to need to be able to decide whether this linear subspace $V \subseteq (\Z_{2^{48}})^{40}$ contains a <em>Boolean vector</em> (i.e., a vector $s\in {0,1}^n$).
+Since the condition that a vector is Boolean is not defined by linear equations, we cannot use Gaussian elimination to break the generator.
+Generally, the task of finding a vector with <em>small</em> coefficients inside a discrete linear subspace is closely related to a classical problem known as finding the <a class="link" href="https://goo.gl/WRNT9S"  target="_blank" rel="noopener"
+    >shortest vector in a lattice</a>. (See also the <a class="link" href="https://goo.gl/KwZWhV"  target="_blank" rel="noopener"
+    >short integer solution (SIS) problem</a>.)</p>
+<h3 id="case-study-2-rc4">Case Study 2: RC4
+</h3><p>The following is another example of an extremely simple generator known as RC4 (this stands for Rivest Cipher 4, as Ron Rivest invented this in 1987) and is still fairly widely used today.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">RC4</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">256</span>
+</span></span><span class="line"><span class="cl">    <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">%</span> <span class="mi">256</span>
+</span></span><span class="line"><span class="cl">    <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">P</span><span class="p">[(</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">%</span> <span class="mi">256</span><span class="p">])</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>The function <code>RC4</code> takes as input the current state <code>P,i,j</code> of the generator and returns the new state together with a single output byte.
+The state of the generator consists of an array <code>P</code> of 256 bytes, which can be thought of as a <em>permutation</em> of the numbers $0,\ldots,255$ in the sense that we maintain the invariant that
+$\texttt{P}[i]\neq\texttt{P}[j]$ for every $i\neq j$, and two indices $i,j \in {0,\ldots,255}$.
+We can consider the initial state as the case where <code>P</code> is a completely random permutation and $i$ and $j$ are initialized to zero, although to save on initial seed size, typically RC4 uses some &ldquo;pseudorandom&rdquo; way to generate <code>P</code> from a shorter seed as well.</p>
+<p>RC4 has extremely efficient software implementations and hence has been widely implemented. However, it has several issues with its security. In particular it was shown by Mantin<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup> and Shamir that the second bit of RC4 is <em>not</em> random, even if the initialization vector was random.
+This and other issues led to a practical attack on the 802.11b WiFi protocol, see Section 9.9 in Boneh-Shoup.
+The initial response to those attacks was to suggest to drop the first 1024 bytes of the output, but by now the attacks have been sufficiently extended that RC4 is simply not considered a secure cipher anymore.
+The ciphers Salsa and ChaCha, designed by Dan Bernstein, have a similar design to RC4, and are considered secure and deployed in several standard protocols such as TLS, SSH and QUIC, see Section 3.6 in Boneh-Shoup.</p>
+<h3 id="case-study-3-blum-blum-and-shub">Case Study 3: Blum, Blum and Shub
+</h3><p>B.B.S., which stands for the authors Blum, Blum and Shub, is a simple generator constructed from a potentially hard problem in number theory.</p>
+<p>Let $N=P\cdot Q$, where $P,Q$ are primes. (We will generally use $P,Q$ of size roughly $n$, where $n$ is our security parameter, and so use capital letters to emphasize that the magnitude of these numbers is exponential in the security parameter.)</p>
+<p>We define $QR_N$ to be the set of <em>quadratic residues modulo $N$</em>, which are the numbers that have a modular square root.
+Formally,</p>
+<p>$$QR_N={X^2 \mod N \mid \gcd(X,N )=1}.$$</p>
+<p>This definition extends the concept of &ldquo;perfect squares&rdquo; when we are working with standard integers. Notice that each number in $Y \in QR_N$ has at least one square root (number $X$ such that $Y = X^2 \mod N$).
+We will see later in the course that if $N = P\cdot Q$ for primes $P,Q$ then each $Y\in QR_N$ has exactly $4$ square roots.
+The B.B.S. generator chooses $N=P\cdot Q$, where $P,Q$ are prime and $P,Q\equiv 3\pmod{4}$. The second condition guarantees that for each $Y\in QR_N$, exactly one of its square roots fall in $QR_N$, and hence the map
+$X \mapsto X^2 \mod N$ is one-to-one and onto map from $QR_N$ to itself.<br>
+It is defined as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">BBS</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">X</span> <span class="o">%</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>In other words,  on input $X$, $BBS(X)$ outputs $X^2 \mod N$ and the least significant bit of $X$.
+We can think of $BBS$ as a map $BBS:QR_N \rightarrow QR_N \times {0,1}$ and so it maps a domain into a larger domain.
+We can also extend it to output $t$ additional bits, by repeatedly squaring the input, letting $X_0 = X$, $X_{i+1} = X_i^2 \mod N$, for $i=0,\ldots,{t-1}$, and outputting $X_t$ together with the least significant bits of $X_0,\ldots,X_{t-1}$.
+It turns out that assuming that there is no polynomial-time algorithm (where &ldquo;polynomial-time&rdquo; means polynomial in the <em>number of bits</em> to represent $N$, i.e., polynomial in $\log N$)  to factor randomly chosen integers $N=P\cdot Q$, for every $t$ that is polynomial in the number of bits in $N$, the output of the $t$-step $BBS$ generator will be computationally indistinguishable from $U_{QR_N} \times U_t$ where $U_{QR_N}$ denotes the uniform distribution over $QR_N$.</p>
+<p>The number theory required to show takes a while to develop. However, it is interesting and I recommend the reader to search up this particular generator, see for example <a class="link" href="https://www.cs.miami.edu/home/burt/learning/Csc609.062/docs/bbs.pdf"  target="_blank" rel="noopener"
+    >this survey by Junod</a>.</p>
+<h2 id="non-constructive-existence-of-pseudorandom-generators">Non-constructive existence of pseudorandom generators
+</h2><p>We now show that, if we don&rsquo;t insist on <em>constructivity</em> of pseudorandom generators, then there exists pseudorandom generators with output that are <em>exponentially larger</em> than the input length.</p>
+<blockquote>
+<h1 id="prgexist">
+</h1></blockquote>
+<p>There is some absolute constant $C$ such that for every $\epsilon,T$, if $\ell &gt; C (\log T + \log (1/\epsilon))$ and $m \leq T$, then there is an $(T,\epsilon)$ pseudorandom generator $G: {0,1}^\ell \rightarrow {0,1}^m$.</p>
+<blockquote>
+<h1 id="heading-4">
+</h1></blockquote>
+<p>The proof uses an extremely useful technique known as the &ldquo;probabilistic method&rdquo; which is not too hard mathematically but can be confusing at first.^[There is a whole (highly recommended) <a class="link" href="https://www.amazon.com/Probabilistic-Method-Discrete-Mathematics-Optimization/dp/1119061954/ref=dp_ob_title_bk"  target="_blank" rel="noopener"
+    >book by Alon and Spencer</a> devoted to this method.]
+The idea is to give a &ldquo;non constructive&rdquo; proof of existence of the pseudorandom generator $G$ by showing that if $G$ was chosen at random, then the probability that it would be a valid $(T,\epsilon)$ pseudorandom generator is positive.
+In particular this means that there <em>exists</em> a single $G$ that is a valid $(T,\epsilon)$ pseudorandom generator.
+The probabilistic method is just a <em>proof technique</em> to demonstrate the existence of such a function.
+Ultimately, our goal is to show the existence of a <em>deterministic</em> function $G$ that satisfies
+the conditions of a $(T, \epsilon)$ PRG.</p>
+<p>The above discussion might be rather abstract at this point, but would become clearer after seeing the proof.</p>
+<blockquote>
+<h1 id="heading-5">
+</h1></blockquote>
+<p>Let $\epsilon,T,\ell,m$ be as in the lemma&rsquo;s statement. We need to show that there exists a function $G:{0,1}^\ell \rightarrow {0,1}^m$ that &ldquo;fools&rdquo; every $T$ line program $P$ in the sense of <a class="link" href="" >prgdefeq</a>{.eqref}.
+We will show that this follows from the following claim:</p>
+<blockquote>
+</blockquote>
+<p><strong>Claim I:</strong> For every fixed NAND program / Boolean circuit $P$, if we pick $G:{0,1}^\ell \rightarrow {0,1}^m$ <em>at random</em> then the probability that <a class="link" href="" >prgdefeq</a>{.eqref} is violated is at most $2^{-T^2}$.</p>
+<blockquote>
+</blockquote>
+<p>Before proving Claim I, let us see why it implies <a class="link" href="" >prgexist</a>{.ref}.
+We can identify a function $G:{0,1}^\ell \rightarrow {0,1}^m$ with its &ldquo;truth table&rdquo; or simply the list of evaluations on all its possible $2^\ell$ inputs. Since each output is an $m$ bit string,
+we can also think of $G$ as a string in ${0,1}^{m\cdot 2^\ell}$. We define $\mathcal{F}^m_\ell$ to be the set of all functions from ${0,1}^\ell$ to ${0,1}^m$. As discussed above we can identify $\mathcal{F}<em>\ell^m$ with ${0,1}^{m\cdot 2^\ell}$ and choosing a random function $G \sim \mathcal{F}</em>\ell^m$ corresponds to choosing a random $m\cdot 2^\ell$-long bit string.</p>
+<blockquote>
+</blockquote>
+<p>For every NAND program / Boolean circuit $P$ let $B_P$ be the event that, if we choose $G$ at random from $\mathcal{F}<em>\ell^m$ then <a class="link" href="" >prgdefeq</a>{.eqref} is violated with respect to the program $P$.
+It is important to understand what is the sample space that the event $B_P$ is defined over, namely this event depends on the choice of $G$ and so $B_P$ is a subset of $\mathcal{F}</em>\ell^m$. An equivalent way to define the event $B_P$ is that it is the subset of all functions mapping ${0,1}^\ell$ to ${0,1}^m$ that violate <a class="link" href="" >prgdefeq</a>{.eqref}, or in other words:
+$$
+B_P = \left{ G \in \mathcal{F}<em>\ell^m ; \big| ; \left| \tfrac{1}{2^\ell}\sum</em>{s\in {0,1}^\ell} P(G(s)) - \tfrac{1}{2^m}\sum_{r \in {0,1}^m}P(r) \right| &gt; \epsilon \right} ;;. \label{eq:eventdefine}
+$$
+(We&rsquo;ve replaced here the probability statements in <a class="link" href="" >prgdefeq</a>{.eqref} with the equivalent sums so as to reduce confusion as to what is the sample space that $B_P$ is defined over.)</p>
+<blockquote>
+</blockquote>
+<p>To understand this proof it is crucial that you pause here and see how the definition of $B_P$ above corresponds to <a class="link" href="" >eq:eventdefine</a>{.eqref}. This may well take re-reading the above text once or twice, but it is a good exercise at parsing probabilistic statements and learning how to identify the <em>sample space</em> that these statements correspond to.</p>
+<blockquote>
+</blockquote>
+<p>Now, the number of programs of size $T$ (or circuits of size $T$) is at most $2^{O(T\log T)}$.
+Since $T\log T = o(T^2$) this means that if Claim I is true, then by the union bound it holds that the probability of the union of $B_P$ over <em>all</em> NAND programs of at most $T$ lines is at most $2^{O(T\log T)}2^{-T^2} &lt; 0.1$ for sufficiently large $T$.
+What is important for us about the number $0.1$ is that it is smaller than $1$.
+In particular this means that there <em>exists</em> a single $G^* \in \mathcal{F}_\ell^m$ such that $G^<em>$ <em>does not</em> violate <a class="link" href="" >prgdefeq</a>{.eqref} with respect to any NAND program of at most $T$ lines, but that precisely means that $G^</em>$ is a $(T,\epsilon)$ pseudorandom generator.</p>
+<blockquote>
+</blockquote>
+<p>Hence, it suffices to prove Claim I to conclude the proof of <a class="link" href="" >prgexist</a>{.ref}.
+Choosing a random $G: {0,1}^\ell \rightarrow {0,1}^m$ amounts to choosing $L=2^\ell$ random strings $y_0,\ldots,y_{L-1} \in {0,1}^m$ and letting $G(x)=y_x$ (identifying ${0,1}^\ell$ and $[L]$ via the binary representation).
+Hence the claim amounts to showing that for every fixed function $P:{0,1}^m \rightarrow {0,1}$,
+if $L &gt; 2^{C (\log T + \log (1/\epsilon))}$ (which by setting $C&gt;4$, we can ensure is larger than $10 T^2/\epsilon^2$) then the probability that
+$$
+\left| \tfrac{1}{L}\sum_{i=0}^{L-1} P(y_i) - \Pr_{s \leftarrow_R {0,1}^m}[P(s)=1] \right| &gt; \epsilon \label{prgdefeqchernoff}
+$$
+is at most $2^{-T^2}$.
+<a class="link" href="" >{prgdefeqchernoff}</a>{.eqref} follows directly from the Chernoff bound.
+If we let for every $i\in [L]$ the random variable $X_i$ denote $P(y_i)$, then since $y_0,\ldots,y_{L-1}$ is chosen independently at random, these are independently and identically distributed random variables with mean $\E_{y \leftarrow_R {0,1}^m}[P(y)]= \Pr_{y\leftarrow_R {0,1}^m}[ P(y)=1]$ and hence the probability that they deviate from their expectation by $\epsilon$ is at most $2\cdot 2^{-\epsilon^2 L/2}$.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Edited and expanded by Richard Xu in Spring 2020.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>Even lawyers grapple with this question, with a recent example being the debate of whether fantasy football is a game of chance or of skill.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>In fact such a function must exist in some sense since in the entire history of the world, presumably no sequence of $100$ fair coin tosses has ever repeated.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>Because we use a small input to grow a large pseudorandom string, the input to a pseudorandom generator is often known as its <em>seed</em>.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p>A ring is a set of elements where addition and multiplication are defined and obey the natural rules of associativity and commutativity (though without necessarily having a multiplicative inverse for every element). For every integer $q$ we define $\Z_q$ (known as the <em>ring of integers modulo $q$</em>) to be the set ${0,\ldots,q-1}$ where addition and multiplication is done modulo $q$.&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p>That number is obtained by applying an algorithm of <a class="link" href="https://goo.gl/SL8ahM"  target="_blank" rel="noopener"
+    >Hans Peter Luhn</a> which applies a simple map to each digit of the card and then sums them up modulo 10.&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p>Actually modern computers will be able to break this generator via brute force, but if the length and number of the constants were doubled (or perhaps quadrupled) this should be sufficiently secure, though longer to write down.&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8">
+<p>I typically do not include references in these lecture notes, and leave them to the texts, but I make here an exception because Itsik Mantin was a close friend of mine in grad school.&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

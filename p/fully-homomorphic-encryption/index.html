@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Fully homomorphic encryption: Introduction and bootstrapping In today&rsquo;s era of &ldquo;cloud computing&rdquo;, much of individuals&rsquo; and businesses&rsquo; data is stored and computed on by third parties such as Google, Microsoft, Apple, Amazon, Facebook, Dropbox and many others. Classically, cryptography provided solutions to protecting data in motion from point A to point B. But these are not always sufficient to protect data at rest and particularly data in use. For example, suppose that Alice has some data $x \\in {0,1}^n$ (in modern applications $x$ would well be terabytes in length or larger) that she wishes to store with the cloud service Bob, but is afraid that Bob will be hacked, subpoenaed or simply does not completely trust Bob.\n">
+<title>Fully Homomorphic Encryption</title>
+
+<link rel='canonical' href='http://localhost:1313/p/fully-homomorphic-encryption/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Fully Homomorphic Encryption">
+<meta property='og:description' content="Fully homomorphic encryption: Introduction and bootstrapping In today&rsquo;s era of &ldquo;cloud computing&rdquo;, much of individuals&rsquo; and businesses&rsquo; data is stored and computed on by third parties such as Google, Microsoft, Apple, Amazon, Facebook, Dropbox and many others. Classically, cryptography provided solutions to protecting data in motion from point A to point B. But these are not always sufficient to protect data at rest and particularly data in use. For example, suppose that Alice has some data $x \\in {0,1}^n$ (in modern applications $x$ would well be terabytes in length or larger) that she wishes to store with the cloud service Bob, but is afraid that Bob will be hacked, subpoenaed or simply does not completely trust Bob.\n">
+<meta property='og:url' content='http://localhost:1313/p/fully-homomorphic-encryption/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Fully Homomorphic Encryption">
+<meta name="twitter:description" content="Fully homomorphic encryption: Introduction and bootstrapping In today&rsquo;s era of &ldquo;cloud computing&rdquo;, much of individuals&rsquo; and businesses&rsquo; data is stored and computed on by third parties such as Google, Microsoft, Apple, Amazon, Facebook, Dropbox and many others. Classically, cryptography provided solutions to protecting data in motion from point A to point B. But these are not always sufficient to protect data at rest and particularly data in use. For example, suppose that Alice has some data $x \\in {0,1}^n$ (in modern applications $x$ would well be terabytes in length or larger) that she wishes to store with the cloud service Bob, but is afraid that Bob will be hacked, subpoenaed or simply does not completely trust Bob.\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#defining-fully-homomorphic-encryption">Defining fully homomorphic encryption</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#another-application-fully-homomorphic-encryption-for-verifying-computation">Another application: fully homomorphic encryption for verifying computation</a></li>
+      </ol>
+    </li>
+    <li><a href="#example-an-xor-homomorphic-encryption">Example: An XOR homomorphic encryption</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#abstraction-a-trapdoor-pseudorandom-generator">Abstraction: A trapdoor pseudorandom generator.</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#from-linear-homomorphism-to-full-homomorphism">From linear homomorphism to full homomorphism</a></li>
+    <li><a href="#bootstrapping-fully-homomorphic-escape-velocity">Bootstrapping: Fully Homomorphic &ldquo;escape velocity&rdquo;</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#radioactive-legos-analogy">Radioactive legos analogy</a></li>
+        <li><a href="#proving-the-bootstrapping-theorem">Proving the bootstrapping theorem</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/fully-homomorphic-encryption/">Fully Homomorphic Encryption</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    24 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="chapfheone">Fully homomorphic encryption: Introduction and bootstrapping
+</h1><p>In today&rsquo;s era of &ldquo;cloud computing&rdquo;, much of individuals&rsquo; and businesses&rsquo; data is stored and computed on by third parties such as Google, Microsoft, Apple, Amazon,  Facebook, Dropbox and many others.
+Classically, cryptography provided solutions to protecting <a class="link" href="https://www.schneier.com/blog/archives/2010/06/data_at_rest_vs.html"  target="_blank" rel="noopener"
+    >data in motion</a> from point A to point B.
+But these are not always sufficient to protect <a class="link" href="https://en.wikipedia.org/wiki/Data_at_rest"  target="_blank" rel="noopener"
+    >data at rest</a> and particularly <a class="link" href="https://en.wikipedia.org/wiki/Data_in_use"  target="_blank" rel="noopener"
+    >data in use</a>.
+For example, suppose that <em>Alice</em> has some data $x \in {0,1}^n$ (in modern applications $x$ would well be terabytes in length or larger) that she wishes to store with the cloud service <em>Bob</em>, but is afraid that Bob will be hacked, subpoenaed or simply does not completely trust Bob.</p>
+<p>Encryption does not seem to immediately solve the problem.
+Alice could store at Bob an <em>encrypted</em> version of the data and keep the secret key for herself.
+But then she would be at a loss if she wanted to do anything more with the data other than retrieving particular blocks of it.
+If she wanted to outsource computation to Bob as well, and compute $f(x)$ for some function $f$, then she would need to share the secret key with Bob, thus defeating the purpose of encrypting the data in the first place.</p>
+<p>For example, after the computing systems of Office of Personell Management (OPM) were <a class="link" href="https://www.lawfareblog.com/why-opm-hack-far-worse-you-imagine"  target="_blank" rel="noopener"
+    >discovered to be hacked</a> in June of 2015, revealing sensitive information, including fingerprints and all data gathered during security clearance checks of up to 18 million people, DHS assistant secretary for cybersecurity and communications Andy Ozment <a class="link" href="http://www.federaltimes.com/story/government/omr/opm-cyber-report/2015/06/19/opm-breach-encryption/28985237/"  target="_blank" rel="noopener"
+    >said</a> that encryption wouldn&rsquo;t have helped preventing it since &ldquo;if an adversary has the credentials of a user on the network, then they can access data even if it&rsquo;s encrypted, just as the users on the network have to access data&rdquo;.
+So, can we encrypt data in a way that still allows some access and computing on it?</p>
+<p>Already in 1978, <a class="link" href="http://luca-giuzzi.unibs.it/corsi/Support/papers-cryptography/RAD78.pdf"  target="_blank" rel="noopener"
+    >Rivest, Adleman and Dertouzos</a> considered this problem of a business that wishes to use a &ldquo;commercial <a class="link" href="https://en.wikipedia.org/wiki/Time-sharing"  target="_blank" rel="noopener"
+    >time-sharing</a> service&rdquo; to store some sensitive data.
+They envisioned a potential solution for this task which they called a privacy homomorphism.
+This notion later became known as <em>fully homomorphic encryption (FHE)</em> which is an encryption that allows a party (such as the cloud provider) that <em>does not know the secret key</em> to modify a ciphertext $c$ encrypting $x$ to a ciphertext $c&rsquo;$ encrypting $f(x)$ for every efficiently computable $f()$.
+In particular in our scenario above (see <a class="link" href="" >fhefig</a>{.ref}), such a scheme will allow Bob, given an encryption of $x$, to compute the encryption of $f(x)$ and send this ciphertext to Alice without ever getting the secret key and so without ever learning anything about $x$ (or $f(x)$ for that matter).</p>
+<p><img src="/figure/fhedescription.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="A fully homomorphic encryption can be used to store data on the cloud in encrypted form, but still have the cloud provider be able to evaluate functions on the data in encrypted form (without ever learning either the inputs or the outputs of the function they evaluate)."
+	
+	
+>{#fhefig }</p>
+<p>Unlike the case of a trapdoor function, where it only took a year for Diffie and Hellman&rsquo;s challenge to be answered by RSA, in the case of fully homomorphic encryption for more than 30 years cryptographers had no constructions achieving this goal.
+In fact, some people suspected that there is something inherently incompatible between the security of an encryption scheme and the ability of a user to perform all these operations on ciphertexts.
+Stanford cryptographer Dan Boneh used to joke to incoming graduate students that he will immediately sign the thesis of anyone who came up with a fully homomorphic encryption.
+But he never expected that he will actually encounter such a thesis, until in 2009, Boneh&rsquo;s student Craig Gentry released a <a class="link" href="https://crypto.stanford.edu/craig/"  target="_blank" rel="noopener"
+    >paper</a> doing just that.
+Gentry&rsquo;s paper shook the world of cryptography, and instigated a flurry of research results making his scheme more efficient, reducing the assumptions it relied on, extending and applying it, and much more.
+In particular,  Brakerski and Vaikuntanathan managed to obtain a fully homomorphic encryption scheme based only on the <em>Learning with Error (LWE)</em> assumption we have seen before.</p>
+<p>Although there is a number of implementations for (partially and) fully homomorphic encryption (see <a class="link" href="https://github.com/jonaschn/awesome-he"  target="_blank" rel="noopener"
+    >this list</a>), there is still much work to be done in order to realize the full practical potential of FHE.
+For a comparable level of security, the encryption and decryption operations of a fully homomorphic encryption scheme are several orders of magnitude slower than a conventional public key system, and (depending on its complexity) homomorphically evaluating a circuit can be significantly more taxing.
+However, this is a fast evolving field, and already since 2009 significant optimizations have been discovered that reduced the computational and storage overhead by many orders of magnitudes.
+As in public key encryption, one would imagine that for larger data one would use a &ldquo;hybrid&rdquo; approach of combining FHE with symmetric encryption, though one might need to come up with tailor-made symmetric encryption schemes that can be efficiently evaluated.^[In <a class="link" href="https://eprint.iacr.org/2012/099.pdf"  target="_blank" rel="noopener"
+    >2015</a> the state of art on homomorphically evaluating AES was about 6 seconds of computation per block using about 4GB memory total for 180 blocks. See also <a class="link" href="https://link.springer.com/article/10.1007/s10623-015-0095-1"  target="_blank" rel="noopener"
+    >this paper</a>. In contrast, modern processors can evaluate <a class="link" href="https://www.bearssl.org/speed.html"  target="_blank" rel="noopener"
+    >10s-100s millions</a> of AES blocks per second.]
+Homomorphically evaluations of <em>approximate computation</em>, which can be useful for machine learning, can be <a class="link" href="https://eprint.iacr.org/2016/421"  target="_blank" rel="noopener"
+    >done more efficiently</a>.</p>
+<p>In this lecture and the next one we will focus on the fully homomorphic encryption schemes that are <em>easiest to describe</em>, rather than the ones that are most <em>efficient</em> (though the efficient schemes share many similarities with the ones we will talk about).
+As is generally the case for lattice based encryption, the current most efficient schemes are based on <em>ideal</em> lattices and on assumptions such as ring LWE or the security of the NTRU cryptosystem.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>::: {.remark title=&ldquo;Lesson from verifying computation&rdquo; #verifyinglessonrem}
+To take the distance between theory and practice in perspective, it might be useful to consider the case of <em>verifying computation</em>.
+In the early 1990&rsquo;s researchers (motivated initially by zero knowledge proofs) came up with the notion of <a class="link" href="http://madhu.seas.harvard.edu/papers/2009/pcpcacm.pdf"  target="_blank" rel="noopener"
+    >probabilistically checkable proofs (PCP&rsquo;s)</a> which could yield in principle extremely succinct ways to check correctness of computation.</p>
+<p>Probabilistically checkable proofs can be thought of as &ldquo;souped up&rdquo; versions of NP completeness reductions and like these reductions, have been mostly used for <em>negative</em> results, especially since the initial proofs were extremely complicated and also included enormous hidden constants.
+However, with time people have slowly understood these better and made them more efficient (e.g., see <a class="link" href="http://m.cacm.acm.org/magazines/2015/2/182636-verifying-computations-without-reexecuting-them/fulltext"  target="_blank" rel="noopener"
+    >this survey</a>) and it has now reached the point where these results, are <a class="link" href="http://cacm.acm.org/magazines/2016/2/197429-pinocchio/abstract"  target="_blank" rel="noopener"
+    >practical</a> (see also <a class="link" href="https://eprint.iacr.org/2016/646"  target="_blank" rel="noopener"
+    >this</a>) and in fact these ideas underlieat least  <a class="link" href="http://z.cash"  target="_blank" rel="noopener"
+    >two</a> <a class="link" href="https://starkware.co/"  target="_blank" rel="noopener"
+    >startups</a>.
+Overall,  constructions for verifying computation have improved by at least 20 orders of magnitude over the last two decades. (We will talk about some of these constructions later in this course.)
+If progress on fully homomorphic encryption follows a similar trajectory, then we can expect the road to practical utility to be very long, but there is hope that it&rsquo;s not a &ldquo;bridge to nowhere&rdquo;.
+:::</p>
+<blockquote>
+<h1 id="hardwarefhe">
+</h1></blockquote>
+<p>Since large scale fully homomorphic encryption is still impractical, people have been trying to achieve at least weaker security goals using certain assumptions.
+In particular Intel chips have so called <a class="link" href="https://goo.gl/HW4pPU"  target="_blank" rel="noopener"
+    >&ldquo;Secure enclaves&rdquo;</a> which one can think of as a somewhat tamper-protected region of the processor that is supposed to be out of reach for the outside world.
+The idea is that a cloud provider client would treat this enclave as a trusted party that it can communicate with through the cloud provider.
+The client can store their data on the cloud encrypted with some key $k$, and then set up a secure channel with the enclave using an authenticated key exchange protocol, and send $k$ over.
+Then, when the client sends over a function $f$ to the cloud provider, the latter party can simulate FHE by asking the enclave to compute the encryption of $f(x)$ given the encryption of $x$.
+In this solution ultimately the private key does reside on the cloud provider&rsquo;s computers, and the client has to trust the security of the enclave.
+In practice, this could provide reasonable security against remote hackers, but (unlike FHE) probably not against sophisticated attackers (e.g., governments) that have physical access to the server.</p>
+<h2 id="defining-fully-homomorphic-encryption">Defining fully homomorphic encryption
+</h2><p>We start by defining <em>partially homomorphic</em> encryption.
+We focus on encryption for single bits.  This is without loss of generality for CPA security (CCA security is anyway ruled out for homomorphic encryption- can you see why?), though there are more efficient constructions that encrypt several bits at a time.</p>
+<p>::: {.definition title=&ldquo;Partially Homomorphic Encryption&rdquo; #partialhomdef}
+Let $\mathcal{F} = \cup \mathcal{F}<em>\ell$ be a class of functions where every $f\in\mathcal{F}</em>\ell$ maps ${0,1}^\ell$ to ${0,1}$.<br>
+An <em>$\mathcal{F}$-homomorphic public key encryption scheme</em> is a CPA secure public key encryption scheme $(G,E,D)$ such that there exists a polynomial-time algorithm $EVAL:{0,1}^* \rightarrow {0,1}^*$ such that for every $(e,d)=G(1^n)$, $\ell=poly(n)$,  $x_1,\ldots,x_\ell \in {0,1}$, and $f\in \mathcal{F}_\ell$ of description size $|f|$ at most $poly(\ell)$ it holds that:</p>
+<ul>
+<li>
+<p>$c=EVAL_e(f,E_e(x_1),\ldots,E_e(x_\ell))$ has length at most $n$.</p>
+</li>
+<li>
+<p>$D_d(c)=f(x_1,\ldots,x_\ell)$.
+:::</p>
+</li>
+</ul>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>Please stop and verify you understand the definition.
+In particular you should understand why some bound on the length of the output of $EVAL$ is needed to rule out trivial constructions that are the analogous of the cloud provider sending over to Alice the entire encrypted database every time she wants to evaluate a function of it.
+By artificially increasing the randomness for the key generation algorithm, this is equivalent to requiring that $|c| \leq p(n)$  for some fixed polynomial $p(\cdot)$ that does not grow with $\ell$ or $|f|$.
+You should also understand the distinction between ciphertexts that are the output of the encryption algorithm on the plaintext $b$, and ciphertexts that decrypt to $b$, see <a class="link" href="" >evalciphertextfig</a>{.ref}.</p>
+<p><img src="/figure/evalciphertexts.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="In a valid encryption scheme $E$, the set of ciphertexts $c$ such that $D_d(c)=b$ is a superset of the set of ciphertexts $c$ such that $c=E_e(b;r)$ for some $r \in \{0,1\}^{t}$ where $t$ is the number of random bits used by the encryption algorithm. Our definition of partially homomorphic encryption scheme requires that for every $f:\{0,1\}^\ell \rightarrow \{0,1\}$ in our family and $x\in \{0,1\}^\ell$, if $c_i \in E_e(x_i;\{0,1\}^t)$ for $i=1&hellip;\ell$ then $EVAL(f,c_1,\ldots,c_\ell)$ is in the superset $\{ c \;|\; D_d(c)=f(x) \}$ of $E_e(f(x);\{0,1\}^t)$. For example if we apply $EVAL$ to the $OR$ function and ciphertexts $c,c&rsquo;$ that were obtained as encryptions of $1$ and $0$ respectively, then the output is a ciphertext $c&rsquo;&rsquo;$ that would be decrypted to $OR(1,0)=1$, even if $c&rsquo;&rsquo;$ is not in the smaller set of possible outputs of the encryption algorithm on $1$. This distinction between the smaller and larger set is the reason why we cannot automatically apply the $EVAL$ function to ciphertexts that are obtained from the outputs of previous $EVAL$ operations."
+	
+	
+>{#evalciphertextfig  }</p>
+<p>A <em>fully homomomorphic encryption</em> is simply a partially homomorphic encryption scheme for the family $\mathcal{F}$ of <em>all</em> functions, where the description of a function is as a circuit (say composed of <a class="link" href="https://en.wikipedia.org/wiki/NAND_gate"  target="_blank" rel="noopener"
+    >NAND</a> gates, which are known to be a universal basis).</p>
+<h3 id="another-application-fully-homomorphic-encryption-for-verifying-computation">Another application: fully homomorphic encryption for verifying computation
+</h3><p>The canonical application of fully homomorphic encryption is for a client to store encrypted data $E(x)$ on a server, send a function $f$ to the server, and get back the encryption $E(f(x))$ of $f(x)$.
+This ensures that the server does not learn any information about $x$, but does not ensure that it actually computes the correct function!</p>
+<p>Here is a cute protocol to achieve the latter goal (due to <a class="link" href="https://eprint.iacr.org/2010/241"  target="_blank" rel="noopener"
+    >Chung Kalai and Vadhan</a>).
+Curiously the protocol involves &ldquo;doubly encrypting&rdquo; the input, and homomorphically evaluating the $EVAL$ function itself.</p>
+<ul>
+<li>
+<p><strong>Assumptions:</strong> We assume that all functions $f$ that the client will be interested in can be described by a string of length $n$.</p>
+</li>
+<li>
+<p><strong>Preprocessing:</strong> The client generates a pair of keys $(e,d)$. In the initial stage the client computes the encrypted database $\overline{c}=E_e(x)$ and sends $\overline{c},e$ to the server. It also computes $c^* = E_e(f^<em>)$ for some function $f^</em>$ as well as $c^{<strong>}=EVAL_{e}(eval,c^<em>|\overline{c})$  for that $f^</em>$ and keeps $c^*,c^{</strong>}$ for herself, where $eval(f,x)=f(x)$ is the circuit evaluation function.</p>
+</li>
+<li>
+<p><strong>Client query:</strong> To ask for an evaluation of $f$, the client generates a new random FHE keypair $(e&rsquo;,d&rsquo;)$, chooses $b \leftarrow_R {0,1}$ and lets $c_b = E_{e&rsquo;}(E_e(f))$ and $c_{1-b}=E_{e&rsquo;}(c^*)$. It sends the triple $e&rsquo;,c_0,c_1$ to the server.</p>
+</li>
+<li>
+<p><strong>Server response:</strong> Given the queries $c_0,c_1$, the server defines the function $g:{0,1}^* \rightarrow {0,1}^*$ where $g(c)=EVAL_e(eval,c|\overline{c})$ (for the fixed $\overline{c}$ received) and computes $c&rsquo;_0,c&rsquo;_1$ where $c&rsquo;<em>b = EVAL</em>{e&rsquo;}(g,c_b)$. (Please pause here and make sure you understand what this step is doing! Note that we use here crucially the fact that $EVAL$ itself is a polynomial time computation.)</p>
+</li>
+<li>
+<p><strong>Client check:</strong> Client checks whether $D_{d&rsquo;}(c&rsquo;<em>{1-b})=c^{**}$ and if so accepts $D_d(D</em>{d&rsquo;}(c&rsquo;_b))$ as the answer.</p>
+</li>
+</ul>
+<p>We claim that if the server cheats then the client will detect this with probability $1/2 - negl(n)$.
+Working this out is a great exercise.
+The probability of detection can be amplified to $1-negl(n)$ using appropriate repetition, see the paper for details.</p>
+<h2 id="example-an-xor-homomorphic-encryption">Example: An XOR homomorphic encryption
+</h2><p>It turns out that Regev&rsquo;s LWE-based encryption LWEENC we saw before is homomorphic with respect to the class of linear (mod 2) functions.
+Let us recall the LWE assumption and the encryption scheme based on it.</p>
+<p>::: {.definition title=&ldquo;DLWE (simplified  variant)&rdquo; #LWEdef}
+Let $q=q(n)$ be some function mapping the natural numbers to primes. The <em>$q(n)$-decision learning with error ($q(n)$-dLWE) conjecture</em> is the following:
+for every $m=poly(n)$ there is a distribution $LWE_q$ over pairs $(A,s)$ such that:</p>
+<ul>
+<li>
+<p>$A$ is an $m\times n$ matrix over $\Z_q$ and $s\in\Z_q^n$ satisfies $s_1=\floor{\tfrac{q}{2}}$ and $|(As)_i| \leq \sqrt{q}$ for every $i\in {1,\ldots, m}$.</p>
+</li>
+<li>
+<p>The distribution $A$ where $(A,s)$ is sampled from $LWE_q$ is computationally indistinguishable from the uniform distribution of $m\times n$ matrices over $\Z_q$.
+:::</p>
+</li>
+</ul>
+<p>The <em>dLWE conjecture</em> is that $q(n)$-dLWE holds for every $q(n)$ that is at most $poly(n)$.
+This is not exactly the same phrasing we used before, but as we sketch below, it is essentially equivalent to it.
+One can also make the stronger conjecture that $q(n)$-dLWE holds even for $q(n)$ that is <em>super polynomial</em> in $n$ (e.g., $q(n)$ magnitude roughly $2^n$  - note that such a number can still be described in $n$ bits and we can still efficiently perform operations such as addition and multiplication modulo $q$).
+This stronger conjecture also seems well supported by evidence and we will use it in future lectures.</p>
+<blockquote>
+<h1 id="heading-1">
+</h1></blockquote>
+<p>It is a good idea for you to pause here and try to show the equivalence on your own.</p>
+<p><strong>Equivalence between LWE and DLWE:</strong>
+The reason the two conjectures are equivalent are the following.
+Before we phrased the conjecture as recovering $s$ from a pair $(A&rsquo;,y)$ where $y=A&rsquo;s&rsquo;+e$ and $|e_i|\leq \delta q$ for every $i$.
+We then showed a <em>search to decision</em> reduction (<a class="link" href="" >LWEsearchtodecthm</a>{.ref}) demonstrating that this is equivalent to the task of distinguishing between this case and the case that $y$ is a random vector.
+If we now let $\alpha = \floor{\tfrac{q}{2}}$ and $\beta = \alpha^{-1} \pmod q$, and consider the matrix $A=(-\beta y|A&rsquo;)$ and the column vector $s=\binom{\alpha}{s&rsquo;}$  we see that $As = e$.
+Note that if $y$ is a random vector in $\Z_q^m$ then so is $-\beta y$ and so the current form of the conjecture follows from the previous one.
+(To reduce the number of free parameters, we fixed $\delta$ to equal $1/\sqrt{q}$; in this form the conjecture becomes stronger as $q$ grows.)</p>
+<p><strong>A linearly-homomorphic encryption scheme:</strong> The following variant of the LWE-ENC described in <a class="link" href="" >lweencsec</a>{.ref} turns out to be linearly homomorphic:</p>
+<p>::: {.quote }
+<strong>LWE-ENC&rsquo; encryption:</strong></p>
+<ul>
+<li>
+<p><em>Key generation:</em> Choose $(A,s)$ from $LWE_q$ where $m$ satisfies $q^{1/4} \gg m \log q \gg n$.</p>
+</li>
+<li>
+<p>To <em>encrypt</em> $b\in{0,1}$, choose $w\in{0,1}^m$ and output $w^\top A + (b,0,\ldots,0)$.</p>
+</li>
+<li>
+<p>To <em>decrypt</em> $c\in\Z_q^n$, output $0$ iff $|\langle c,s \rangle| \leq q/10$, where for $x\in\Z_q$ we defined $|x| = \min { x , q-x }$. (Recall that the first coordinate of $s$ is $\floor{q/2}$.)
+:::</p>
+</li>
+</ul>
+<p>The decryption algorithm recovers the original plaintext since $\langle c,s \rangle= w^\top A s + s_1 b$ and $|w^\top A s| \leq m\sqrt{q} \ll q$.
+It turns out that this scheme is homomorphic with respect to the class of <em>linear functions</em> modulo $2$. Specifically we make the following claim:</p>
+<blockquote>
+<h1 id="parityhomlem">
+</h1></blockquote>
+<p>For every $\ell \ll q^{1/4}$, there is an algorithm $EVAL_\ell$ that on input $c_1,\ldots,c_\ell$ which are LWEENC-encryptions of the bits $b_1,\ldots,b_\ell \in {0,1}$, outputs a ciphertext $c$ whose decryption is $b_1 \oplus \cdots \oplus b_\ell$.</p>
+<blockquote>
+<h1 id="heading-2">
+</h1></blockquote>
+<p>This claim is not hard to prove, but working it out for yourself can be a good way to get more familiarity with LWE-ENC&rsquo; and the kind of manipulations we&rsquo;ll be making time and again in the constructions of many lattice based cryptographic primitives.
+Recall that a ciphertext $c$ of LWE-ENC&rsquo; is a vector in $\Z_q^n$. Try to show that $c = c_1 + \cdots +c_\ell$ (where addition is done as vectors in $\Z_q$) will be the encryption of $b_1 \oplus \cdots \oplus b_\ell$.
+Note that if $q$ is <em>super polynomial</em>  in $n$ then $\ell$ can be an arbitrarily large polynomial in $n$.</p>
+<p>::: {.proof data-ref=&ldquo;parityhomlem&rdquo;}
+The proof is quite simple. $EVAL$ will simply add the ciphertexts as vectors in $\Z_q$.
+If $c = \sum c_i$ then
+$$\langle c,s \rangle = \sum b_i \floor{\tfrac{q}{2}}  +  \xi \mod q$$
+where $\xi \in \Z_q$ is a &ldquo;noise term&rdquo; such that $|\xi| \leq \ell m \sqrt{q} \ll q$.</p>
+<p>Since $|\floor{\tfrac{q}{2}}-  \tfrac{q}{2}|&lt;1$, adding at most $\ell$ terms of this difference adds at most $\ell$, and so we can also write
+$$\langle c,s \rangle = \floor{ \sum b_i \tfrac{q}{2} }  +  \xi&rsquo; \mod q$$
+for $|\xi&rsquo;| \leq \ell m \sqrt{q} + \ell \ll q$.</p>
+<p>If $\sum b_i$ is even then $\sum b_i \tfrac{q}{2}$ is an integer multiple of $q$ and hence in this case $|\langle c,s \rangle| \ll q$.
+If $\sum b_i$ is odd $\floor{\sum b_i \tfrac{q}{2}} = \floor{q/2} \mod q$ and so in this case $|\langle c,s \rangle| = q/2 \pm o(q) &gt; q/10$.
+:::</p>
+<p>Several other encryption schemes are also homomorphic with respect to linear functions. Even before Gentry&rsquo;s construction there were constructions of encryption schemes that are homomorphic with respect to somewhat larger classes (e.g., quadratic functions by Boneh, Goh and Nissim) but not significantly so.</p>
+<h3 id="abstraction-a-trapdoor-pseudorandom-generator">Abstraction: A trapdoor pseudorandom generator.
+</h3><p>It is instructive to consider the following abstraction (which we&rsquo;ll use in the next lecture) of the above encryption scheme as a <em>trapdoor generator</em> (see <a class="link" href="" >TDPgenfig</a>{.ref}).
+On input $1^n$ the key generation algorithm outputs a vector $s\in\Z_q^m$ with $s_1 = \floor{\tfrac{q}{2}}$ and a probabilistic algorithm $G_s$ such that the following holds:</p>
+<ul>
+<li>
+<p>Any polynomial number of samples from the distribution $G_s(1^n)$ is computationally indistinguishable from independent samples from the uniform distribution over $\Z_q^n$.</p>
+</li>
+<li>
+<p>If $c$ is output by $G_s(1^n)$ then $|\langle c,s \rangle| \leq n\sqrt{q}$.</p>
+</li>
+</ul>
+<p>The generator $G_s$ picks $w \leftarrow_R {0,1}^m$ to $w^\top A$. Its output will look pseudorandom but will satisfy the condition $|\langle G_s(1^n),s \rangle| \leq n\sqrt{q}$ with probability $1$ over the choice of $w$.
+Thus $s$ can be thought of a &ldquo;trapdoor&rdquo; for the generator that allows us to distinguish between a random vector $c\in \Z_q^n$ (that with high probability would satisfy $|\langle c,s \rangle| \gg n\sqrt{q}$, assuming $q \gg n^2$) and an output of the generator.</p>
+<p>We use $G_s$ to encrypt a bit $b$ by letting $c \leftarrow_R G_s(1^n)$ and outputting $c + (b,0,\ldots,0)^\top$.
+While our particular implementation mapped $G_s(w)= w^\top A$, we can ignore these implementation details in the forgoing.</p>
+<p><img src="/figure/trapdoorprg.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="In a trapdoor generator, we have two ways to generate randomized algorithms. That is, we have some algorithms $GEN$ and $GEN&rsquo;$ such that $GEN$ outputs a pair $(G_s,s)$ and $GEN&rsquo;$ outputs $G&rsquo;$ with $G_s,G&rsquo;$ being themselves algorithms (e.g., randomized circuits). The conditions we require are that (1) the descriptions of the circuits $G_s$ and $G&rsquo;$ (considering them as distributions over strings) are computationally indistinguishable and (2) the distribution $G&rsquo;(1^n)$ is statistically indistinguishable from the uniform distribution , (3) there is an efficient algorithm that given the secret &ldquo;trapdoor&rdquo; $s$ can distinguish the output of $G_s$ from the uniform distribution. In particular (1),(2), and (3) together imply that it is not feasible to extract $s$ from the description of $G_s$."
+	
+	
+>{#TDPgenfig }</p>
+<p>Our LWE-based trapdoor generator satisfies the following stronger property: we can generate an alternative generator $G&rsquo;$ such that the description of $G&rsquo;$ is indistinguishable from the description of $G_s$ but such that $G&rsquo;$ actually does produce (up to exponentially small statistical error)  the uniform distribution over $\Z_q^n$. We can do so by sampling $A$ completely at random instead of from the $LWE_q$ distribution.
+We can define trapdoor generators formally as follows</p>
+<p>::: {.definition title=&ldquo;Trapdoor generators&rdquo; #tdpgendef}
+A <em>trapdoor generator</em> is a pair of randomized algorithms $GEN,GEN&rsquo;$ that satisfy the following:</p>
+<ul>
+<li>
+<p>On input $1^n$, $GEN$ outputs a pair $(G_s,s)$ where $G_s$ is a string describing a <em>randomized</em> circuit. The circuit $G_s$ takes $1^n$ as input and outputs a (randomly chosen) string of length $t$ where $t=t(n)$ is some polynomial.</p>
+</li>
+<li>
+<p>On input $1^n$, $GEN&rsquo;$ outputs $G&rsquo;$ where $G&rsquo;$ is a string describing a randomized circuit with the same inputs and outputs.</p>
+</li>
+<li>
+<p>The distributions $GEN(1^n)_1$ (i.e., the first output of $GEN(1^n)$) and $GEN&rsquo;(1^n)_1$ are computationally indistinguishable. (These are both distributions over <em>circuits</em>.)</p>
+</li>
+<li>
+<p>With probability $1-negl(n)$ over the choice of $G&rsquo;$ output by $GEN&rsquo;$, the distribution $G&rsquo;(1^n)$ is <em>statistically indistinguishable</em> (i.e., within $negl(n)$ total variation distance) from $U_t$ (i.e., the uniform distribution over ${0,1}^t$).</p>
+</li>
+<li>
+<p>There is an efficient algorithm $T$ such that for every pair $(G_s,s)$ output by $GEN$, $\Pr[ T(s,G_s(1^n))=1] \geq 1- negl(n)$ (where this probability is over the internal randomness used by $G_s$ on the input $1^n$) but $\Pr[ T(s,U_t)=1] \leq 1/3$.^[The choice of $1/3$ is arbitrary, and can be amplified as needed.]
+:::</p>
+</li>
+</ul>
+<blockquote>
+<h1 id="heading-3">
+</h1></blockquote>
+<p>This is not an easy definition to parse, but looking at <a class="link" href="" >TDPgenfig</a>{.ref} can help.
+Make sure you understand why $LWEENC$ gives rise to a trapdoor generator satisfying all the conditions of <a class="link" href="" >tdpgendef</a>{.ref}.</p>
+<p>::: {.remark title=&ldquo;Trapdoor generators in real life&rdquo; #trapdoorgenreal}
+In the above we use the notion of a &ldquo;trapdoor&rdquo; in the pseudorandom generator as a mathematical abstraction, but generators with actual trapdoors have arisen in practice. In 2007 the National Institute of Standards (NIST) released standards for pseudorandom generators. Pseudorandom generators are the quintessential private key primitive, typically built out of hash functions, block ciphers, and such and so it was surprising that NIST included in the list a pseudorandom generator based on public key tools - the <a class="link" href="https://en.wikipedia.org/wiki/Dual_EC_DRBG"  target="_blank" rel="noopener"
+    >Dual EC DRBG</a> generator based on elliptic curve cryptography. This was already strange but became even more worrying when Microsoft researchers Dan Shumow and Niels Ferguson <a class="link" href="http://rump2007.cr.yp.to/15-shumow.pdf"  target="_blank" rel="noopener"
+    >showed</a> that this generator <em>could</em> have a trapdoor in the sense that it contained some hardwired constants that if generated in a particular way, there would be some information that (just like in $G_s$ above) allows to distinguish the generator from random (see here for a <a class="link" href="https://www.schneier.com/blog/archives/2007/11/the_strange_sto.html"  target="_blank" rel="noopener"
+    >2007 blog post</a> on this issue). We learned more about this when leaks from the Snowden document <a class="link" href="http://www.reuters.com/article/us-usa-security-rsa-idUSBRE9BJ1C220131220"  target="_blank" rel="noopener"
+    >showed</a> that the NSA secretly paid 10 million dollars to RSA to make this generator the default option in their Bsafe software.</p>
+<p>You&rsquo;d think that this generator is long dead but it turns out to be the &ldquo;gift that keeps on giving&rdquo;.
+In December of 2015, Juniper systems <a class="link" href="http://www.wired.com/2015/12/juniper-networks-hidden-backdoors-show-the-risk-of-government-backdoors/"  target="_blank" rel="noopener"
+    >announced</a> that they have discovered a malicious code in their system, dating back to at least 2012 (possibly <a class="link" href="https://goo.gl/X6pAXV"  target="_blank" rel="noopener"
+    >2008</a>), that would allow an attacker to surreptitiously decrypt all VPN traffic through their firewalls.
+The issue is that Juniper has been using the Dual EC DRBG and someone has managed to replace the constant they were using with another one, one that they presumably knew the trapdoor for (see <a class="link" href="https://rpw.sh/blog/2015/12/21/the-backdoored-backdoor/"  target="_blank" rel="noopener"
+    >here</a>  and <a class="link" href="http://blog.cryptographyengineering.com/2015/12/on-juniper-backdoor.html"  target="_blank" rel="noopener"
+    >here</a> for more; of course unless you know to check for this, it&rsquo;s very hard by looking at the code to see that one arbitrary looking constant has been replaced by another).
+Apparently, even though this is very surprising to many people in law enforcement and government, inserting back doors into cryptographic primitives might end up making them less secure. Some more details have emereged in this case in 2021, see <a class="link" href="https://finance.yahoo.com/news/juniper-breach-mystery-starts-clear-130016591.html"  target="_blank" rel="noopener"
+    >this story</a> and  <a class="link" href="https://twitter.com/matthew_d_green/status/1433451378391883782?s=20"  target="_blank" rel="noopener"
+    >this Tweet thread</a>.
+:::</p>
+<h2 id="from-linear-homomorphism-to-full-homomorphism">From linear homomorphism to full homomorphism
+</h2><p>Gentry&rsquo;s breakthrough had two components:</p>
+<ul>
+<li>
+<p>First, he gave a scheme that is homomorphic with respect to arithmetic circuits (involving not just addition but also multiplications) of <em>logarithmic depth</em>.</p>
+</li>
+<li>
+<p>Second, he showed the amazing &ldquo;bootstrapping theorem&rdquo; that if a scheme is homomorphic enough to evaluate its own decryption circuit, then it can be turned into a <em>fully homomorphic</em> encryption that can evaluate <em>any</em> function.</p>
+</li>
+</ul>
+<p>Combining these two insights led to his fully homomorphic encryption.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>In this lecture we will focus on the second component - the bootstrapping theorem.
+We will show a &ldquo;partially homomorphic encryption&rdquo; (based on a later work of Gentry, Sahai and Waters) that can fit that theorem in the next lecture.</p>
+<h2 id="bootstrapping-fully-homomorphic-escape-velocity">Bootstrapping: Fully Homomorphic &ldquo;escape velocity&rdquo;
+</h2><p><img src="/figure/fheescape.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="The &ldquo;Bootstrapping Theorem&rdquo; shows that once a partially homomorphic encryption scheme is homomorphic with respect to a rich enough family of functions, and specifically a family that contains its own decryption algorithm, then it can be converted to a fully homomorphic encryption scheme that can be used to evaluate any function."
+	
+	
+>{#bootstrapfig  }</p>
+<p>The bootstrapping theorem is quite surprising.
+A priori you might expect that given that a homomorphic encryption for linear functions was not trivial to do, a homomorphic encryption for quadratics would be harder, cubics even harder and so on and so forth.
+But it turns out that there is some special degree $t^<em>$ such that if we obtain homomorphic encryption for degree $t^</em>$ polynomials then we can obtain <em>fully</em> homomorphic encryption that works for <em>all</em> functions.
+(Specifically, if the decryption algorithm $c \mapsto D_d(c)$ is a degree $t$ polynomial, then homomorphically evaluating polynomials of degree $t^*=2t$ will be sufficient.)
+That is, it turns out that once an encryption scheme is strong enough to <em>homomorphically evaluate its own decryption algorithm</em> then we can use it to obtain a fully homomorphic encryption by &ldquo;pulling itself up by its own bootstraps&rdquo;.
+One analogy is that at this point the encryption reaches &ldquo;escape velocity&rdquo; and we can continue onwards evaluating gates in perpetuity.</p>
+<p>We now show the bootstrapping theorem:</p>
+<blockquote>
+<h1 id="bootstrapthm">
+</h1></blockquote>
+<p>Suppose that $(G,E,D)$ is a CPA circular<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> secure partially homomorphic encryption scheme for the family $\mathcal{F}$ and suppose that for every pair of ciphertexts $c,c&rsquo;$  the map $d \mapsto D_d(c) ;NAND; D_d(c&rsquo;)$ is in $\mathcal{F}$. Then $(G,E,D)$ can be turned a fully homomorphic encryption scheme.</p>
+<h3 id="radioactive-legos-analogy">Radioactive legos analogy
+</h3><p>Here is one analogy for bootstrapping, inspired by Gentry&rsquo;s <a class="link" href="https://crypto.stanford.edu/craig/easy-fhe.pdf"  target="_blank" rel="noopener"
+    >survey</a>.
+Suppose that you need to construct some complicated object from a highly toxic material (see <a class="link" href="" >ziplocbagfig</a>{.ref}).
+For example you want to build a castle out of radio-active legos.</p>
+<p>You are given a supply of sealed bags that are flexible enough so you can manipulate the object from outside the bag.
+However, each bag can only hold for $10$ seconds of such manipulations before it leaks.
+The idea is that if you can open one bag inside another within $9$ seconds then you can use the extra second to perform one step. By repeating this, you perform the manipulations for arbitrary length.</p>
+<p>Specifically, suppose that you have completed $i$ steps out of the total of $T$, and now have the partially constructed castle inside a sealed bag $B_i$.
+You now put the bag $B_i$ <em>inside</em> a fresh bag $B_{i+1}$. You now spend $9$ seconds on opening the bag $B_i$ inside the bag $B_{i+1}$, and an extra second on performing the $i+1$ step in the construction.
+At this point we have completed $i+1$ steps and have the object in the bag $B_{i+1}$, we can now continue by putting in the bag $B_{i+2}$ and so on and so forth.</p>
+<p><img src="/figure/fheziplocbag.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="To build a castle from radioactive Lego bricks, which can be kept safe in a special ziploc bag for 10 seconds, we can: 1) Place the bricks in a bag, and place the bag inside an outer bag. 2) Manipulate the inner bag through the outer bag to remove the bricks from it in 9 seconds, and spend 1 second putting one brick in place. Now, just before the outer bag &ldquo;leaks&rdquo; we put it inside a fresh new bag and repeat the process."
+	
+	
+>{#ziplocbagfig  }</p>
+<h3 id="proving-the-bootstrapping-theorem">Proving the bootstrapping theorem
+</h3><p>We now turn to the formal proof of <a class="link" href="" >bootstrapthm</a>{.ref}</p>
+<p>::: {.proof data-ref=&ldquo;bootstrapthm&rdquo;}
+The idea behind the proof is simple but ingenious.
+Recall that the NAND gate $b,b&rsquo; \mapsto \neg(b \wedge b&rsquo;)$ is a universal gate that allows us to compute any function $f:{0,1}^n\rightarrow{0,1}$ that can be efficiently computed.
+Thus, to obtain a fully homomorphic encryption it suffices to obtain a function $NANDEVAL$ such that
+$D_d(NANDEVAL(c,c&rsquo;))=D_d(c) ;NAND; D_d(c&rsquo;)$.
+(Note that this is stronger than the typical notion of homomorphic evaluation since we require that $NANDEVAL$ outputs an encryption of $b ;NAND; b&rsquo;$ when given <em>any</em> pair of ciphertexts that decrypt to $b$ and $b&rsquo;$ respectively, regardless whether these ciphertexts were produced by the encryption algorithm or by some other method, including the $NANDEVAL$ procedure itself.)</p>
+<p>Thus to prove the theorem, we need to modify $(G,E,D)$ into an encryption scheme supporting the $NANDEVAL$ operation.
+Our new scheme will use the same encryption algorithms $E$ and $D$ but the following modification $G&rsquo;$ of the key generation algorithm: after running $(d,e)=G(1^n)$, we will append to the public key an encryption $c^* = E_e(d)$ of the secret key.
+We have now defined the key generation, encryption and decryption.
+CPA security follows from the security of the original scheme, where by circular security we refer exactly to the condition that the scheme is secure even if the adversary gets a single encryption of the public key.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>
+This latter condition is not known to be implied by standard CPA security but as far as we know is satisfied by all natural public key encryptions, including the LWE-based ones we will plug into this theorem later on.</p>
+<p>So, now all that is left is to define the $NANDEVAL$ operation. On input two ciphertexts $c$ and $c&rsquo;$, we will construct the function $f_{c,c&rsquo;}:{0,1}^n\rightarrow{0,1}$ (where $n$ is the length of the secret key) such that $f_{c,c&rsquo;}(d)=D_d(c) ;NAND; D_d(c&rsquo;)$.
+It would be useful to pause at this point and make sure you understand what are the inputs to $f_{c,c&rsquo;}$, what are &ldquo;hardwired constants&rdquo; and what is its output.
+The ciphertexts $c$ and $c&rsquo;$ are simply treated as fixed strings and are <em>not</em> part of the input to $f_{c,c&rsquo;}$.
+Rather $f_{c,c&rsquo;}$ is a function (depending on the strings $c,c&rsquo;$) that maps the secret key into a bit.
+When running $NANDEVAL$ we of course do not know the secret key $d$, but we can still design a circuit that computes this function $f_{c,c&rsquo;}$.
+Now $NANDEVAL(c,c&rsquo;)$ will simply be defined as $EVAL(f_{c,c&rsquo;},c^<em>)$.
+Since $c^</em> = E_e(d)$, we get that
+$$D_d(NANDEVAL(c,c&rsquo;))= D_d(EVAL(f_{c,c&rsquo;},c^*))=f_{c,c&rsquo;}(d) =D_d(c) ;NAND; D_d(c&rsquo;) ;.$$
+Thus indeed we map <em>any</em> pair of ciphertexts $c,c&rsquo;$ that decrypt to $b,b&rsquo;$ into a ciphertext $c&rsquo;&rsquo;$ that decrypts to $b ;NAND; b&rsquo;$.
+This is all that we needed to prove.
+:::</p>
+<blockquote>
+<h1 id="heading-4">
+</h1></blockquote>
+<p>Don&rsquo;t let the short proof fool you. This theorem is quite deep and subtle, and requires some reading and re-reading to truly &ldquo;get&rdquo; it.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>As we mentioned before, as a general rule of thumb, the difference between the ideal schemes and the one that we describe is that in the ideal setting one deals with <em>structured</em> matrices that have a compact representation as a single vector and also enable fast FFT-like matrix-vector multiplication. This saves a factor of about $n$ in the storage and computation requirements (where $n$ is the dimension of the subspace/lattice). However, there can be some subtle security implications for ideal lattices as well, see e.g., <a class="link" href="https://eprint.iacr.org/2016/127"  target="_blank" rel="noopener"
+    >here</a>, <a class="link" href="https://eprint.iacr.org/2015/313"  target="_blank" rel="noopener"
+    >here</a>, <a class="link" href="https://eprint.iacr.org/2016/139"  target="_blank" rel="noopener"
+    >here</a>, and <a class="link" href="https://eprint.iacr.org/2015/676"  target="_blank" rel="noopener"
+    >here</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>The story is a bit more complex than that. Frustratingly, the decryption circuit of Gentry&rsquo;s basic scheme was just a little bit too deep for the bootstrapping theorem to apply. A lesser man, such as yours truly, would at this point surmise that fully homomprphic encryption was just not meant to be, and perhaps take up knitting or playing bridge as an alternative hobby. However, Craig persevered and managed to come up with a way to &ldquo;squash&rdquo; the decryption circuit so it can fit the bootstrapping parameters. Follow up works, and in particular the paper of Brakerski and Vaikuntanathan, managed to get schemes with much better relation between the homomorphism depth and decryption circuit, and hence avoid the need for squashing and also improve the security assumptions.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>You can ignore the condition of circular security in a first read - we will discuss it later.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>Without this assumption we can still obtain a form of FHE known as a <em>leveled</em> FHE where the size of the public key grows with the <a class="link" href="https://en.wikipedia.org/wiki/Circuit_complexity"  target="_blank" rel="noopener"
+    >depth</a> of the circuit to be evaluated. We can do this by having $\ell$ public keys where $\ell$ is the depth we want to evaluate, and encrypt the private key of the $i^{th}$ key with the $i+1^{st}$ public key.  However, since circular security seems quite likely to hold, we ignore this extra complication in the rest of the discussion.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

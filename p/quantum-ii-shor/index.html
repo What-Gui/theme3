@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Quantum computing and cryptography II Bell&rsquo;s Inequality is powerful demonstration that there is something very strange going on with quantum mechanics. But could this &ldquo;strangeness&rdquo; be of any use to solve computational problems not directly related to quantum systems? A priori, one could guess the answer is no. In 1994 Peter Shor showed that one would be wrong:\nThe map that takes an integer $m$ into its prime factorization is efficiently quantumly computable. Specifically, it can be computed using $O(\\log^3 m)$ quantum gates.\n">
+<title>Quantum II: Shor</title>
+
+<link rel='canonical' href='http://localhost:1313/p/quantum-ii-shor/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Quantum II: Shor">
+<meta property='og:description' content="Quantum computing and cryptography II Bell&rsquo;s Inequality is powerful demonstration that there is something very strange going on with quantum mechanics. But could this &ldquo;strangeness&rdquo; be of any use to solve computational problems not directly related to quantum systems? A priori, one could guess the answer is no. In 1994 Peter Shor showed that one would be wrong:\nThe map that takes an integer $m$ into its prime factorization is efficiently quantumly computable. Specifically, it can be computed using $O(\\log^3 m)$ quantum gates.\n">
+<meta property='og:url' content='http://localhost:1313/p/quantum-ii-shor/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Quantum II: Shor">
+<meta name="twitter:description" content="Quantum computing and cryptography II Bell&rsquo;s Inequality is powerful demonstration that there is something very strange going on with quantum mechanics. But could this &ldquo;strangeness&rdquo; be of any use to solve computational problems not directly related to quantum systems? A priori, one could guess the answer is no. In 1994 Peter Shor showed that one would be wrong:\nThe map that takes an integer $m$ into its prime factorization is efficiently quantumly computable. Specifically, it can be computed using $O(\\log^3 m)$ quantum gates.\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#from-order-finding-to-factoring-and-discrete-log">From order finding to factoring and discrete log</a></li>
+    <li><a href="#finding-periods-of-a-function-simons-algorithm">Finding periods of a function: Simon&rsquo;s Algorithm</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#from-simon-to-shor">From Simon to Shor</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#the-fourier-transform-over-z_m">The Fourier transform over $\Z_m$</a>
+          <ol>
+            <li><a href="#fast-fourier-transform">Fast Fourier Transform.</a></li>
+          </ol>
+        </li>
+        <li><a href="#quantum-fourier-transform-over-z_m">Quantum Fourier Transform over $\Z_m$</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#shors-order-finding-algorithm">Shor’s Order-Finding Algorithm.</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#analysis-the-case-that-rm">Analysis: the case that $r|m$</a>
+          <ol>
+            <li><a href="#the-general-case">The general case</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#rational-approximation-of-real-numbers">Rational approximation of real numbers</a>
+      <ol>
+        <li><a href="#quantum-cryptography">Quantum cryptography</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/quantum-ii-shor/">Quantum II: Shor</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    19 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="quantum-computing-and-cryptography-ii">Quantum computing and cryptography II
+</h1><p>Bell&rsquo;s Inequality is powerful demonstration that there is something very strange going on with quantum mechanics.
+But could this &ldquo;strangeness&rdquo; be of any use to solve computational problems not directly related to quantum systems?
+A priori, one could guess the answer is <em>no</em>.
+In 1994 Peter Shor showed that one would be wrong:</p>
+<blockquote>
+<h1 id="shorthm">
+</h1></blockquote>
+<p>The map that takes an integer $m$ into its prime factorization is efficiently quantumly computable. Specifically, it can be computed using $O(\log^3 m)$ quantum gates.</p>
+<p>This is an exponential improvement over the best known classical algorithms, which as we mentioned before,  take roughly $2^{\tilde{O(\log^{1/3}m)}}$ time.</p>
+<p>We will now sketch the ideas behind Shor&rsquo;s algorithm. In fact, Shor proved the following more general theorem:</p>
+<blockquote>
+<h1 id="hiddengroupthm">
+</h1></blockquote>
+<p>There is a quantum polynomial time algorithm that given a multiplicative Abelian group $\mathbb{G}$ and element $g\in\mathbb{G}$ computes the <em>order</em> of $g$ in the group.</p>
+<p>Recall that the order of $g$ in $\mathbb{G}$ is the smallest positive integer $a$ such that $g^a = 1$. By &ldquo;given a group&rdquo; we mean that we can represent the elements of the group as strings of length $O(\log |\mathbb{G}|)$ and there is a $poly(\log|\mathbb{G}|)$ algorithm to perform multiplication
+in the group.</p>
+<h2 id="from-order-finding-to-factoring-and-discrete-log">From order finding to factoring and discrete log
+</h2><p>The order finding problem allows not just to factor integers in polynomial time, but also solve the discrete logarithm over arbitrary Abelian groups, hereby showing that quantum computers will break not just RSA but also Diffie Hellman and Elliptic Curve Cryptography.
+We merely sketch how one reduces the factoring and discrete logarithm problems to order finding: (see some of the sources above for the full details)</p>
+<ul>
+<li>
+<p>For <strong>factoring</strong>, let us restrict to the case $m=pq$ for distinct $p,q$. Recall that we showed that finding the size $(p-1)(q-1)=m-p-q+1$ of the group $\Z^<em>_m$ is sufficient to recover $p$ and $q$. One can show that if we pick a few random $x$&rsquo;s in $\Z^</em>_m$ and compute their order, the least common multiplier of these orders is likely to be the group size.</p>
+</li>
+<li>
+<p>For <strong>discrete log</strong> in a group $\mathbb{G}$, if we get $X=g^x$ and need to recover $x$, we can compute the order of various elements of the form $X^ag^b$. The order of such an element is a number $c$ satisfying $c(xa+b) = 0 \pmod{|\mathbb{G}|}$. Again, with a few random examples we will get a non trivial example (where $c \neq 0 \pmod{|\mathbb{G}|}$ ) and be able to recover the unknown $x$.</p>
+</li>
+</ul>
+<h2 id="finding-periods-of-a-function-simons-algorithm">Finding periods of a function: Simon&rsquo;s Algorithm
+</h2><p>Let $\mathbb{H}$ be some Abelian group with a group operation that we&rsquo;ll denote by $\oplus$, and $f$ be some function mapping $\mathbb{H}$ to an arbitrary set (which we can encode as ${0,1}^<em>$).
+We say that $f$ has _period $h^</em>$_ for some $h^<em>\in\mathbb{H}$ if for every $x,y \in \mathbb{H}$, $f(x)=f(y)$ if and only if $y = x \oplus kh^</em>$ for some integer $k$.
+Note that if $\mathbb{G}$ is some Abelian group, then if we define $\mathbb{H}=\Z_{|\mathbb{G}|}$, for every element $g\in \mathbb{G}$, the map $f(a)=g^a$ is a periodic map over $\mathbb{H}$ with period the order of $g$.
+So, finding the order of an item reduces to the question of finding the period of a function.</p>
+<p>How do we generally find the period of a function? Let us consider the simplest case, where $f$ is a function from $\R$ to $\R$ that is $h^<em>$ periodic for some number $h^</em>$, in the sense that $f$ repeats itself on the intervals $[0,h^<em>]$, $[h^</em>,2h^<em>]$, $[2h^</em>,3h^<em>]$, etc..
+How do we find this number $h^</em>$?
+The key idea would be to transform $f$ from the <em>time</em> to the <em>frequency</em> domain.
+That is, we use the <em>Fourier transform</em> to represent $f$ as a sum of wave functions. In this representation wavelengths that divide the period $h^*$ would get significant mass, while wavelengths that don&rsquo;t would likely &ldquo;cancel out&rdquo;.</p>
+<p><img src="/figure/quantum_fourier.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="If $f$ is a periodic function then when we represent it in the Fourier transform, we expect the coefficients corresponding to wavelengths that do not evenly divide the period to be very small, as they would tend to &ldquo;cancel out&rdquo;."
+	
+	
+>{#tmplabelfig}</p>
+<p>Similarly, the main idea behind Shor&rsquo;s algorithm is to use a tool known as the <em>quantum fourier transform</em> that given a circuit computing the function $f:\mathbb{H}\rightarrow\R$, creates a quantum state over roughly $\log |\mathbb{H}|$ qubits (and hence dimension $|\mathbb{H}|$) that corresponds to the Fourier transform of $f$.
+Hence when we measure this state,  we get a group element $h$ with probability proportional to the square of the corresponding Fourier coefficient.
+One can show that if $f$ is $h^<em>$-periodic then we can recover $h^</em>$ from this distribution.</p>
+<p>Shor carried out this approach for the group $\mathbb{H}=\Z^*_q$ for some $q$, but we will start be seeing this for the group $\mathbb{H} = {0,1}^n$ with the XOR operation.
+This case is known as <em>Simon&rsquo;s algorithm</em> (given by Dan Simon in 1994) and actually preceded (and inspired) Shor&rsquo;s algorithm:</p>
+<blockquote>
+<h1 id="simonsthm">
+</h1></blockquote>
+<p>If $f:{0,1}^n\rightarrow{0,1}^<em>$ is polynomial time computable and satisfies the property that $f(x)=f(y)$ iff $x\oplus y = h^</em>$ then there exists
+a quantum polynomial-time algorithm that outputs a random $h\in {0,1}^n$ such that $\langle h,h^* \rangle=0 \pmod{2}$.</p>
+<p>Note that given $O(n)$ such samples, we can recover $h^*$ with high probability by solving the corresponding linear equations.</p>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>Let $HAD$ be the $2\times 2$ unitary matrix corresponding to the one qubit operation $|0\rangle \mapsto \tfrac{1}{\sqrt{2}}(|0\rangle+|1\rangle)$ and
+$|1\rangle \mapsto \tfrac{1}{\sqrt{2}}(|0\rangle-|1\rangle)$  or $|a\rangle\mapsto \tfrac{1}{\sqrt{2}}(|0\rangle+(-1)^a|1\rangle)$.
+Given the state $|0^{n+m\rangle}$ we can apply this map to each one of the first $n$ qubits to get the state
+$2^{-n/2}\sum_{x\in{0,1}^n}|x\rangle|0^m\rangle$
+and then we can apply the gates of $f$ to map this to the state
+$2^{-n/2}\sum_{x\in{0,1}^n}|x\rangle|f(x)\rangle$
+now suppose that we apply this operation again to the first $n$ qubits then we get the state
+$2^{-n}\sum_{x\in{0,1}^n}\prod_{i=1}^n(|0\rangle+(-1)^{x_i}|1\rangle)|f(x)\rangle$
+which if we open up each one of these product and look at all $2^n$ choices $y\in{0,1}^n$ (with $y_i=0$ corresponding to picking $|0\rangle$ and $y_i=1$ corresponding to picking $|1\rangle$ in the $i^{th}$ product) we get
+$2^{-n}\sum_{x\in{0,1}^n}\sum_{y\in{0,1}^n}(-1)^{\langle x,y \rangle}|y\rangle|f(x)\rangle$.
+Now under our assumptions for every particular $z$ in the image of $f$, there exist exactly two preimages $x$ and $x\oplus h^<em>$ such that $f(x)=f(x+h^</em>)=z$.
+So, if $\langle y,h^* \rangle=0 \pmod{2}$, we get that $(-1)^{\langle x,y \rangle}+(-1)^{\langle x,y+h^* \rangle}=2$ and otherwise we get $(-1)^{\langle x,y \rangle}+(-1)^{\langle x,y+h^* \rangle}=0$.
+Therefore, if measure the state we will get a pair $(y,z)$ such that $\langle y,h^* \rangle=0 \pmod{2}$. QED</p>
+<p>Simon&rsquo;s algorithm seems to really use the special bit-wise structure of the group ${0,1}^n$, so one could wonder if it has any relevance for the group $\Z^*_m$ for some exponentially large $m$.
+It turns out that the same insights that underlie the well known Fast Fourier Transform (FFT) algorithm can be used to essentially follow the same strategy for this group as well.</p>
+<h2 id="from-simon-to-shor">From Simon to Shor
+</h2><p>(Note: The presentation here is adapted from the quantum computing chapter in my textbook with Arora.)</p>
+<p>We now describe how to achieve Shor&rsquo;s algorithm for order finding. We will not do this for a general group but rather focus our attention on the group $\Z^*_{\ell}$ for some number $\ell$ which is the case of interest for integer factoring and the discrete logarithm modulo primes problems.</p>
+<p>That is, we prove the following theorem:</p>
+<blockquote>
+<h1 id="shortwothm">
+</h1></blockquote>
+<p>For every $\ell$ and $a\in\Z^<em>_\ell$, there is a quantum $poly(log \ell)$ algorithm to find the order of $a$ in $\Z^</em>_\ell$.</p>
+<p>The idea is similar to Simon&rsquo;s algorithm.  We consider the map $x \mapsto a^x (\mod \ell)$ which is a periodic map over $\Z_m$ where $m=|\Z^*_\ell|$ with period being the order of $a$.<br>
+To find the period of this map we will now need to perform a <em>Quantum Fourier Transform (QFT)</em> over the group $\Z_m$ instead of ${0,1}^n$.
+This is a quantum algorithm that takes a register from some arbitrary
+state $f \in \mathbb{C}^{m}$ into a state whose vector is the Fourier transform
+$\hat{f}$ of $f$. The QFT takes only $O(\log^2 m)$ elementary steps and
+is thus very efficient. Note that we cannot say that this algorithm
+“computes�? the Fourier transform, since the transform is stored in the
+amplitudes of the state, and as mentioned earlier, quantum mechanics
+give no way to “read out�? the amplitudes per se. The only way to get
+information from a quantum state is by <em>measuring</em> it, which yields a
+single basis state with probability that is related to its amplitude.
+This is hardly representative of the entire Fourier transform vector,
+but sometimes (as is the case in Shor’s algorithm) this is enough to get
+highly non-trivial information, which we do not know how to obtain using
+classical (non-quantum) computers.</p>
+<h3 id="the-fourier-transform-over-z_m">The Fourier transform over $\Z_m$
+</h3><p>We now define the Fourier transform over $\Z_m$ (the group of integers
+in ${0,\ldots,m-1}$ with addition modulo $m$). We give a definition that is specialized to the current context.
+For every vector $f\in\mathbb{C}^m$, the <em>Fourier transform of $f$</em> is the
+vector $\hat{f}$ where the $x^{th}$ coordinate of $\hat{f}$ is defined as<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>$\hat{f}(x) = \tfrac{1}{\sqrt{m}}\sum_{y\in\Z_m} f(x)\omega^{xy}$</p>
+<p>where $\omega = e^{2\pi i/m}$.</p>
+<p>The Fourier transform is simply a representation of $f$ in the <em>Fourier basis</em> ${  \chi_x }<em>{x \in \Z_m}$, where $\chi_x$ is the
+vector/function whose $y^{th}$ coordinate is
+$\tfrac{1}{\sqrt{m}\omega^{xy}}$. Now the inner product of any two vectors
+$\chi_x,\chi_z$ in this basis is equal to
+$$\langle \chi_x,\chi_z \rangle = \tfrac{1}{m}\sum</em>{y\in\Z_m} \omega^{xy} \overline{\omega^{zy}} = \tfrac{1}{m}\sum_{y\in\Z_m} \omega^{(x-z)y}  ;.$$
+But if $x=z$ then $\omega^{(x-z)}=1$ and hence this sum is equal to $1$. On
+the other hand, if $x \neq z$, then this sum is equal to
+$\tfrac{1}{m} \tfrac{1 -\omega^{(x-y)m}}{1-\omega^{x-y}}=
+\tfrac{1}{m}\tfrac{1-1}{1-\omega^{x-y}}=0$ using the formula for the sum of
+a geometric series. In other words, this is an <em>orthonormal</em> basis which
+means that the Fourier transform map $f \mapsto \hat{f}$ is a <em>unitary</em>
+operation.</p>
+<p>What is so special about the Fourier basis? For one thing, if we
+identify vectors in $\mathbb{C}^m$ with functions mapping $\Z_m$ to $\mathbb{C}$, then
+it’s easy to see that every function $\chi$ in the Fourier basis is a
+<em>homomorphism</em> from $\Z_m$ to $\mathbb{C}$ in the sense that
+$\chi(y+z)= \chi(y)\chi(z)$ for every $y,z \in
+\Z_m$. Also, every function $\chi$ is <em>periodic</em> in the sense that there
+exists $r\in \Z_m$ such that $\chi(y+r)=\chi(z)$ for every $y\in \Z_m$
+(indeed if $\chi(y) =
+\omega^{xy}$ then we can take $r$ to be $\ell/x$ where $\ell$ is the least
+common multiple of $x$ and $m$). Thus, intuitively, if a function
+$f:\Z_m\rightarrow\mathbb{C}$ is itself periodic (or roughly periodic) then when
+representing $f$ in the Fourier basis, the coefficients of basis vectors
+with periods agreeing with the period of $f$ should be large, and so we
+might be able to discover $f$’s period from this representation. This
+does turn out to be the case, and is a crucial point in Shor’s
+algorithm.</p>
+<h4 id="fast-fourier-transform">Fast Fourier Transform.
+</h4><p>Denote by $FT_m$ the operation that maps every vector $f\in\mathbb{C}^m$ to its
+Fourier transform $\hat{f}$. The operation $FT_m$ is represented by an
+$m\times m$ matrix whose $(x,y)$th entry is $\omega^{xy}$. The trivial
+algorithm to compute it takes $m^2$ operations. The famous <em>Fast Fourier
+Transform</em> (FFT) algorithm computes the Fourier transform in
+$O(m\log m)$ operations. We now sketch the idea behind the FFT algorithm as
+the same idea is used in the <em>quantum</em> Fourier transform algorithm.</p>
+<p>Note that</p>
+<p>$\hat{f}(x) = \tfrac{1}{\sqrt{m}}\sum_{y\in\Z_m} f(y)\omega^{xy} =$</p>
+<p>$\tfrac{1}{\sqrt{m}}\sum_{y\in\Z_m,y ;even} f(y)\omega^{-2x(y/2)} + \omega^x\tfrac{1}{\sqrt{m}}\sum_{y\in\Z_m,y ;odd} f(y)\omega^{2x(y-1)/2} ;.$</p>
+<p>Now since $\omega^2$ is an $m/2$th root of unity and $\omega^{m/2}=-1$, letting
+$W$ be the $m/2 \times m/2$ diagonal matrix with diagonal entries
+$\omega^0,\ldots,\omega^{m/2-1}$, we get that</p>
+<p>$FT_m(f)<em>{low} = FT</em>{m/2}(f_{even}) + W FT_{m/2}(f_{odd})$</p>
+<p>$FT_m(f)<em>{high} = FT</em>{m/2}(f_{even}) - W FT_{m/2}(f_{odd})$</p>
+<p>where for an $m$-dimensional vector $\vec{v}$, we denote by $\vec{v}<em>{even}$ (resp. $\vec{v}</em>{odd}$)
+the $m/2$-dimensional vector obtained by restricting $\vec{v}$ to the
+coordinates whose indices have least significant bit equal to $0$ (resp.
+$1$) and by $\vec{v}<em>{low}$ (resp. $\vec{v}</em>{high}$) the restriction of
+$\vec{v}$ to coordinates with most significant bit $0$ (resp. $1$).</p>
+<p>The equations above are the crux
+of the divide-and-conquer idea of the FFT algorithm, since they allow to
+replace a size-$m$ problem with two size-$m/2$ subproblems, leading to a
+recursive time bound of the form $T(m) = 2T(m/2) + O(m)$ which solves to
+$T(m)=O(m\log m)$.</p>
+<h3 id="quantum-fourier-transform-over-z_m">Quantum Fourier Transform over $\Z_m$
+</h3><p>The <em>quantum Fourier transform</em> is an algorithm to change the state of a
+quantum register from $f \in \mathbb{C}^m$ to its Fourier transform $\hat{f}$.</p>
+<blockquote>
+<h1 id="quantumftthm">
+</h1></blockquote>
+<p>For every $m$ and $m =2^m$ there is a quantum algorithm that uses
+$O(m^2)$ elementary quantum operations and transforms a quantum register
+in state $f = \sum_{x\in\Z_m} f(x)|x\rangle$ into the state
+$\hat{f}= \sum_{x\in\Z_m} \hat{f}(x) |x\rangle$, where
+$\hat{f}(x) = \tfrac{1}{\sqrt{m}} \sum_{y\in \Z_m} \omega^{xy}f(x)$.</p>
+<p>The crux of the algorithm is the FFT equations, which allow the problem of computing $FT_m$,
+the problem of size $m$, to be split into two identical subproblems of
+size $m/2$ involving computation of $FT_{m/2}$, which can be carried out
+recursively using the same elementary operations. (Aside: Not every
+divide-and-conquer classical algorithm can be implemented as a fast
+quantum algorithm; we are really using the structure of the problem
+here.)</p>
+<p>We now describe the algorithm and the state, neglecting normalizing factors.</p>
+<ol>
+<li>
+<p><em>initial state:</em>                $f= \sum_{x\in\Z_m} f(x)|x\rangle$</p>
+</li>
+<li>
+<p>Recursively run $FT_{m/2}$ on $m-1$ most significant qubits (state: $(FT_{m/2}f_{even})|0\rangle + (FT_{m/2}f_{odd})|1\rangle$)</p>
+</li>
+<li>
+<p>If LSB is $1$ then compute $W$ on $m-1$ most significant qubits (see below). (state : $(FT_{m/2}f_{even})|0\rangle + (W FT_{m/2}f_{odd})|1\rangle$)</p>
+</li>
+<li>
+<p>Apply Hadmard gate $H$ to least significant qubit.  (state: $(FT_{m/2}f_{even})(|0\rangle+|1\rangle)$ $+$ $(W FT_{m/2}f_{odd})(|0\rangle-|1\rangle) =$ $(FT_{m/2}f_{even}+ W FT_{m/2}f_{odd})|0\rangle + (FT_{m/2}f_{even}-W FT_{m/2}f_{odd})|1\rangle$)</p>
+</li>
+<li>
+<p>Move LSB to the most significant position. (state: $|0\rangle(FT_{m/2}f_{even}+ W FT_{m/2}f_{odd}) + |1\rangle(FT_{m/2}f_{even}- W FT_{m/2}f_{odd}) = \hat{f}$)</p>
+</li>
+</ol>
+<p>The transformation $W$ on $m-1$ qubits can be defined by $|x\rangle \mapsto \omega^x = \omega^{\sum_{i=0}^{m-2} 2^ix_i}$ (where $x_i$ is
+the $i^{th}$ qubit of $x$). It can be easily seen to be the result of
+applying for every $i\in { 0,\ldots,m-2}$ the following elementary
+operation on the $i^{th}$ qubit of the register:</p>
+<p>$|0\rangle \mapsto |0\rangle$ and $|1\rangle \mapsto \omega^{2^i}|1\rangle$.</p>
+<p>The final state is equal to $\hat{f}$ by the FFT equations (we leave this as an exercise)</p>
+<h2 id="shors-order-finding-algorithm">Shor’s Order-Finding Algorithm.
+</h2><p>We now present the central step in Shor’s factoring algorithm: a quantum polynomial-time algorithm to find the <em>order</em> of an integer $a$ modulo an integer $\ell$.</p>
+<blockquote>
+<h1 id="orderdinfindrestatethm">
+</h1></blockquote>
+<p>There is a polynomial-time quantum algorithm that
+on input $A,N$ (represented in binary) finds the smallest $r$ such that $A^r=1 \pmod{N}$.</p>
+<p>Let $t=\ceil{5\log (A+N)}$. Our register will consist of
+$t+polylog(N)$ qubits. Note that the function $x
+\mapsto A^x \pmod{N}$ can be computed in $polylog(N)$ time and so we will assume that we can
+compute the map $|x\rangle|y\rangle \mapsto |x\rangle|y\oplus (A^x \pmod{N\rangle)}$ (where we identify a number $X \in { 0,\ldots,N-1}$ with its representation as a binary
+string of length $\log N$).<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> Now we describe the order-finding
+algorithm. It uses a tool of elementary number theory called <em>continued fractions</em> which allows us to approximate (using a classical algorithm)
+an arbitrary real number $\alpha$ with a rational number $p/q$ where
+there is a prescribed upper bound on $q$ (see below)</p>
+<p>We now describe the algorithm and the state, this time <em>including</em> normalizing factors.</p>
+<ol>
+<li>
+<p>Apply Fourier transform to the first $m$ bits. (state:  $\tfrac{1}{\sqrt{m}}\sum_{x\in\Z_m}|x\rangle)|0^n\rangle$)</p>
+</li>
+<li>
+<p>Compute the transformation $|x\rangle|y\rangle \mapsto |x\rangle|y \oplus (A^x \pmod{N\rangle)}$. (state: $\tfrac{1}{\sqrt{m}}\sum_{x\in\Z_m} |x\rangle|A^x \pmod{N\rangle}$)</p>
+</li>
+<li>
+<p>Measure the second register to get a value $y_0$.  (state: $\tfrac{1}{\sqrt{K}}\sum_{\ell=0}^{K-1}|x_0 + \ell r\rangle|y_0\rangle$ where $x_0$ is the smallest number such that $A^{x_0} = y_0 \pmod{N}$ and $K= \floor{(m-1-x_0)/r}$.)</p>
+</li>
+<li>
+<p>Apply the Fourier transform to the first register. (state:  $\tfrac{1}{\sqrt{m}\sqrt{K}} \left(\sum_{x\in\Z_n}\sum_{\ell=0}^{K-1} \omega^{(x_0+\ell r)x}|x\rangle \right) |y_0\rangle$)</p>
+</li>
+</ol>
+<p>In the analysis, it will suffice to show that this algorithm outputs the order $r$ with probability at least $\Omega(1/\log N)$ (we can always
+amplify the algorithm’s success by running it several times and taking
+the smallest output).</p>
+<h3 id="analysis-the-case-that-rm">Analysis: the case that $r|m$
+</h3><p>We start by analyzing the algorithm in the case that $m = rc$ for some
+integer $c$. Though very unrealistic (remember that $m$ is a power of
+$2$!) this gives the intuition why Fourier transforms are useful for
+detecting periods.</p>
+<p><strong>Claim:</strong> In this case the value $x$ measured will be equal to $ac$ for a random $a \in {0,\ldots,r-1}$.</p>
+<p>The claim concludes the proof since it implies that $x/m = a/r$ where $a$ is random integer less than $r$. Now for every $r$, at
+least $\Omega(r/\log r)$ of the numbers in $[r-1]$ are co-prime to $r$.
+Indeed, the prime number theorem says that there at least this many primes in this
+interval, and since $r$ has at most $\log r$ prime factors, all but
+$\log r$ of these primes are co-prime to $r$. Thus, when the algorithm
+computes a rational approximation for $x/m$, the denominator it will
+find will indeed be $r$.</p>
+<p>To prove the claim, we compute for every $x \in \Z_m$ the absolute value
+of $|x\rangle$’s coefficient before the measurement. Up to some
+normalization factor this is</p>
+<p>$\left|  \sum_{\ell=0}^{c-1} \omega^{(x_0+\ell r)x} \right| = \left| \omega^{x_0c&rsquo;c} \right| \left| \sum_{\ell=0}^{c-1} \omega^{r\ell x} \right| = 1 \cdot \left| \sum_{\ell=0}^{c-1} \omega^{r\ell x} \right| ;.$</p>
+<p>If $c$ does not divide $x$ then
+$\omega^r$ is a $c^{th}$ root of unity, so
+$\sum_{\ell=0}^{c-1} w^{r \ell x} =0$ by the formula for sums of
+geometric progressions. Thus, such a number $x$ would be measured with
+zero probability. But if $x = cj$ then
+$\omega^{r\ell x} = w^{r c j \ell}  = \omega^{Mj} = 1$, and hence the amplitudes
+of all such $x$’s are equal for all $j \in {0, 2, \ldots, r-1}$.</p>
+<h4 id="the-general-case">The general case
+</h4><p>In the general case, where $r$ does not necessarily divide $m$, we will
+not be able to show that the measured value $x$ satisfies $m | xr$.
+However, we will show that with $\Omega(1/\log r)$ probability,
+<strong>(1)</strong> $xr$ will be “almost divisible�? by $m$ in the sense that $0 \leq xr \pmod{m} &lt; r/10$ and <strong>(2)</strong> $\floor{xr/m}$ is coprime to $r$.</p>
+<p>Condition <strong>(1)</strong> implies that $|xr - cM| &lt; r/10$ for $c=\floor{xr/m}$. Dividing
+by $rM$ gives
+$\left| \frac{x}{m} - \tfrac{c}{r} \right| &lt; \tfrac{1}{10M}$.
+Therefore,
+$\tfrac{c}{r}$ is a rational number with denominator at most $N$ that
+approximates $\frac{x}{m}$ to within $1/(10M) &lt; 1/(4N^4)$. It is not hard to see that such an approximation is unique
+(again left as an exercise) and hence in this case the algorithm
+will come up with $c/r$ and output the denominator $r$.</p>
+<p>Thus all that is left is to prove the next two lemmas. The first shows
+that there are $\Omega(r/\log r)$ values of $x$ that satisfy the above
+two conditions and the second shows that each is measured with
+probability $\Omega((1/\sqrt{r})^2) =\Omega(1/r)$.</p>
+<p><strong>Lemma 1:</strong> There exist $\Omega(r/\log r)$ values $x \in \Z_m$ such that:</p>
+<ol>
+<li>
+<p>$0 &lt; xr \pmod{m} &lt; r/10$</p>
+</li>
+<li>
+<p>$\floor{xr/m}$ and $r$ are coprime</p>
+</li>
+</ol>
+<p><strong>Lemma 2:</strong> If $x$ satisfies $0 &lt; xr \pmod{m} &lt; r/10$ then,
+before the measurement in the final step of the order-finding algorithm,
+the coefficient of $|x\rangle$ is at least $\Omega(\tfrac{1}{\sqrt{r}})$.</p>
+<p><strong>Proof of Lemma 1</strong> We prove the lemma for the
+case that $r$ is coprime to $m$, leaving the general case to the reader. In this case, the map
+$x \mapsto rx \pmod{m}$ is a permutation of $\Z^*_m$. There are at least
+$\Omega(r/\log r)$ numbers in $[1..r/10]$ that are coprime to $r$ (take
+primes in this range that are not one of $r$’s at most $\log r$ prime
+factors) and hence $\Omega(r/\log r)$ numbers $x$ such that
+$rx \pmod{m} = xr - \floor{xr/m}m$ is in $[1..r/10]$ and coprime to $r$. But this means that
+$\floor{rx/m}$ can not have a nontrivial shared factor with $r$, as
+otherwise this factor would be shared with $rx \pmod{m}$ as well.</p>
+<p><strong>Proof of Lemma 2:</strong> Let $x$ be such that
+$0 &lt; xr \pmod{m} &lt; r/10$. The absolute value of $|x\rangle$’s coefficient
+in the state before the measurement is
+$$\tfrac{1}{\sqrt{K}\sqrt{m}}\left| \sum_{\ell=0}^{K-1} \omega^{\ell r x} \right| ;,$$ where
+$K = \floor{(m-x_0-1)/r}$. Note that $\tfrac{m}{2r} &lt; K &lt; \tfrac{m}{r}$
+since $x_0 &lt; N \ll m$.</p>
+<p>Setting $\beta=\omega^{rx}$ (note that since $m \not| rx$, $\beta
+\neq 1$) and using the formula for the sum of a geometric series, this
+is at least
+$\tfrac{\sqrt{r}}{2M}\left| \tfrac{1 - \beta^{\ceil{m/r}}}{1-\beta} \right| = \tfrac{\sqrt{r}}{2M}\tfrac{\sin(\theta\ceil{m/r}/2)}{\sin(\theta/2)} ;,$
+where $\theta=\tfrac{rx \pmod{m}}{m}$ is the angle such that
+$\beta = e^{i\theta}$ (see Figure [quantum:fig:theta] for a proof by
+picture of the last equality). Under our assumptions
+$\ceil{m/r}\theta&lt;1/10$ and hence (using the fact that
+$\sin \alpha \sim \alpha$ for small angles $\alpha$), the coefficient of
+$x$ is at least
+$\tfrac{\sqrt{r}}{4M}\ceil{m/r} \geq \tfrac{1}{8\sqrt{r}}$</p>
+<p>This completes the proof of <a class="link" href="" >orderdinfindrestatethm</a>{.ref}.</p>
+<!--
+## Reducing factoring to order finding. {#quantum:sec:orderfind}
+
+The reduction of the factoring problem to the order-finding problem is
+classical (in particular, predates quantum computing) and follows from
+the following two Lemmas:
+
+\[quantum:lem:factoring2\] For every nonprime $N$ that is not a prime
+power, the probability that a random $X$ in the set
+$\Z^*_N = \set{ X \in [N-1] : gcd(X,N)=1}$ has an even order $r$ and
+furthermore, $X^{r/2} \neq -1 \pmod{N}$ is at least $\nicefrac{1}{4}$.
+
+\[quantum:lem:factoring1\] For every $N$ and $Y$, if $Y^2 = 1 \pmod{N}$
+but $Y
+\pmod{N}\not\in\{ +1,-1\}$ then $gcd(Y-1,N)\not\in{1,N}$.
+
+Together, lemmas \[quantum:lem:factoring2\]
+and \[quantum:lem:factoring1\] show that given a composite $N$ that is
+not a prime power if we choose $A$ at random in $[N-1]$ then with good
+probability either $gcd(A,N)$ or $gcd(A^{r/2}-1,N)$ will yield a
+non-trivial factor $F$ of $N$. We can then use recursion to find the
+prime factors of $F$ and $N/F$ respectively, leading to a $polylog(N)$
+time factorization algorithm. (Note that if $N$ is a prime power then it
+is easy to find its factorization by simply going over all
+$\ell \in [\log N]$ and trying the $\ell^{th}$ root of $N$.) Thus to
+prove Theorem \[quantum:thm:shor\] all that is left is to prove
+lemmas \[quantum:lem:factoring2\] and \[quantum:lem:factoring1\]. The
+proofs rely on some basic facts from number theory; see
+Section \[appendix:sec:numtheory\] in the Appendix for a quick review.
+
+\[Proof of Lemma \[quantum:lem:factoring1\]\] Under our assumptions, $N$
+divides $Y^2 - 1 = (Y-1)(Y+1)$ but does not divide neither $Y-1$ or
+$Y+1$. But this means that $gcd(Y-1,N)>1$ since if $Y-1$ and $N$ were
+coprime, then since $N$ divides $(Y-1)(Y+1)$, it would have to divide
+$Y+1$ (Exercise \[quantum:ex:factoring1\]). Since $Y-1 < N$, obviously
+$gcd(Y-1,N)<N$ and hence we’re done.
+
+\[Proof of Lemma \[quantum:lem:factoring2\]\] We prove the lemma for the
+case $N=PQ$ for primes $P,Q$: the proof can be suitably generalized for
+every $N$. Now, by the Chinese Remainder Theorem every $X\in\Z^*_N$ is
+isomorphic to the pair $\tupl{X \pmod{P},X \pmod{Q}}$. In particular,
+choosing a random number $X\in\Z^*_N$ is equivalent to choosing two
+random numbers $Y,Z$ in $\Z^*_P$ and $\Z^*_Q$ respectively and setting
+$X$ to be the unique number corresponding to the pair $\tupl{Y,Z}$. Now
+for every $k$, $X^k \pmod{N}$ is isomorphic to
+$\tupl{Y^k \pmod{P},Z^k \pmod{Q}}$ and so the *order* of $X$ is the
+least common multiple of the orders of $Y$ and $Z$ modulo $P$ and $Q$
+respectively. We will complete the proof by showing that with
+probability at least $\half$, the order of $Y$ is even: a number of the
+form $2^kc$ for $k \geq 1$ and $c$ odd. We then show that with
+probability at least $\half$, the order of $Z$ has the form $2^{\ell}d$
+for $d$ odd and $\ell \neq k$. This implies that the order of $X$ is
+$r=2^{\max\{ k,\ell\}}lcm(c,d)$ (where $lcm$ denotes the least common
+multiple) which, means that $X^{r/2}$ will be equal to $1$ in at least
+one coordinate. Since $-1 \pmod{N}$ is isomorphic to the tuple
+$\tupl{ -1 , -1 }$ this means that $X^{r/2} \neq -1 \pmod{P}$.
+
+Thus all that is left is to prove the following:
+
+-   $Y$ has even order with probability at least $\half$.
+
+    Indeed, the set of numbers in $\Z^*_P$ with odd order is a
+    *subgroup* of $\Z^*_P$: if $Y,Y'$ have odd orders $r,r'$
+    respectively then $(YY')^{rr'}=1\pmod{P}$, which means that the
+    order of $YY'$ divides the odd number $rr'$. Yet $-1$ has even
+    order, implying that this is a *proper* subgroup of $\Z^*_P$, taking
+    at most $\half$ of $\Z^*_P$.
+
+-   There is a number $\ell_0$ such that with probability exactly
+    $\half$, the order of of a random $Z \in \Z^*_Q$ is a number of the
+    form $2^{\ell}c$ for $\ell \leq
+        \ell_0$. (This implies that for every fixed $k$, the probability
+    that the order has the form $2^kd$ is at most $\half$.)
+
+    For every $\ell$, define $G_{\ell}$ to be the subset of $\Z^*_Q$
+    whose order modulo $Q$ is of the form $2^jc$ where $j \leq \ell$ and
+    $c$ is odd. It can be verified that for every $\ell$, $G_{\ell}$ is
+    a subgroup of $G_{\ell+1}$ and furthermore, because modulo a prime
+    $P$ the mapping $x \mapsto x^2 \pmod{P}$ is two-to-one and maps
+    $G_{\ell+1}$ into $G_{\ell}$ (Exercise \[quantum:ex:factoring2\]),
+    $|G_{\ell}| \geq
+        |G_{\ell+1}|/2$. It follows that if we take $\ell_0$ to be the
+    largest such that $G_{\ell_0}$ is a proper subgroup of $\Z^*_P$,
+    then $|G_{\ell_0}| = |Z^*_P|/2$.
+-->
+<h2 id="rational-approximation-of-real-numbers">Rational approximation of real numbers
+</h2><p>In many settings, including Shor’s algorithm, we are given a real number
+in the form of a program that can compute its first $t$ bits in
+$poly(t)$ time. We are interested in finding a close approximation to
+this real number of the form $a/b$, where there is a prescribed upper
+bound on $b$. Continued fractions is a tool in number theory that is
+useful for this.</p>
+<p>A <em>continued fraction</em> is a number of the following form:
+$a_0 + \frac{1}{a_1 + \frac{1}{a_2 + \tfrac{1}{a_3 + \ldots}} }$ for $a_0$ a non-negative integer and
+$a_1,a_2,\ldots$ positive integers.</p>
+<p>Given a real number $\alpha&gt;0$, we can find its representation as an
+<em>infinite</em> fraction as follows: split $\alpha$ into the integer part
+$\floor{\alpha}$ and fractional part $\alpha -
+\floor{\alpha}$, find recursively the representation $R$ of
+$1/(\alpha - \floor{\alpha})$, and then write
+$$\alpha = \floor{\alpha} + \frac{1}{R} ;.$$ If we continue this
+process for $n$ steps, we get a rational number, denoted by
+$[a_0,a_1,\ldots,a_n]$, which can be represented as $\tfrac{p_n}{q_n}$
+with $p_n,q_n$ coprime. The following facts can be proven using
+induction:</p>
+<ul>
+<li>
+<p>$p_0=a_0, q_0 =1$ and for every $n&gt;1$, $p_n = a_np_{n-1} + p_{n-2}$, $q_n = a_nq_{n-1} + q_{n-2}$.</p>
+</li>
+<li>
+<p>$\tfrac{p_n}{q_n} - \tfrac{p_{n-1}}{q_{n-1}}  =        \tfrac{(-1)^{n-1}}{q_nq_{n-1}}$</p>
+</li>
+</ul>
+<p>Furthermore, it is known that
+$\Bigl|\tfrac{p_n}{q_n} - \alpha\Bigl| &lt; \tfrac{1}{q_nq_{n+1}}  (<em>)$
+which implies
+that $\tfrac{p_n}{q_n}$ is the <em>closest</em> rational number to $\alpha$
+with denominator at most $q_n$. It also means that if $\alpha$ is
+extremely close to a rational number, say,
+$\left|\alpha - \tfrac{a}{b} \right| &lt; \tfrac{1}{4b^4}$ for some coprime $a,b$ then we can find $a,b$ by
+iterating the continued fraction algorithm for $polylog(b)$ steps.
+Indeed, let $q_n$ be the first denominator such that $q_{n+1} \geq b$.
+If $q_{n+1} &gt; 2b^2$ then $(</em>)$ implies that
+$\bigl|\tfrac{p_n}{q_n}-\alpha\bigr| &lt; \tfrac{1}{2b^2}$. But this means
+that $\tfrac{p_n}{q_n} = \tfrac{a}{b}$ since there is at most one
+rational number of denominator at most $b$ that is so close to $\alpha$.
+On the other hand, if $q_{n+1} \leq
+2b^2$ then since $\tfrac{p_{n+1}}{q_{n+1}}$ is closer to $\alpha$ than
+$\tfrac{a}{b}$,
+$\bigl|\tfrac{p_{n+1}}{q_{n+1}}-\alpha\bigr| &lt; \tfrac{1}{4b^4};,$
+again
+meaning that $\tfrac{p_{n+1}}{q_{n+1}}=\tfrac{a}{b}$. It’s not hard to
+verify that $q_n \geq 2^{n/2}$, implying that $p_n$ and $q_n$ can be
+computed in $polylog(q_n)$ time.</p>
+<h3 id="quantum-cryptography">Quantum cryptography
+</h3><p>There is another way in which quantum mechanics interacts with cryptography. These &ldquo;spooky actions at a distance&rdquo; have been suggested by Weisner and Bennet-Brassard as a way in which parties can create a secret shared key over an insecure channel. On one hand, this concept does not require as much control as general-purpose quantum computing, and so it has in fact been <a class="link" href="https://en.wikipedia.org/wiki/Quantum_key_distribution#Quantum_Key_Distribution_Networks"  target="_blank" rel="noopener"
+    >demonstrated physically</a>. On the other hand, unlike transmitting standard digital information, this &ldquo;insecure channel&rdquo; cannot be an arbitrary media such as wifi etc.. but rather one needs fiber optics, lasers, etc.. Unlike quantum computers, where we only need one of those to break RSA, to actually use key exchange at scale we need to setup these type of networks, and so it is unclear if this approach will ever dominate the solution of Alice sending to Bob a Brink&rsquo;s truck with the shared secret key. People have proposed some other ways to use the interesting properties of quantum mechanics for cryptographic purposes including <a class="link" href="https://en.wikipedia.org/wiki/Quantum_money"  target="_blank" rel="noopener"
+    >quantum money</a> and <a class="link" href="http://www.scottaaronson.com/papers/noclone-ccc.pdf"  target="_blank" rel="noopener"
+    >quantum software protection</a>.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>In the context of Fourier transform it is customary and convenient to denote the $x^{th}$ coordinate of a vector $f$ by $f(x)$ rather than $f_x$.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>To compute this map we may need to extend the register by some additional $polylog(N)$ many qubits, but we can ignore them as they will always be equal to zero except in intermediate computations.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

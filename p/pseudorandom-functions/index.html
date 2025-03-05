@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Pseudorandom functions Reading: Rosulek Chapter 6 has a good description of pseudorandom functions. Katz-Lindell cover pseudorandom functions in a different order than us. The topics of this lecture and the next ones are covered in KL sections 3.4-3.5 (PRFs and CPA security), 4.1-4.3 (MACs), and 8.5 (construction of PRFs from PRG).\nIn the last lecture we saw the notion of pseudorandom generators, and introduced the PRG conjecture, which stated that there exists a pseudorandom generator mapping $n$ bits to $n+1$ bits. We have seen the length extension theorem, which states that given such a pseudorandom generator, there exists a generator mapping $n$ bits to $m$ bits for an arbitrarily large polynomial $m(n)$. But can we extend it even further? Say, to $2^n$ bits? Does this question even make sense? And why would we want to do that? This is the topic of this lecture.\n">
+<title>Pseudorandom functions</title>
+
+<link rel='canonical' href='http://localhost:1313/p/pseudorandom-functions/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Pseudorandom functions">
+<meta property='og:description' content="Pseudorandom functions Reading: Rosulek Chapter 6 has a good description of pseudorandom functions. Katz-Lindell cover pseudorandom functions in a different order than us. The topics of this lecture and the next ones are covered in KL sections 3.4-3.5 (PRFs and CPA security), 4.1-4.3 (MACs), and 8.5 (construction of PRFs from PRG).\nIn the last lecture we saw the notion of pseudorandom generators, and introduced the PRG conjecture, which stated that there exists a pseudorandom generator mapping $n$ bits to $n+1$ bits. We have seen the length extension theorem, which states that given such a pseudorandom generator, there exists a generator mapping $n$ bits to $m$ bits for an arbitrarily large polynomial $m(n)$. But can we extend it even further? Say, to $2^n$ bits? Does this question even make sense? And why would we want to do that? This is the topic of this lecture.\n">
+<meta property='og:url' content='http://localhost:1313/p/pseudorandom-functions/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Pseudorandom functions">
+<meta name="twitter:description" content="Pseudorandom functions Reading: Rosulek Chapter 6 has a good description of pseudorandom functions. Katz-Lindell cover pseudorandom functions in a different order than us. The topics of this lecture and the next ones are covered in KL sections 3.4-3.5 (PRFs and CPA security), 4.1-4.3 (MACs), and 8.5 (construction of PRFs from PRG).\nIn the last lecture we saw the notion of pseudorandom generators, and introduced the PRG conjecture, which stated that there exists a pseudorandom generator mapping $n$ bits to $n+1$ bits. We have seen the length extension theorem, which states that given such a pseudorandom generator, there exists a generator mapping $n$ bits to $m$ bits for an arbitrarily large polynomial $m(n)$. But can we extend it even further? Say, to $2^n$ bits? Does this question even make sense? And why would we want to do that? This is the topic of this lecture.\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#one-time-passwords-eg-google-authenticator-rsa-id-etc">One time passwords (e.g. Google Authenticator, RSA ID, etc.)</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#how-do-pseudorandom-functions-help-in-the-login-problem">How do pseudorandom functions help in the login problem?</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#modifying-input-and-output-lengths-of-prfs">Modifying input and output lengths of PRFs</a></li>
+        <li><a href="#PRFlengthextensionthm"></a></li>
+      </ol>
+    </li>
+    <li><a href="#message-authentication-codes">Message Authentication Codes</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#macs-from-prfs">MACs from PRFs</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#arbitrary-input-length-extension-for-macs-and-prfs">Arbitrary input length extension for MACs and PRFs</a></li>
+    <li><a href="#aside-natural-proofs">Aside: natural proofs</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/pseudorandom-functions/">Pseudorandom functions</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    27 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="pseudorandom-functions">Pseudorandom functions
+</h1><p><strong>Reading:</strong> <a class="link" href="https://web.engr.oregonstate.edu/~rosulekm/crypto/chap6.pdf"  target="_blank" rel="noopener"
+    >Rosulek Chapter 6</a> has a good description of pseudorandom functions. Katz-Lindell cover pseudorandom functions in a different order than us. The topics of this lecture and the next ones are covered in KL sections 3.4-3.5 (PRFs and CPA security), 4.1-4.3 (MACs), and 8.5 (construction of PRFs from PRG).</p>
+<p>In the last lecture we saw the notion of <em>pseudorandom generators</em>, and introduced the <strong>PRG conjecture</strong>, which stated that there exists a pseudorandom
+generator mapping $n$ bits to $n+1$ bits. We have seen the <em>length extension</em> theorem, which states that given such a pseudorandom generator, there exists a generator mapping $n$ bits to $m$ bits for an arbitrarily large polynomial $m(n)$. But can we extend it even further? Say, to $2^n$ bits?
+Does this question even make sense? And why would we want to do that? This is the topic of this lecture.</p>
+<p>At a first look, the notion of extending the output length of a pseudorandom generator to $2^n$ bits seems nonsensical.
+After all, we want our generator to be <em>efficient</em> and just writing down the output will take exponential time. However, there is a way around this conundrum.
+While we can&rsquo;t efficiently write down the full output, we can require that it would be possible, given an index $i\in {0,\ldots,2^n-1}$, to compute the $i^{th}$
+bit of the output in polynomial time.^[We will often identify the strings of length $n$ with the numbers between $0$ and $2^{n-1}$, and switch freely between the two representations, and hence can think of $i$ also as a string in ${0,1}^n$. We will also switch between indexing strings starting from $0$ and starting from $1$ based on convenience.]
+That is, we require that the function $i \mapsto G(s)_i$ is efficiently computable and (by security of the pseudorandom generator)
+indistinguishable from a function that maps each index $i$ to an independent random bit in ${0,1}$. This is the notion of a <em>pseudorandom function generator</em> which is a bit subtle to define and construct, but turns out to have a great many applications in cryptography.</p>
+<p>::: {.definition title=&ldquo;Pseudorandom Function Generator&rdquo; #prfdef}
+An efficiently computable function $F$ taking two inputs $s\in{0,1}^*$ and $i \in {0,\ldots,2^{|s|}-1}$  and outputting a single
+bit $F(s,i)$ is a <em>pseudorandom function (PRF) generator</em> if for every polynomial time adversary $A$ outputting a single bit and polynomial $p(n)$, if $n$ is large enough then:</p>
+<p>$$ \left| \E_{s\in{0,1}^n}[ A^{F(s,\cdot)}(1^n)] - \E_{H \leftarrow_R [2^n]\rightarrow{0,1}}[A^H(1^n)] \right| &lt; 1/p(n) ;.$$
+:::</p>
+<p>Some notes on notation are in order. The input $1^n$ is simply a string of $n$ ones, and it is a typical cryptography convention to assume that such an input
+is always given to the adversary. This is simply because by &ldquo;polynomial time adversary&rdquo; we really mean polynomial in $n$ (which is our key size or security parameter)^[This also allows us to be consistent with the notion of &ldquo;polynomial in the size of the input.&rdquo;].
+The notation $A^{F(s,\cdot)}$ means that $A$ has <em>black box</em> (also known as <em>oracle</em>) access to the function that
+maps $i$ to $F(s,i)$. That is, $A$ can choose an index $i$, query the box and get $F(s,i)$, then choose a new index $i&rsquo;$, query the box to get $F(s,i&rsquo;)$, and so on for
+a polynomial number of queries.
+The notation $H \leftarrow_R [2^n] \rightarrow {0,1}$ means that $H$ is a completely random function that maps every index $i$ to an independent and random different bit.</p>
+<p>::: {.remark title=&ldquo;Completely Random Functions&rdquo; #randfuncs}
+This notion of a randomly chosen function can be difficult to wrap your mind around. Try to imagine a table of all of the strings in ${0, 1}^n$. We now go to each possible input, randomly generate a bit to be its output, and write down the result in the table. When we&rsquo;re done, we have a length $2^n$ lookup table that maps each input to an output that was generated uniformly at random and independently of all other outputs. This lookup table is now our random function $H$.</p>
+<p>In practice it&rsquo;s too cumbersome to actually generate all $2^n$ bits, and sometimes in theory it&rsquo;s convenient to think of each output as generated only after a query is made. This leads to adopting the <em>lazy evaluation model</em>. In the lazy evaluation model, we imagine that a lazy person is sitting in a room with the same lookup table as before, but with all entries blank. If someone makes some query $H(s)$, the lazy person checks if the entry for $s$ in the lookup table is blank. If so, the lazy evaluator generates a random bit, writes down the result for $s$, and returns it. Otherwise, if an output has already been generated for $s$ previously (because $s$ has been queried before), the lazy evaluator simply returns this value. Can you see why this model is more convenient in some ways?</p>
+<p>One last way to think about how a completely random function is determined is to first observe that there exist a total of $2^{2^n}$ functions from ${0, 1}^n$ to ${0, 1}$ (can you see why? It may be easier to think of them as functions from $[2^n]$ to ${0, 1}$). We choose one of them uniformly at random to be $H$, and it&rsquo;s still the case that for any given input $s$ the result $H(s)$ is $0$ or $1$ with equal probability independent of any other input.</p>
+<p>Regardless of which model we use to think about generating $H$, after we&rsquo;ve chosen $H$ and put it in a black box, the behavior of $H$ is in some sense &ldquo;deterministic&rdquo; because given the same query it will always return the same result. However, before we ever make any given query $s$ we can only guess $H(s)$ correctly with probability $\tfrac{1}{2}$, because without previously observing $H(s)$ it is effectively random and undecided to us (just like in the lazy evaluator model).
+:::</p>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>Now would be a fantastic time to stop and think deeply about the three constructions in the remark above, and in particular why they are all equivalent. If you don&rsquo;t feel like thinking then at the very least you should make a mental note to come back later if you&rsquo;re confused, because this idea will be very useful down the road.</p>
+<p>Thus, the notation $A^H$ in the PRF definition means $A$ has access to a completely random black box that returns a random bit for any new query made, and on previously seen queries returns the same bit as before.
+Finally one last note: below we will identify the set $[2^n] = {0,\ldots,2^n-1}$ with the set ${0,1}^n$ (there is a one to one mapping between those sets using the binary representation), and so we will treat $i$ interchangeably as a number in $[2^n]$ or a string in ${0,1}^n$.</p>
+<p><strong>Ensembles of PRFs.</strong>
+If $F$ is a pseudorandom function generator, then if we choose a random string $s$ and consider the function $f_s$ defined by $f_s(i) = F(s,i)$,
+no efficient algorithm can distinguish between black box access to $f_s(\cdot)$ and black box access to a completely random function (see <a class="link" href="" >prfmodelfig</a>{.ref}). Notably, black box access implies that a priori the adversary does not know which function it&rsquo;s querying. From the adversary&rsquo;s point of view, they query some oracle $O$ (which behind the scenes is either $f_s(\cdot)$ or $H$), and must decide if $O = f_s(\cdot)$ or $O = H$.
+Thus often instead of talking about a pseudorandom function generator we will refer to a <em>pseudorandom function ensemble</em> ${ f_s }_{s\in {0,1}^*}$.
+Formally, this is defined as follows:</p>
+<p>::: {.definition title=&ldquo;PRF ensembles&rdquo; #prfensemnledef}
+Let ${ f_s }_{s\in {0,1}^<em>}$ be an ensemble of functions such that for every $s\in {0,1}^</em>$,  $f_s:{0,1}^{|s|} \rightarrow {0,1}$.
+We say that ${ f_s }$ is a <em>pseudorandom function ensemble</em> if the function $F$ that on input $s\in {0,1}^*$ and $i \in {0,\ldots,2^{|s|}-1}$ outputs $f_s(i)$ is a PRF generator.
+:::</p>
+<p>Note that the condition of <a class="link" href="" >prfensemnledef</a>{.ref} corresponds to requiring that for every polynomial $p$ and $p(n)$-time adversary $A$, if $n$ is large enough then</p>
+<p>$$ \left| \E_{s\in{0,1}^n}[ A^{f_s(\cdot)}(1^n)] - \E_{h \leftarrow_R \mathcal{F}<em>{n,1} }[A^h(1^n)] \right| &lt; 1/p(n)$$
+where $\mathcal{F}</em>{n,1}$ is the set of all functions mapping ${0,1}^n$ to ${0,1}$ (i.e., the set ${0,1}^n \rightarrow {0,1}$).</p>
+<p>::: { .pause }
+It is worth while to pause and make sure you understand why <a class="link" href="" >prfensemnledef</a>{.ref} and <a class="link" href="" >prfdef</a>{.ref} give different ways to talk about the same object.
+:::</p>
+<p><img src="/figure/pseudorandom_function.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="In a pseudorandom function, an adversary cannot tell whether they are given a black box that computes the function $i \mapsto F(s,i)$ for some secret $s$ that was chosen at random and fixed, or whether the black box computes a completely random function that tosses a fresh random coin whenever it&rsquo;s given a new input $i$."
+	
+	
+>{#prfmodelfig width=&ldquo;50%&rdquo; }</p>
+<p>In the next lecture we will see the proof of following theorem (due to Goldreich, Goldwasser, and Micali)</p>
+<blockquote>
+<h1 id="prffromprgthmone">
+</h1></blockquote>
+<p>Assuming the PRG conjecture, there exists a secure pseudorandom function generator.</p>
+<p>But before we see the proof of <a class="link" href="" >prffromprgthmone</a>{.ref}, let us see why pseudorandom functions could be useful.</p>
+<h2 id="one-time-passwords-eg-google-authenticator-rsa-id-etc">One time passwords (e.g. Google Authenticator, RSA ID, etc.)
+</h2><p>Until now we have talked about the task of <em>encryption</em>, or protecting the <em>secrecy</em> of messages. But the task of <em>authentication</em>, or protecting the
+<em>integrity</em> of messages is no less important. For example, consider the case that you receive a software update for your PC, phone, car, pacemaker, etc.
+over an open channel such as an unencrypted Wi-Fi connection. The contents of that update are not secret, but it is of crucial importance that it was unchanged from the message sent out by the company and that no malicious
+attacker had modified the code. Similarly, when you log into your bank, you might be much more
+concerned about the possibility of someone impersonating you and cleaning out your account than you are about the secrecy of your information.</p>
+<p>Let&rsquo;s start with a very simple scenario which we&rsquo;ll call <strong>the login problem</strong>. <strong>Alice</strong> and <strong>Bob</strong> share a key as before, but now Alice wants to simply prove her identity to Bob. What makes this challenging is that this time they need to contend with not the passive eavesdropping Eve but the active adversary <strong>Mallory</strong>, who completely controls the communication channel between them and can modify (or <em>mall</em>) any message that they send.
+Specifically for the identity proving case, we think of the following scenario. Each instance of such an <strong>identification protocol</strong> consists of some interaction between Alice and Bob that ends with Bob deciding whether to accept it
+as authentic or reject as an impersonation attempt. Mallory&rsquo;s goal is to fool Bob into accepting her as Alice.</p>
+<p>The most basic way to try to solve the login problem is by simply using a <em>password</em>. That is, if we assume that Alice and Bob can share a key, we can treat this key as some secret password $p$ that was selected at random from ${0,1}^n$ (and hence can only be guessed with probability $2^{-n}$). Why doesn&rsquo;t Alice simply send $p$ to Bob to prove to him her identity?
+A moment&rsquo;s thought shows that this would be a very bad idea. Since Mallory is controlling the communication line, she would learn $p$ after the first identification attempt and could then easily impersonate Alice in future interactions. However, we seem to have just the tool to protect the secrecy of $p$&mdash; <em>encryption</em>.  Suppose that Alice and Bob share a secret key $k$ and an additional secret password $p$. Wouldn&rsquo;t a simple way to solve the login problem be for Alice to send Bob an encryption of the password $p$? After all, the security of the encryption should guarantee that Mallory can&rsquo;t learn $p$, right?</p>
+<blockquote>
+<h1 id="heading-1">
+</h1></blockquote>
+<p>This would be a good time to stop reading and try to think for yourself whether using a secure encryption to encrypt $p$ would guarantee security for the login problem. (No really, stop and think about it.)</p>
+<p>The problem is that Mallory does not have to learn the password $p$ in order to impersonate Alice. For example, she can simply record the message Alice $c_1$ sends to Bob in the first session and then <em>replay</em> it to Bob in the next session. Since the message is a valid encryption of $p$, then Bob would accept it from Mallory!  (This is known as a <em>replay attack</em> and is a common attack one needs to protect against in cryptographic protocols.) One can try to put in countermeasures to defend against this particular attack, but its existence demonstrates that secrecy of the password does not guarantee security of the login protocol.</p>
+<h3 id="how-do-pseudorandom-functions-help-in-the-login-problem">How do pseudorandom functions help in the login problem?
+</h3><p>The idea is that they create what&rsquo;s known as a <em>one time password</em>. Alice and Bob will share an index $s\in{0,1}^n$ for the pseudorandom function generator ${ f_s }$. When Alice wants to prove her identity to Bob, Bob will choose a random $i\leftarrow_R{0,1}^n$, send $i$ to Alice, and then Alice will send $f_s(i),f_s(i+1),\ldots,f_s(i+\ell-1)$ to Bob where $\ell$ is some parameter (you can think of $\ell=n$ for simplicity). Bob will check that indeed $y=f_s(i)$ and if so accept the session as authentic.</p>
+<p>The formal protocol is as follows:</p>
+<p><strong>Protocol</strong> <code>PRF-Login</code><strong>:</strong></p>
+<ul>
+<li>Shared input: $s\in{0,1}^n$. Alice and Bob treat it as a seed for a pseudorandom function generator ${ f_s }$.</li>
+<li>In every session Alice and Bob do the following:
+<ol>
+<li>Bob chooses a random $i\leftarrow_R[2^n]$ and sends $i$ to Alice.</li>
+<li>Alice sends $y_1,\ldots,y_\ell$ to Bob where $y_j = f_s(i+j-1)$.</li>
+<li>Bob checks that for every $j\in{1,\ldots,\ell}$, $y_j = f_s(i+j-1)$ and if so accepts the session; otherwise he rejects it.</li>
+</ol>
+</li>
+</ul>
+<p>As we will see it&rsquo;s not really crucial that the input $i$ (which is known in crypto parlance as a <em>nonce</em>) is random.
+What is crucial is that it never repeats itself, to foil a replay attack.
+For this reason in many applications Alice and Bob compute $i$ as a function of the current time (for example, the index of the current minute based on some agreed-upon starting point), and hence we can make it into a one message protocol.
+Also the parameter $\ell$ is sometimes chosen to be deliberately short so that it will be easy for people to type the values $y_1,\ldots,y_\ell$.</p>
+<p><img src="/figure/google-authenticator.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="The Google Authenticator app is one popular example of a one-time password scheme using pseudorandom functions. Another example is RSA&rsquo;s SecurID token."
+	
+	
+>{#tmplabelfig  .margin}</p>
+<p><em>Why is this secure?</em> The key to understanding schemes using pseudorandom functions is to imagine what would happen if $f_s$ was be an <em>actual</em> random function instead of a <em>pseudo</em> random function.
+In a truly random function, every one of the values $f_s(0),\ldots,f_s(2^n-1)$ is chosen independently and uniformly at random from ${0,1}$.
+One useful way to imagine this is using the concept of &ldquo;lazy evaluation&rdquo;.
+We can think of $f_S$ as determined by tossing $2^n$ different coins for the values $f(0),\ldots,f(2^n-1)$. Now consider the case where we don&rsquo;t actually toss the $i^{th}$ coin until we need it.
+The crucial point is that if we have queried the function in $T\ll 2^n$ places, then when Bob chooses a random $i\in[2^n]$ it is <em>extremely unlikely</em> that any one of the set ${i,i+1,\ldots,i+\ell-1}$ will be one of those locations that we previously queried.
+Thus, if the function was truly random,  Mallory has <em>no information</em> on the value of the function in these coordinates, and would be able to predict (or rather, guess) it in all these locations with probability at most $2^{-\ell}$.</p>
+<blockquote>
+<h1 id="heading-2">
+</h1></blockquote>
+<p>Please make sure you understand the informal reasoning above, since we will now translate this into a formal theorem and proof.</p>
+<blockquote>
+<h1 id="loginprfthm">
+</h1></blockquote>
+<p>Suppose that ${ f_s }$ is a secure pseudorandom function generator and Alice and Bob interact using Protocol <code>PRF-Login</code> for some polynomial number $T$ of sessions (over a channel controlled by Mallory). After observing these interactions, Mallory then interacts with Bob, where Bob follows the protocol&rsquo;s instructions but Mallory has access to arbitrary efficient computation.
+Then, the probability that Bob accepts the interaction is at most $2^{-\ell}+\mu(n)$ where $\mu(\cdot)$ is some negligible function.</p>
+<blockquote>
+<h1 id="heading-3">
+</h1></blockquote>
+<p>This proof, as so many others in this course, uses an argument via contradiction.
+We assume, towards the sake of contradiction, that there exists an adversary $M$ (for Mallory) that can break the identification scheme <code>PRF-Login</code> with probability $2^{-\ell}+\epsilon$ after $T$ interactions. We then construct an attacker $A$ that can distinguish access to ${ f_s }$ from access to a random function in $poly(T)$ time and with bias at least $\epsilon/2$.</p>
+<blockquote>
+</blockquote>
+<p>How do we construct this adversary $A$? The idea is as follows. First, we prove that if we ran the protocol <code>PRF-Login</code> using an <em>actual random</em> function, then $M$ would not be able to succeed in impersonating with probability better than $2^{-\ell}+negligible$. Therefore, if $M$ does do better, then we can use that to distinguish $f_s$ from a random function.
+The adversary $A$ gets some black box $O(\cdot)$ (for <em>oracle</em>) and will use it while internally simulating all the parties&mdash; Alice, Bob and Mallory (using $M$) in the $T+1$ interactions of the <code>PRF-Login</code> protocol. Whenever any of the parties needs to evaluate $f_s(i)$, $A$ will forward $i$ to its black box $O(\cdot)$ and return the value $O(i)$. It will then output $1$ if and only if $M$ succeeds in impersonation in this internal simulation. The argument above showed that if $O(\cdot)$ is a truly random function, then the probability that $A$ outputs $1$ is at most $2^{-\ell}+negligible$ (and so in particular less than $2^{-\ell}+\epsilon/2$). On the other hand, if $O(\cdot)$ is the function $i \mapsto f_s(i)$ for some fixed and random $s$, then this probability is at least $2^{-\ell}+\epsilon$. Thus $A$ will distinguish between the two cases with bias at least $\epsilon/2$.  We now turn to the formal proof:</p>
+<blockquote>
+</blockquote>
+<p><strong>Claim 1:</strong> Let <code>PRF-Login*</code> be the hypothetical variant of the protocol <code>PRF-Login</code> where Alice and Bob share a completely random function $H:[2^n]\rightarrow{0,1}$. Then, no matter what Mallory does, the probability she can impersonate Alice after observing $T$ interactions is at most $2^{-\ell}+(8\ell T)/2^n$.</p>
+<blockquote>
+</blockquote>
+<p>(If <code>PRF-Login*</code> is easier to prove secure than <code>PRF-Login</code>, you might wonder why we bother with <code>PRF-Login</code> in the first place and not simply use <code>PRF-Login*</code>. The reason is that specifying a random function $H$ requires specifying $2^n$ bits, and so that would be a <em>huge</em> shared key. So <code>PRF-Login*</code> is not a protocol we can actually run but rather a hypothetical &ldquo;mental experiment&rdquo; that helps us in arguing about the security of <code>PRF-Login</code>.)</p>
+<blockquote>
+</blockquote>
+<p><strong>Proof of Claim 1:</strong> Let $i_1,\ldots,i_{2T}$ be the nonces chosen by Bob and recieved by Alice in the first $T$ iterations.
+That is, $i_1$ is the nonce chosen by Bob in the first iteration while $i_2$ is the nonce that Alice received in the first iteration (if Mallory doesn&rsquo;t modify it then $i_1=i_2$). Similarly, $i_3$ is the nonce chosen by Bob in the second iteration while $i_4$ is the nonce received by Alice and so on and so forth. Let $i$ be the nonce chosen in the $T+1^{st}$ iteration in which Mallory tries to impersonate Alice.
+We claim that the probability that there exists some $j\in{1,\ldots,2T}$ such that $|i-i_j|&lt;2\ell$ is at most $8\ell T/2^n$. Indeed, let $S$ be the union of all the intervals of the form ${ i_j-2\ell+1,\ldots, i_j+2\ell-1 }$ for $1 \leq j \leq 2T$. Since it&rsquo;s a union of $2T$ intervals each of length less than $4\ell$, $S$ contains at most $8T\ell$ elements, so the probability that $i\in S$ is $|S|/2^n \leq (8T\ell)/2^n$.  Now, if there does <em>not</em> exists a $j$ such that
+$|i-i_j|&lt;2\ell$ then it means in particular that all the
+queries to $H(\cdot)$ made by either Alice or Bob during the first $T$ iterations are disjoint from
+the interval ${ i,i+1,\ldots,i+\ell-1 }$.
+Since $H(\cdot)$ is a completely random function, the values $H(i),\ldots,H(i+\ell-1)$ are chosen uniformly and independently from all the rest of the values of this function. Since Mallory&rsquo;s message $y$ to Bob in the $T+1^{st}$ iteration depends only on what she observed in the past, the values $H(i),\ldots,H(i+\ell-1)$ are <em>independent</em> from $y$, and hence under the condition that there is no overlap between this interval and  prior queries, the probability that they equal $y$ is $2^{-\ell}$. QED (Claim 1).</p>
+<blockquote>
+</blockquote>
+<p>The proof of Claim 1 is not hard but it is somewhat subtle, so it&rsquo;s good to go over it again and make sure you understand it.</p>
+<blockquote>
+</blockquote>
+<p>Now that we have Claim 1, the proof of the theorem follows as outlined above. We build an adversary $A$ to the pseudorandom function generator from $M$ by having $A$ simulate &ldquo;inside its belly&rdquo; all the parties Alice, Bob and Mallory and output $1$ if Mallory succeeds in impersonating. Since we assumed $\epsilon$ is non-negligible and $T$ is polynomial, we can assume that $(8\ell T)/2^n &lt; \epsilon/2$ and hence by Claim 1, if the black box is a random function, then we are in the <code>PRF-Login*</code> setting and Mallory&rsquo;s success will be at most $2^{-\ell}+\epsilon/2$. If the black box is $f_s(\cdot)$, then we get exactly the <code>PRF-Login</code> setting and hence under our assumption the success will be at least $2^{-\ell}+\epsilon$. We conclude that the difference in probability of $A$ outputting $1$ between the random and pseudorandom case is at least $\epsilon/2$ thus contradicting the security of the pseudorandom function generator.</p>
+<h3 id="modifying-input-and-output-lengths-of-prfs">Modifying input and output lengths of PRFs
+</h3><p>In the course of constructing this one-time-password scheme from a PRF, we have actually proven a general statement that
+is useful on its own: that we can transform standard PRF which is a collection ${ f_s }$ of functions
+mapping ${0,1}^n$ to ${0,1}$, into a PRF where the functions have a longer output $\ell$.
+Specifically, we can make the following definition:</p>
+<p>::: {.definition title=&ldquo;PRF ensemble (varying inputs and outputs)&rdquo; #prfensembledinputdef}
+Let $\ell_{\text{in}},\ell_{\text{out}}:\N \rightarrow \N$. An ensemble of functions ${ f_s }<em>{s\in {0,1}^*}$ is a <em>PRF ensemble with input length $\ell</em>{\text{in}}$ and output length $\ell</em>{\text{out}}$_ if:</p>
+<ol>
+<li>
+<p>For every $n\in\N$ and $s \in {0,1}^n$, $f_s:{0,1}^{\ell_{\text{in}}} \rightarrow {0,1}^{\ell_{\text{out}}}$.</p>
+</li>
+<li>
+<p>For every polynomial $p$ and $p(n)$-time adversary $A$, if $n$ is large enough then</p>
+</li>
+</ol>
+<p>$$ \left| \E_{s\in{0,1}^n}[ A^{f_s(\cdot)}(1^n)] - \E_{h \leftarrow_R {0,1}^{\ell_{\text{in}}} \rightarrow {0,1}^{\ell_{\text{out}}} }[A^h(1^n)] \right| &lt; 1/p(n) ;.$$
+:::</p>
+<p>Standard PRFs as we defined in <a class="link" href="" >prfensemnledef</a>{.ref} correspond to generalized PRFs where $\ell_{\text{in}}(n)=n$ and $\ell_{\text{out}}(n)=1$ for all $n\in\N$.
+It is a good exercise (which we will leave to the reader) to prove the following theorem:</p>
+<blockquote>
+<h3 id="PRFlengthextensionthm">
+</h3></blockquote>
+<p>Suppose that PRFs exist. Then for every constant $c$ and polynomial-time computable functions $\ell_{\text{in}},\ell_{\text{out}}:\N \rightarrow \N$ with $\ell_{\text{in}}(n), \ell_{\text{out}}(n) \leq n^c$, there exist a
+PRF ensemble with input length $\ell_{\text{in}}$ and output length $\ell_{\text{out}}$.</p>
+<p>Thus from now on whenever we are given a PRF, we will allow ourselves to assume that it has any polynomial output size that is convenient for us.</p>
+<h2 id="message-authentication-codes">Message Authentication Codes
+</h2><p>One time passwords are a tool allowing you to prove your <em>identity</em> to, say, your email server. But even after you did so, how can the server trust that future communication comes from you and not from some attacker that can interfere with the communication channel between you and the server (so called &ldquo;man in the middle&rdquo; attack)? Similarly, one time passwords may allow a software company to prove their identity before they send you a software update, but how do you know that an attacker does not change some bits of this software update on route between their servers and your device?</p>
+<p>This is where <em>Message Authentication Codes (MACs)</em> come into play- their role is to authenticate not only the <em>identity</em> of the parties but also their <em>communication</em>.
+Once again we have <strong>Alice</strong> and <strong>Bob</strong>, and the adversary <strong>Mallory</strong> who can actively modify messages (in contrast to the passive eavesdropper Eve).
+Similar to the case to encryption, Alice has a <em>message</em>  $m$ she wants to send to Bob, but now we are not concerned with Mallory <em>learning</em> the contents of the message.
+Rather, we want to make sure that Bob gets precisely the message $m$ sent by Alice.
+Actually this is too much to ask for, since Mallory can always decide to block all communication, but we can ask that either Bob gets precisely $m$ or he detects failure and accepts no message at all.
+Since we are in the <em>private key</em> setting, we assume that Alice and Bob share a key $k$ that is unknown to Mallory.</p>
+<p>What kind of security would we want? We clearly want Mallory not to be able to cause Bob to accept a message $m&rsquo;\neq m$.
+But, like in the encryption setting, we want more than that. We would like Alice and Bob to be able to use the same key for <em>many</em> messages.
+So, Mallory might observe the interactions of Alice and Bob on messages $m_1,\ldots,m_T$ before trying to cause Bob to accept a message $m&rsquo;<em>{T+1}  \neq m</em>{T+1}$.
+In fact, to make our notion of security more robust, we will even allow Mallory to <em>choose</em> the messages $m_1,\ldots,m_T$ (this is known as a <em>chosen message</em> or <em>chosen plaintext</em> attack).
+The resulting formal definition is below:</p>
+<blockquote>
+<h1 id="MACdef">
+</h1></blockquote>
+<p>Let $(S,V)$ (for <em>sign</em> and <em>verify</em>) be a pair of efficiently computable algorithms
+where $S$ takes as input a key $k$ and a message $m$, and produces a tag $\tau \in {0,1}^*$, while $V$ takes as input a key $k$, a message $m$,
+and a tag $\tau$, and produces a bit $b\in{0,1}$. We say that $(S,V)$ is a <em>Message Authentication Code (MAC)</em> if:</p>
+<blockquote>
+</blockquote>
+<ul>
+<li>For every key $k$ and message $m$, $V_k(m,S_k(m))=1$. \</li>
+<li>For every polynomial-time adversary $A$ and polynomial $p(n)$, it is with less than $1/p(n)$  probability over the choice of $k\leftarrow_R{0,1}^n$
+that $A^{S_k(\cdot)}(1^n)=(m&rsquo;,\tau&rsquo;)$ such that $m&rsquo;$ is <em>not</em> one of the messages $A$ queries and $V_k(m&rsquo;,\tau&rsquo;)=1$.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></li>
+</ul>
+<p>If Alice and Bob share the key $k$, then to send a message $m$ to Bob, Alice will simply send over the pair $(m,\tau)$ where $\tau = S_k(m)$.
+If Bob receives a message $(m&rsquo;,\tau&rsquo;)$, then he will accept $m&rsquo;$ if and only if $V_k(m&rsquo;,\tau&rsquo;)=1$. Mallory now observes $t$ rounds of communication
+of the form $(m_i,S_k(m_i))$ for messages $m_1,\ldots,m_t$ of her choice, and her goal is to try to create a new message $m&rsquo;$ that was <em>not</em> sent
+by Alice, but for which she can forge a valid tag $\tau&rsquo;$ that will pass verification. Our notion of security guarantees that she&rsquo;ll only be able to do
+so with negligible probability, in which case the MAC is <strong>CMA-secure</strong>.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<blockquote>
+<h1 id="choosemessages">
+</h1></blockquote>
+<p>The notion of a &ldquo;chosen message attack&rdquo; might seem a little &ldquo;over the top&rdquo;. After all, Alice is going to send to Bob the messages of <em>her</em> choice, rather than those chosen by her adversary Mallory.
+However, as cryptographers have learned time and again the hard way, it is better to be conservative in our security definitions and think of an attacker that has as much power as possible.
+First of all, we want a message authentication code that will work for <em>any</em> sequence of messages, and so it&rsquo;s better to consider this &ldquo;worst case&rdquo; setting of allowing Mallory to choose them.
+Second, in many realistic settings an adversary could have some effect on the messages that are being sent by the parties.
+This has occurred time and again in cases ranging from web servers to German submarines in World War II, and we&rsquo;ll return to this point when we talk about <em>chosen plaintext</em> and <em>chosen ciphertext</em> attacks on encryption schemes.</p>
+<blockquote>
+<h1 id="strongunforgability">
+</h1></blockquote>
+<p>Some texts (such as Boneh Shoup) define a stronger notion of unforgability where the adversary cannot even produce new signatures for messages it <em>has</em> queried in the attack. That is, the adversary cannot produce a valid message-signature pair that it has not seen before.
+This stronger definition can be useful for some applications.
+It is fairly easy to transform MACs satisfying <a class="link" href="" >MACdef</a>{.ref} into MACs satisfying strong unforgability.
+In particular, if the signing function is deterministic, and we use a <em>canonical verifier algorithm</em> where $V_k(m,\sigma)=1$ iff $S_k(m)=\sigma$ then weak unforgability automatically implies strong unforgability since every message has a single signature that would pass verification (can you see why?).</p>
+<h2 id="macs-from-prfs">MACs from PRFs
+</h2><p>We now show how pseudorandom function generators yield message authentication codes. In fact, the construction is so immediate that much of the more applied cryptographic literature does not distinguish between these two concepts, and uses the name &ldquo;Message Authentication Codes&rdquo; to refer to both MAC&rsquo;s and PRF&rsquo;s. However, since this is not applied cryptographic literature, the distinction is rather important.</p>
+<blockquote>
+<h1 id="MACfromPRFthm">
+</h1></blockquote>
+<p>Under the PRF Conjecture, there exists a secure MAC.</p>
+<p>::: {.proof data-ref=&ldquo;MACfromPRFthm&rdquo;}
+Let $F(\cdot,\cdot)$ be a secure pseudorandom function generator with $n/2$ bits output (which we can obtain using <a class="link" href="" >PRFlengthextensionthm</a>{.ref}).
+We define $S_k(m) = F(k,m)$ and $V_k(m,\tau)$ to output $1$ iff $F(k,m)=\tau$.
+Suppose towards the sake of contradiction that there exists an adversary $A$ breaks the security of this construction of a MAC. That is, $A$ queries $S_k(\cdot)$
+$poly(n)$ many times and with probability $1/p(n)$ for some polynomial $p$ outputs $(m&rsquo;,\tau&rsquo;)$ that she did <em>not</em> ask for such that $F(k,m&rsquo;)=\tau&rsquo;$.</p>
+<p>We use $A$ to construct an adversary $A&rsquo;$ that can distinguish between oracle access to a PRF and a random function by simulating the MAC security game inside $A&rsquo;$. Every time $A$ requests the signature of some message $m$, $A&rsquo;$ returns $O(m)$. When $A$ returns $(m&rsquo;, \tau&rsquo;)$ at the end of the $MAC$ game, $A&rsquo;$ returns $1$ if $O(m&rsquo;) = \tau&rsquo;$, and $0$ otherwise. If $O(\cdot) = H(\cdot)$ for some completely random function $H(\cdot)$, then the value $H(m&rsquo;)$ would be completely
+random in ${0,1}^{n/2}$ and independent of all prior queries. Hence the probability that this value would equal $\tau&rsquo;$ is at most $2^{-n/2}$. If instead $O(\cdot) = F(k,\cdot)$, then by the fact that $A$ wins the MAC security game with probability $1/p(n)$, the adversary $A&rsquo;$ will output $1$ with probability $1/p(n)$. That means that such an adversary $A&rsquo;$ can distinguish between an oracle to $F(k,\cdot)$ and an oracle
+to a random function $H$, which gives us a contradiction.
+:::</p>
+<h2 id="arbitrary-input-length-extension-for-macs-and-prfs">Arbitrary input length extension for MACs and PRFs
+</h2><p>So far we required the message to be signed $m$ to be no longer than the key $k$ (i.e., both $n$ bits long). However, it is not hard to see that this requirement is not really needed. If our message is longer, we can divide it into blocks $m_1,\ldots,m_t$
+and sign each message $(i,m_i)$ individually. The disadvantage here is that the size of the tag (i.e., MAC output) will grow with the
+size of the message. However, even this is not really needed. Because the tag has length $n/2$ for length $n$ messages, we can sign the <em>tags</em> $\tau_1,\ldots,\tau_t$
+and only output those. The verifier can repeat this computation to verify this. We can continue this way and so get tags of $O(n)$ length for arbitrarily
+long messages.
+Hence in the future, whenever we need to, we can assume that our PRFs and MACs can get inputs in ${0,1}^*$ &mdash; i.e., arbitrarily length strings.</p>
+<p>We note that this issue of length extension is actually quite a thorny and important one in practice. The above approach is not the most efficient way to
+achieve this, and there are several more practical variants in the literature (see Boneh-Shoup Sections 6.4-6.8). Also, one needs to be very
+careful on the exact way one chops the message into blocks and pads it to an integer multiple of the block size. Several attacks have been mounted on
+schemes that performed this incorrectly.</p>
+<h2 id="aside-natural-proofs">Aside: natural proofs
+</h2><p>Pseudorandom functions play an important role in computational complexity, where they have been used as a way to give &ldquo;barrier results&rdquo; for proving results such as $\mathbf{P}\neq \mathbf{NP}$.^[This discussion has more to do with computational complexity than cryptography, and so can be safely skipped without harming understanding of future material in this course.]
+Specifically, the <a class="link" href="https://goo.gl/fiH3Pe"  target="_blank" rel="noopener"
+    >Natural Proofs</a> barrier for proving circuit lower bounds says that if strong enough pseudorandom functions exist, then certain types of arguments are bound to fail.
+These are arguments which come up with a property $EASY$ of a Boolean function $f:{0,1}^n \rightarrow {0,1}$ such that:</p>
+<ul>
+<li>
+<p>If $f$ can be computed by a polynomial sized circuit, then it has the property $EASY$.</p>
+</li>
+<li>
+<p>The property $EASY$ fails to hold for a random function with high probability.</p>
+</li>
+<li>
+<p>Checking whether $EASY$ holds can be done in time polynomial <em>in the truth table size of $f$</em>. That is, in $2^{O(n)}$ time.</p>
+</li>
+</ul>
+<p>A priori these technical conditions might not seem very &ldquo;natural&rdquo; but it turns out that many approaches for proving circuit lower bounds (for restricted families of circuits) have this form.
+The idea is that such approaches find a &ldquo;non generic&rdquo; property of easily computable function, such as finding some interesting correlations between the some input bits and the output.
+These are correlations that are unlikely to occur in random functions.
+The lower bound typically follows by exhibiting a function $f_0$ that does not have this property, and then using that to derive that $f_0$ cannot be efficiently computed by this particular restricted family of circuits.</p>
+<p>The existence of strong enough pseudorandom functions can be shown to contradict the existence of such a property $EASY$, since a pseudorandom function can be computed by a polynomial sized circuit, but it cannot be distinguished from a random function.
+While a priori a pseudorandom function is only secure for polynomial time distinguishers, under certain assumptions it might be possible to create a pseudorandom function with a seed of size, say, $n^5$, that would be secure with respect to adversaries running in time $2^{O(n^2)}$.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Clearly if the adversary outputs a pair $(m,\tau)$ that it did query from its oracle then that pair will pass verification. This suggests the possibility of a <em>replay</em> attack whereby Mallory resends to Bob a message that Alice sent him in the past.  As above, one can thwart this by insisting the every message $m$ begins with a fresh nonce or a value derived from the current time.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>A priori you might ask if we should not also give Mallory an oracle to $V_k(\cdot)$ as well. After all, in the course of those many interactions, Mallory could also send Bob many messages $(m&rsquo;,\tau&rsquo;)$ of her choice, and observe from his behavior whether or not these passed verification. It is a good exercise to show that adding such an oracle does not change the power of the definition, though we note that this is decidedly <em>not</em> the case in the analogous question for encryption.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

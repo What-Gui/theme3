@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Establishing secure connections over insecure channels We&rsquo;ve now compiled all the tools that are needed for the basic goal of cryptography (which is still being subverted quite often) allowing Alice and Bob to exchange messages assuring their integrity and confidentiality over a channel that is observed or controlled by an adversary. Our tools for achieving this goal are:\nPublic key (aka asymmetric) encryption schemes.\nPublic key (aka asymmetric) digital signatures schemes.\n">
+<title>Secure communication over insecure channels</title>
+
+<link rel='canonical' href='http://localhost:1313/p/secure-communication-over-insecure-channels/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Secure communication over insecure channels">
+<meta property='og:description' content="Establishing secure connections over insecure channels We&rsquo;ve now compiled all the tools that are needed for the basic goal of cryptography (which is still being subverted quite often) allowing Alice and Bob to exchange messages assuring their integrity and confidentiality over a channel that is observed or controlled by an adversary. Our tools for achieving this goal are:\nPublic key (aka asymmetric) encryption schemes.\nPublic key (aka asymmetric) digital signatures schemes.\n">
+<meta property='og:url' content='http://localhost:1313/p/secure-communication-over-insecure-channels/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Secure communication over insecure channels">
+<meta name="twitter:description" content="Establishing secure connections over insecure channels We&rsquo;ve now compiled all the tools that are needed for the basic goal of cryptography (which is still being subverted quite often) allowing Alice and Bob to exchange messages assuring their integrity and confidentiality over a channel that is observed or controlled by an adversary. Our tools for achieving this goal are:\nPublic key (aka asymmetric) encryption schemes.\nPublic key (aka asymmetric) digital signatures schemes.\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#cryptographys-obsession-with-adjectives">Cryptography&rsquo;s obsession with adjectives.</a></li>
+    <li><a href="#basic-key-exchange-protocol">Basic Key Exchange protocol</a></li>
+    <li><a href="#authenticated-key-exchange">Authenticated key exchange</a>
+      <ol>
+        <li><a href="#bleichenbachers-attack-on-rsa-pkcs-v15-and-ssl-v30">Bleichenbacher&rsquo;s attack on RSA PKCS V1.5 and SSL V3.0</a></li>
+      </ol>
+    </li>
+    <li><a href="#chosen-ciphertext-attack-security-for-public-key-cryptography">Chosen ciphertext attack security for public key cryptography</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#cca-secure-public-key-encryption-in-the-random-oracle-model">CCA secure public key encryption in the Random Oracle Model</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#defining-secure-authenticated-key-exchange">Defining secure authenticated key exchange</a></li>
+        <li><a href="#the-compiler-approach-for-authenticated-key-exchange">The compiler approach for authenticated key exchange</a></li>
+      </ol>
+    </li>
+    <li><a href="#password-authenticated-key-exchange">Password authenticated key exchange.</a></li>
+    <li><a href="#client-to-client-key-exchange-for-secure-text-messaging---zrtp-otr-textsecure">Client to client key exchange for secure text messaging - ZRTP, OTR, TextSecure</a></li>
+    <li><a href="#heartbleed-and-logjam-attacks">Heartbleed and logjam attacks</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/secure-communication-over-insecure-channels/">Secure communication over insecure channels</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    23 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="establishing-secure-connections-over-insecure-channels">Establishing secure connections over insecure channels
+</h1><p>We&rsquo;ve now compiled all the tools that are needed for the basic goal of cryptography (which is still being subverted quite often) allowing Alice and Bob to exchange messages assuring their integrity and confidentiality over a channel that is observed or controlled by an adversary.
+Our tools for achieving this goal are:</p>
+<ul>
+<li>
+<p>Public key (aka asymmetric) encryption schemes.</p>
+</li>
+<li>
+<p>Public key (aka asymmetric) digital signatures schemes.</p>
+</li>
+<li>
+<p>Private key (aka symmetric) encryption schemes - block ciphers and stream ciphers.</p>
+</li>
+<li>
+<p>Private key (aka symmetric) message authentication codes and pseudorandom functions.</p>
+</li>
+<li>
+<p>Hash functions that are used both as ways to compress messages for authentication as well as key derivation and other tasks.</p>
+</li>
+</ul>
+<p>The notions of security we require from these building blocks can vary as well. For encryption schemes we talk about CPA (chosen plaintext attack)
+and CCA (chosen ciphertext attacks), for hash functions we talk about collision-resistance, being used (combined with keys) as pseudorandom functions, and then sometimes we simply model those as random oracles.  Also, all of those tools require access to a source of randomness, and here we use hash functions as well for entropy extraction.</p>
+<h2 id="cryptographys-obsession-with-adjectives">Cryptography&rsquo;s obsession with adjectives.
+</h2><p>As we learn more and more cryptography we see more and more adjectives, every notion seems to have modifiers such as &ldquo;non-malleable&rdquo;, &ldquo;leakage-resilient&rdquo;, &ldquo;identity based&rdquo;, &ldquo;concurrently secure&rdquo;, &ldquo;adaptive&rdquo;, &ldquo;non-interactive&rdquo;, etc. etc.
+Indeed, this motivated a parody web page of an <a class="link" href="https://cseweb.ucsd.edu/~mihir/crypto-topic-generator.html"  target="_blank" rel="noopener"
+    >automatic crypto paper title generator</a>.
+Unlike algorithms, where typically there are straightforward <em>quantitative</em> tradeoffs (e.g., faster is better), in cryptography there are many <em>qualitative</em> ways protocols can vary based on the assumptions they operate under and the notions of security they provide.</p>
+<p>In particular, the following issues arise when considering the task of securely transmitting information between two parties Alice and Bob:</p>
+<ul>
+<li>
+<p><strong>Infrastructure/setup assumptions:</strong> What kind of setup can Alice and Bob rely upon? For example in the TLS protocol, typically Alice is a website and Bob is user; using the infrastructure of certificate authorities, Bob has a trusted way to obtain Alice&rsquo;s <em>public signature key</em>, while Alice doesn&rsquo;t know anything about Bob. But there are many other variants as well. Alice and Bob could share a (low entropy) <em>password</em>. One of them might have some hardware token, or they might have a secure out of band channel (e.g., text messages) to transmit a short amount of information. There are even variants where the parties authenticate by something they <em>know</em>, with one recent example being the notion of <em>witness encryption</em> (Garg, Gentry, Sahai, and Waters) where one can encrypt information in a &ldquo;digital time capsule&rdquo; to be opened by anyone who, for example, finds a proof of the Riemann hypothesis.</p>
+</li>
+<li>
+<p><strong>Adversary access:</strong> What kind of attacks do we need to protect against. The simplest setting is a <em>passive</em> eavesdropping adversary (often called &ldquo;Eve&rdquo;) but we sometimes consider an <em>active person-in-the-middle</em> attacks (sometimes called &ldquo;Mallory&rdquo;). We sometimes consider notions of <em>graceful recovery</em>. For example, if the adversary manages to hack into one of the parties then it can clearly read their communications from that time onwards, but we would want their past communication to be protected (a notion known as <em>forward secrecy</em>). If we rely on trusted infrastructure such as certificate authorities, we could ask what happens if the adversary breaks into those. Sometimes we rely on the security of several entities or secrets, and we want to consider adversaries that control <em>some</em> but not <em>all</em> of them, a notion known as <em>threshold cryptography</em>. While we typically assume that information is either fully secret or fully public, we sometimes want to model <em>side channel attacks</em> where the adversary can learn <em>partial information</em> about the secret, this is known as <em>leakage-resistant cryptography</em>.</p>
+</li>
+<li>
+<p><strong>Interaction:</strong> Do Alice and Bob get to interact and relay several messages back and forth or is it a &ldquo;one shot&rdquo; protocol? You may think that this is merely a question about efficiency but it turns out to be crucial for some applications. Sometimes Alice and Bob might not be two parties separated in space but the same party separated in time. That is, Alice wishes to send a message to her future self by storing an encrypted and authenticated version of it on some media. In this case, absent a time machine, back and forth interaction between the two parties is obviously impossible.</p>
+</li>
+<li>
+<p><strong>Security goal:</strong> The security goals of a protocol are usually stated in the negative- what does it mean for an adversary to <em>win</em> the security game. We typically want the adversary to learn absolutely no information about the secret beyond what she obviously can. For example, if we use a shared password chosen out of $t$ possibilities, then we might need to allow the adversary $1/t$ success probability, but we wouldn&rsquo;t want her to get anything beyond $1/t+negl(n)$. In some settings, the adversary can obviously completely disconnect the communication channel between Alice and Bob, but we want her to be essentially limited to either dropping communication completely or letting it go by unmolested, and not have the ability to modify communication without detection. Then in some settings, such as in the case of steganography and anonymous routing, we would want the adversary not to find out even the fact that a conversation had taken place.</p>
+</li>
+</ul>
+<h2 id="basic-key-exchange-protocol">Basic Key Exchange protocol
+</h2><p>The basic primitive for secure communication is a <em>key exchange</em> protocol, whose goal is to have Alice and Bob share a common random secret key $k\in{0,1}^n$.
+Once this is done, they can use a CCA secure / authenticated private-key encryption to communicate with confidentiality and integrity.</p>
+<p>The canonical example of a basic key exchange protocol is the <em>Diffie Hellman</em> protocol.
+It uses as public parameters a group $\mathbb{G}$ with generator $g$, and then follows the following steps:</p>
+<ol>
+<li>
+<p>Alice picks random $a\leftarrow_R{0,\ldots,|\mathbb{G}|-1}$ and sends $A=g^a$.</p>
+</li>
+<li>
+<p>Bob picks random $b\leftarrow_R {0,\ldots,|\mathbb{G}|-1}$ and sends $B=g^b$.</p>
+</li>
+<li>
+<p>They both set their key as $k=H(g^{ab})$ (which Alice computes as $B^a$ and Bob computes as $A^b$), where $H$ is some hash function.</p>
+</li>
+</ol>
+<p>Another variant is using an arbitrary public key encryption scheme such as RSA:</p>
+<ol>
+<li>
+<p>Alice generates keys $(d,e)$ and sends $e$ to Bob.</p>
+</li>
+<li>
+<p>Bob picks random $k \leftarrow_R{0,1}^m$ and sends $E_e(k)$ to Alice.</p>
+</li>
+<li>
+<p>They both set their key to $k$ (which Alice computes by decrypting Bob&rsquo;s ciphertext)</p>
+</li>
+</ol>
+<p>Under plausible assumptions, it can be shown that these protocols are secure against a <em>passive</em> eavesdropping adversary Eve.
+The notion of security here means that, similar to encryption, if after observing the transcript Eve receives with probability $1/2$ the value of $k$ and with probability $1/2$ a random string $k&rsquo;\gets{0,1}^n$, then her probability of guessing which is the case would be at most $1/2+negl(n)$ (where $n$ can be thought of as $\log |\mathbb{G}|$ or some other parameter related to the length of bit representation of members in the group).</p>
+<h2 id="authenticated-key-exchange">Authenticated key exchange
+</h2><p>The main issue with this key exchange protocol is of course that adversaries often are <em>not</em> passive.
+In particular, an active Eve could agree on her own key with Alice and Bob separately and then be able to see and modify all future communication.
+She might also be able to create weird (with some potential security implications) correlations by, say, modifying the message $A$ to be $A^2$ etc..</p>
+<p>For this reason, in actual applications we typically use <em>authenticated</em> key exchange.
+The notion of authentication used depends on what we can assume on the setup assumptions.
+A standard assumption is that Alice has some public keys but Bob doesn&rsquo;t.
+The justification for this assumption is that Alice might be a server, which has the capabilities to generate a private/public key pair, disseminate the public key (e.g., using a certificate authority) and maintain the private key in a secure storage.
+In contrast, if Bob is an individual user, then it might not have access to a secure storage to maintain a private key (since personal devices can often be hacked).
+Moreover, Alice might not care about Bob&rsquo;s identity. For example, if Alice is nytimes.com and Bob is a reader, then Bob wants to know that the news he reads really came from the <em>New York Times</em>, but Alice is equally happy to engage in communication with any reader.
+In other cases, such as gmail.com, after an initial secure connection is setup, Bob can authenticate himself to Alice as a registered user (by sending his login information or sending a &ldquo;cookie&rdquo; stored from a past interaction).</p>
+<p>It is possible to obtain a secure channel under these assumptions, but one needs to be careful. Indeed, the standard protocol for securing the web: the <a class="link" href="https://goo.gl/md9Bsa"  target="_blank" rel="noopener"
+    >transport Layer Security (TLS) protocol</a> (and its predecessor SSL) has gone through six revisions (including a name change from SSL to TLS) largely because of security concerns.
+We now illustrate one of those attacks.</p>
+<h3 id="bleichenbachers-attack-on-rsa-pkcs-v15-and-ssl-v30">Bleichenbacher&rsquo;s attack on RSA PKCS V1.5 and SSL V3.0
+</h3><p>If you have a public key, a natural approach is to take the encryption-based protocol and simply skip the first step since Bob already knows the public
+key $e$ of Alice.
+This is basically what happened in the SSL V3.0 protocol.
+However, as was <a class="link" href="http://archiv.infsec.ethz.ch/education/fs08/secsem/bleichenbacher98.pdf"  target="_blank" rel="noopener"
+    >shown by Bleichenbacher in 1998</a>, it turns out this is susceptible to the following attack:</p>
+<ul>
+<li>
+<p>The adversary listens in on a conversation, and in particular observes $c=E_e(k)$ where $k$ is the private key.</p>
+</li>
+<li>
+<p>The adversary then starts many connections with the server with ciphertexts related to $c$, and observes whether they succeed or fail (and in what way they fail, if they do). It turns out that based on this information, the adversary would be able to recover the key $k$.</p>
+</li>
+</ul>
+<p>Specifically, the version of RSA (known as PKCS \�?1 V1.5) used in the SSL V3.0 protocol requires the value $x$ to have a particular format, with the top two bytes having a certain form.
+If in the course of the protocol, a server decrypts $y$ and gets a value $x$ not of this form then it would send an error message and halt the connection.
+While the designers of SSL V3.0 might not have thought of it that way, this amounts to saying that an SSL V3.0 server supplies to any party an oracle that on input $y$ outputs $1$ iff $y^{d} \pmod{m}$ has this form, where $d = e^{-1} \pmod{|\Z^*_m|}$ is the secret decryption key.
+It turned out that one can use such an oracle to invert the RSA function.
+For a result of a similar flavor, see the (1/2 page) proof of Theorem 11.31 (page 418) in KL, where they show that an oracle that given $y$ outputs the least significant bit of $y^d \pmod{m}$ allows one to invert the RSA function.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>For this reason, new versions of the SSL used a different variant of RSA known as PKCS \�?1 V2.0 which satisfies (under assumptions) <em>chosen ciphertext security (CCA)</em> and in particular such oracles cannot be used to break the encryption. Nonetheless, there are still some implementation issues that allowed adversaries to perform some attacks, specifically <a class="link" href="http://archiv.infsec.ethz.ch/education/fs08/secsem/Manger01.pdf"  target="_blank" rel="noopener"
+    >Manger</a> showed that depending on how PKCS \�?1 V2.0 is implemented, it might be possible to still launch an attack. The main reason is that the specification states several conditions under which decryption box is supposed to return &ldquo;error&rdquo;. The proof of CCA security crucially relies on the attacker not being able to distinguish which condition caused the error message. However, some implementations could still leak this information, for example by checking these conditions one by one, and so returning &ldquo;error&rdquo; quicker when the earlier conditions hold. See discussion in Katz-Lindell (3rd ed)  12.5.4.</p>
+<h2 id="chosen-ciphertext-attack-security-for-public-key-cryptography">Chosen ciphertext attack security for public key cryptography
+</h2><p>The concept of chosen ciphertext attack security makes perfect sense for <em>public key</em> encryption as well.
+It is defined in the same way as it was in the private key setting:</p>
+<p>::: {.definition title=&ldquo;CCA secure public key encryption&rdquo; #CCSpubdef}
+A public key encryption scheme $(G,E,D)$ is <em>chosen ciphertext attack (CCA) secure</em> if every
+efficient Mallory wins in the following game with probability at most $1/2+ negl(n)$:</p>
+<ul>
+<li>
+<p>The keys $(e,d)$ are generated via $G(1^n)$, and Mallory gets the public encryption key $e$ and $1^n$.</p>
+</li>
+<li>
+<p>For $poly(n)$ rounds, Mallory gets access to the function $c \mapsto D_d(c)$. (She doesn&rsquo;t need access to $m \mapsto E_e(m)$ since she already knows $e$.)</p>
+</li>
+<li>
+<p>Mallory chooses a pair of messages ${ m_0,m_1 }$, a secret $b$ is chosen at random in ${0,1}$, and Mallory gets $c^* = E_e(m_b)$. (Note that she of course does <em>not</em> get the randomness used to generate this challenge encryption.)</p>
+</li>
+<li>
+<p>Mallory now gets another $poly(n)$ rounds of access to the function $c \mapsto D_d(c)$ except that she is not allowed to query $c^*$.</p>
+</li>
+<li>
+<p>Mallory outputs $b&rsquo;$ and <em>wins</em> if $b&rsquo;=b$.
+:::</p>
+</li>
+</ul>
+<p>In the private key setting, we achieved CCA security by combining a CPA-secure private key encryption scheme with a message authenticating code (MAC), where to CCA-encrypt a message $m$,
+we first used the CPA-secure scheme on $m$ to obtain a ciphertext $c$, and then added an authentication tag $\tau$ by signing $c$ with the MAC.
+The decryption algorithm first verified the MAC before decrypting the ciphertext.
+In the public key setting, one might hope that we could repeat the same construction using a CPA-secure <em>public key</em> encryption and replacing the MAC with <em>digital signatures</em>.</p>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>Try to think what would be such a construction, and whether there is a fundamental obstacle to combining digital signatures and public key encryption in the same way we combined MACs and private key encryption.</p>
+<p>Alas, as you may have realized, there is a fly in this ointment.
+In a signature scheme (necessarily) it is the <em>signing key</em> that is <em>secret</em>, and the <em>verification key</em> that is <em>public</em>.
+But in a public key encryption, the <em>encryption</em> key is <em>public</em>, and hence it makes no sense for it to use a secret signing key.
+(It&rsquo;s not hard to see that if you reveal the secret signing key then there is no point in using a signature scheme in the first place.)</p>
+<p><strong>Why CCA security matters.</strong> For the reasons above, constructing CCA secure public key encryption is very challenging.
+But is it worth the trouble? Do we really need this &ldquo;ultra conservative&rdquo; notion of security?
+The answer is <em>yes</em>.
+Just as we argued for <em>private key</em> encryption, chosen ciphertext security is the notion that gets us as close as possible to designing encryptions that fit the metaphor of <em>secure sealed envelopes</em>.
+Digital analogies will never be a perfect imitation of physical ones, but such metaphors are what people have in mind when designing cryptographic protocols, which is a hard enough task even when we don&rsquo;t have to worry about the ability of an adversary to reach inside a sealed envelope and XOR the contents of the note written there with some arbitrary string.
+Indeed, several practical attacks, including Bleichenbacher&rsquo;s attack above, exploited exactly this gap between the physical metaphor and the digital realization.
+For more on this, please see <a class="link" href="http://www.shoup.net/papers/expo.pdf"  target="_blank" rel="noopener"
+    >Victor Shoup&rsquo;s survey</a> where he also describes the Cramer-Shoup encryption scheme which was the first practical public key system to be shown CCA secure without resorting to the random oracle heuristic.
+(The first definition of CCA security, as well as the first polynomial-time construction, was given in a seminal 1991 work of Dolev, Dwork and Naor.)</p>
+<h2 id="cca-secure-public-key-encryption-in-the-random-oracle-model">CCA secure public key encryption in the Random Oracle Model
+</h2><p>We now show how to convert any CPA-secure public key encryption scheme to a CCA-secure scheme in the random oracle model (this construction is taken from Fujisaki and Okamoto, CRYPTO 99).
+In the homework, you will see a somewhat simpler direct construction of a CCA secure scheme from a <em>trapdoor permutation</em>, a variant of which
+is known as OAEP (which has better ciphertext expansion) has been standardized as PKCS \�?1 V2.0 and is used in several protocols.
+The advantage of a generic construction is that it can be instantiated not just with the RSA and Rabin schemes, but also directly with Diffie-Hellman and Lattice based schemes
+(though there are direct and more efficient variants for these as well).</p>
+<p>::: {.quote }
+<strong>CCA-ROM-ENC Scheme:</strong></p>
+<ul>
+<li>
+<p><strong>Ingredients:</strong> A CPA-secure public key encryption scheme $(G&rsquo;,E&rsquo;,D&rsquo;)$ and three hash functions $H,H&rsquo;,H&rsquo;&rsquo;:{0,1}^*\rightarrow{0,1}^n$ (which we model as independent random oracles<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>).</p>
+</li>
+<li>
+<p><em>Notes:</em> We assume that $E&rsquo;$ takes $n$ bit messages (since CPA security is preserved under concatenation, a one-bit scheme can be transformed into such a scheme). Since $E&rsquo;$ is (necessarily) randomized, we denote by $E&rsquo;(x;s)$ the encryption of the message $x$ using the randomness $s$. We assume that the number of bits of randomness $E&rsquo;$ uses is $n$. (Otherwise we can modify the scheme to use $n$ bits using a pseudorandom generator, or modify the co-domain of $H$ to be the space of random choices for $E&rsquo;$.)</p>
+</li>
+<li>
+<p><strong>Key generation:</strong> We generate keys $(e,d)=G&rsquo;(1^n)$ for the underlying encryption scheme.</p>
+</li>
+<li>
+<p><strong>Encryption:</strong> To encrypt a message $m\in{0,1}^\ell$, we select $r \leftarrow_R {0,1}^n$, and output</p>
+</li>
+</ul>
+<p>$$E_e(m) = E&rsquo;_e(r ; H(m|r)) | H&rsquo;&rsquo;(r) \oplus m | H&rsquo;(m | r)$$</p>
+<p>recall that $E&rsquo;_e(r ; s)$ denotes the encryption of the message $r$ using randomness $s$.</p>
+<ul>
+<li><strong>Decryption:</strong> To decrypt a ciphertext $c|y | h$ first let $r=D&rsquo;_d(c)$, then compute  $m=H&rsquo;&rsquo;(r) \oplus y$. Finally check that $c= E&rsquo;_e(r ; H(m|r))$ and $h=H&rsquo;(m|r)$. If either check fails we output <code>error</code>; otherwise we output $m$.
+:::</li>
+</ul>
+<blockquote>
+<h1 id="CCAPKCthm">
+</h1></blockquote>
+<p>The above CCA-ROM-ENC scheme is CCA secure.</p>
+<p>::: {.proof data-ref=&ldquo;CCAPKCthm&rdquo;}
+Let $A$ be a polynomial-time adversary that wins the &ldquo;CCA Game&rdquo; with respect to the scheme $(G,E,D)$ with probability $1/2 + \epsilon$. We will show (Claim 1) that there is an adversary $\tilde{A}$ that can win in this game with probability $1/2 + \epsilon - negl(n)$ <em>without using the decryption box</em>.
+We will then show (Claim 2) that this implies that $A&rsquo;$ can win the <em>CPA game</em> with respect to the scheme $(G&rsquo;,E&rsquo;,D&rsquo;)$ with probability $1/2 + \Omega(\epsilon)$.
+We start by establishing the first claim:</p>
+<p><strong>Claim 1:</strong> Under the above assumptions, there exists a polynomial-time adversary $\tilde{A}$ that wins the CCA game with respect to the scheme $(G,E,D)$ without making any queries to the decryption box.</p>
+<p><strong>Proof of Claim 1:</strong> The adversary $\tilde{A}$ will simulate $A$, keeping track of all of $A$&rsquo;s queries to its decryption and random oracles. Whenever $A$ makes a query $c|y|h$ to the decryption oracle, then $\tilde{A}$ will respond to it using the following &ldquo;fake&rdquo; decryption box $\tilde{D}$: check whether $h$ was returned before from the random oracle $H&rsquo;$ as a response to a query $m|r$ by $A$. If this is the case, then $\tilde{A}$ will check if $c = E&rsquo;_e(r;H(m|r))$ and $y= H&rsquo;&rsquo;(r) \oplus m$. If so, then it will return $m$, otherwise it will return <code>error</code>. Note that $\tilde{D}(c|y|h)$ is computed without any knowledge of the secret key $d$.</p>
+<p>We claim that the probability that $\tilde{A}$ will return an answer that differs from the true decryption box is negligible.  Indeed, for each particular query $c|y|h$, first observe that if $\tilde{D}(c|y|h)$ is not <code>error</code> then  $\tilde{D}(c|y|h) = D_d(c|y|h)$. Indeed, in this case it holds that $c=E&rsquo;_e(m;H(m|r))$, $y=H&rsquo;(r) \oplus m$ and $h=H&rsquo;(m|r)$. Hence this is a properly formatted encryption of $m$, on which the true decryption box will return $m$ as well.</p>
+<p>So the only way that $D$ and $\tilde{D}$ differ is if $D_d(c|y|h)=m$ but $\tilde{D}(c|y|h)$ returns <code>error</code>. For this it must be the case that for $r=D&rsquo;_d(c)$, $h=H&rsquo;(m|r)$ but $m|r$ was <em>not</em> queried before by $A$. There are two options: either $m|r$ was not queried at all, but then by the &ldquo;lazy evaluation&rdquo; paradigm, the value $H&rsquo;(m|r)$ is chosen uniformly in ${0,1}^n$ independently of $h$, and the probability that it equals $h$ is $2^{-n}$. The other option is that $m|r$ was queried but not by the adversary. The only other party that can make queries to the oracle in the CCA game is the challenger, and it only makes a single query to $H&rsquo;$ when producing the challenge ciphertext $C^* = c^<em>|y^</em>|h^<em>$ with $h^</em> = H&rsquo;(m^<em>|r^</em>)$. Now the adversary is not allowed to make the query $C^<em>$ so in this case the query must have the form $c|y|h^</em>$ where $c|y \neq c^<em>|y^</em>$. But the only way that $D_d(c|y|h^<em>)$ returns a value other than <code>error</code> is if for $r=D&rsquo;_d(c)$ and $m = y \oplus H&rsquo;&rsquo;(r)$, $c=E_e(r;H(m|r))$ and $h^</em> = H&rsquo;(m|r)$. Since the probability of a collision in $H&rsquo;$ is negligible, this can only happen if $m|r = m^<em>|r^</em>$, but in this case it will hold that $c=c^<em>$ and $y=y^</em>$, contradicting the fact that the ciphertext must differ from $C^*$. <strong>QED (Claim 1)</strong></p>
+<p><strong>Claim 2:</strong> Under the above assumptions, there exists a polynomial-time adversary $A&rsquo;$ that wins the CPA game with respect to the scheme $(G&rsquo;,E&rsquo;,D&rsquo;)$ with probability at least  $1/2 + \epsilon/10$.</p>
+<p><strong>Proof of Claim 2:</strong><br>
+$A&rsquo;$ runs  the full CCA experiment with the adversary $\tilde{A}$ obtained from Claim 1, simulating the random oracles $H,H&rsquo;,H&rsquo;&rsquo;$ using &ldquo;lazy evaluation&rdquo;. When the time comes and the adversary $\tilde{A}$ chooses two ciphertexts $m_0,m_1$, then $A&rsquo;$ does the following:</p>
+<ol>
+<li>
+<p>The adversary $A&rsquo;$ will choose $r_0,r_1 \leftarrow_R {0,1}^n$, give them to its own challenger and get $c^<em>$ which is either an encryption of $r_{b^</em>}$ under $E&rsquo;<em>e$ for $b^* \leftarrow_R {0,1}$. If the adversary $\tilde{A}$ made in the past a query of the form $r_b$ or $m_b|r</em>{b&rsquo;}$ for $b,b&rsquo; \in {0,1}$  to one of the random oracles then we stop the experiment and declare failure. (Since $r_0,r_1$ are random in ${0,1}^n$ and $\tilde{A}$ made only polynomially many queries, the probability of this happening is negligible).</p>
+</li>
+<li>
+<p>The adversary $A&rsquo;$ will now give $c^* | y^* | h^<em>$ with $y^</em>,h^* \leftarrow_R {0,1}^n$ to $\tilde{A}$ as the response to the challenge. (Note that this ciphertext does not involve neither $m_0$ nor $m_1$ in any way.)</p>
+</li>
+<li>
+<p>Now if the adversary $\tilde{A}$ makes a query of the form $r_b$ or $m|r_b$ for $b\in {0,1}$ to one of its oracles, then $A&rsquo;$ will output $b$. Otherwise, it outputs a random output.</p>
+</li>
+</ol>
+<p>Note that the adversary $A&rsquo;$ ignores the <em>output</em> of $\tilde{A}$. It only cares about the queries that $\tilde{A}$ makes. Let&rsquo;s say that an &ldquo;$r_b$ query is one that has $r_b$ as a postfix&rdquo;. To finish the proof we make the following two claims:</p>
+<p><strong>Claim 2.1:</strong> The probability that $\tilde{A}$ makes an $r_{1-b^<em>}$ query is negligible.
+<strong>Proof:</strong> This is because the only value that $\tilde{A}$ receives that depends on one of $r_0,r_1$ is $c^</em>$ which is an encryption of $r_{b^<em>}$. Hence $\tilde{A}$ never sees any value that depends on $r_{1-b^</em>}$ and since it is uniform in ${0,1}^n$, the probability that $\tilde{A}$ makes a query with this postfix is negligible. <strong>QED (Claim 2.1)</strong></p>
+<p><strong>Claim 2.2:</strong>  $\tilde{A}$ will make an $r_{b^<em>}$ query with probability at least $\epsilon/2$.
+<strong>Proof:</strong> Let $c^</em> = E&rsquo;<em>e(r</em>{b^<em>} ; s^</em>)$ where $s^<em>$ is the randomness used in producing it. By the lazy evaluation paradigm, since no $r_{b^</em>}$ query was made up to that point, the distribution would be identical if we defined  $H(m_b|r_{b^<em>})=s^</em>$, defined $H&rsquo;&rsquo;(r_{b^<em>}) = y^</em> \oplus m_b$ and define $h^* = H&rsquo;(m_b|r_{b^<em>})$. Hence the distribution of the ciphertext is identical to how it is distributed in the actual CCA game. Now, since $\tilde{A}$ wins the CCA game with probability $1/2 + \epsilon - negl(n)$, in this game it must query $H&rsquo;&rsquo;$ at $r_{b^</em>}$ with probability at least $\epsilon/2$. Indeed, conditioned on not querying $H&rsquo;&rsquo;$ at this value, the string $y^*$ is independent of the message $m_0$, and the adversary cannot win the game with probability more than $1/2$. <strong>QED (Claim 2.2)</strong></p>
+<p>Together Claims 2.1 and 2.2 imply that the adversary $\tilde{A}$ makes an $r_{b^<em>}$ query with probability at least $\epsilon/2$, and makes an $r_{1-b^</em>}$ query with negligible probability, hence our adversary $A&rsquo;$ will output $b^*$ with probability at least $\epsilon/2$, and with all but a negligible part of the remaining probability will guess randomly, leading to an overall success in the CPA game of at least $1/2 + \epsilon/2$. <strong>QED (Claim 2 and hence theorem)</strong>
+:::</p>
+<h3 id="defining-secure-authenticated-key-exchange">Defining secure authenticated key exchange
+</h3><p>The basic goal of secure communication is to set up a <em>secure channel</em> between two parties Alice and Bob.
+We want to do so over an open network, where messages between Alice and Bob might be read, modified, deleted, or added by the adversary.
+Moreover, we want Alice and Bob to be sure that they are talking to one another rather than other parties.
+This raises the question of what is identity and how is it verified.
+Ultimately, if we want to use identities, then we need to trust some authority that decides which party has which identity.
+This is typically done via a <em>certificate authority (CA)</em>.
+This is some trusted authority, whose verification key $v_{CA}$ is public and known to all parties.
+Alice proves in some way to the CA that she is indeed Alice, and then generates a pair $(s_{Alice},v_{Alice})$, and gets from the CA the message $\sigma_{Alice}$=&ldquo;The key $v_{Alice}$ belongs to Alice&rdquo; signed with $s_{CA}$.^[The registration process could be more subtle than that, and for example Alice might need to <em>prove</em> to the CA that she does indeed know the corresponding secret key.]
+Now Alice can send $(v_{Alice},\sigma_{Alice})$ to Bob to certify that the owner of this public key is indeed Alice.</p>
+<p>For example, in the web setting, certain <a class="link" href="https://en.wikipedia.org/wiki/Certificate_authority"  target="_blank" rel="noopener"
+    >certificate authorities</a> can certify that a certain public key is associated with a certain website.
+If you go to a website using the <code>https</code> protocol, you should see a &ldquo;lock&rdquo; symbol on your browser which will give you details on the certificate.
+Often the certificate is a chain of certificate.
+If I click on this lock symbol in my Chrome browser, I see that the certificate that amazon.com&rsquo;s public key is some particular string (corresponding to a 2048 RSA modulos and exponent) is signed by the Symantec Certificate authority, whose own key is certified by Verisign.
+My communication with Amazon is an example of a setting of <em>one sided authentication</em>.
+It is important for me to know that I am truly talking to amazon.com, while Amazon is willing to talk to any client.
+(Though of course once we establish a secure channel, I could use it to login to my Amazon account.)
+Chapter 21 of Boneh Shoup contains an in depth discussion of authenticated key exchange protocols, see for example <a class="link" href="" >BSAKEfig</a>{.ref}.
+Because the definition is so involved, we will not go over the full formal definitions in this book, but I recommend Boneh-Shoup for an in-depth treatment.</p>
+<p><img src="/figure/AKEdef.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="The attack game for defining authenticated key exchange, taken from Boneh-Shoup (Sec 21.9). TTP refers to a trusted third party such as a certificate authority that maintains the identity of all users. The adversary can register corrupted users (which the adversary controls), can decide on how many honest users will register and who will talk to whom, as well as play &ldquo;man in the middle&rdquo; in their interaction. The adversary wins if they can distinguish between this exchange and an idealized exchange in which all honest users keys are securely transferred."
+	
+	
+>{#BSAKEfig}
+the definitions of protocols AEK1 - AEK4.</p>
+<h3 id="the-compiler-approach-for-authenticated-key-exchange">The compiler approach for authenticated key exchange
+</h3><p>There is a generic &ldquo;compiler&rdquo; approach to obtaining authenticated key exchange protocols:</p>
+<ul>
+<li>
+<p>Start with a protocol such as the basic Diffie-Hellman protocol that is only secure with respect to a <em>passive eavesdropping</em> adversary.</p>
+</li>
+<li>
+<p>Then <em>compile</em> it into a protocol that is secure with respect to an active adversary using authentication tools such as digital signatures, message authentication codes, etc., depending on what kind of setup you can assume and what properties you want to achieve.</p>
+</li>
+</ul>
+<p>This approach has the advantage of being modular in both the construction and the analysis.
+However, direct constructions might be more efficient.
+There are a great many potentially desirable properties of key exchange protocols, and different protocols achieve different subsets of these properties at different costs. The most common variant of authenticated key exchange protocols is to use some version of the Diffie-Hellman key exchange.
+If both parties have public signature keys, then they can simply sign their messages and then that effectively rules out an active attack,
+reducing active security to passive security (though one needs to include identities in the signatures to ensure non repeating of messages, see <a class="link" href="http://link.springer.com/article/10.1007%2FBF00124891"  target="_blank" rel="noopener"
+    >here</a>).</p>
+<p>The most efficient variants of Diffie Hellman achieve authentication implicitly, where the basic protocol remains the same (sending $X=g^x$ and $Y=g^y$) but the computation of the secret shared key involves some authentication information.
+Of these protocols a particularly efficient variant is the MQV protocol of Law, Menezes, Qu, Solinas and Vanstone (which is based on similar principles as DSA signatures), and its variant <a class="link" href="https://eprint.iacr.org/2005/176.pdf"  target="_blank" rel="noopener"
+    >HMQV</a> by Krawczyk that has some improved security properties and analysis.</p>
+<h2 id="password-authenticated-key-exchange">Password authenticated key exchange.
+</h2><p><strong>NOTE:</strong> The following three parts are not yet written - we will discuss them in class, but please at least skim the resources pointed out below</p>
+<p>PAKE is covered in Boneh-Shoup Chapter 21.11</p>
+<h2 id="client-to-client-key-exchange-for-secure-text-messaging---zrtp-otr-textsecure">Client to client key exchange for secure text messaging - ZRTP, OTR, TextSecure
+</h2><p>To be completed. See <a class="link" href="http://blog.cryptographyengineering.com/2013/03/here-come-encryption-apps.html"  target="_blank" rel="noopener"
+    >Matthew Green&rsquo;s blog</a> , <a class="link" href="https://whispersystems.org/blog/advanced-ratcheting/"  target="_blank" rel="noopener"
+    >text secure</a>, <a class="link" href="https://otr.cypherpunks.ca/Protocol-v3-4.0.0.html"  target="_blank" rel="noopener"
+    >OTR</a>.</p>
+<p>Security requirements: forward secrecy, deniability.</p>
+<h2 id="heartbleed-and-logjam-attacks">Heartbleed and logjam attacks
+</h2><ul>
+<li>
+<p>Vestiges of past crypto policies.</p>
+</li>
+<li>
+<p>Importance of &ldquo;perfect forward secrecy&rdquo;</p>
+</li>
+</ul>
+<p><img src="/figure/NSA_Page_29.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="How the NSA feels about breaking encrypted communication"
+	
+	
+>{#tmplabelfig  .margin }</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>The first attack of this flavor was given in the 1982 paper of Goldwasser, Micali, and Tong. Interestingly, this notion of &ldquo;hardcore bits&rdquo; has been used for both practical <em>attacks</em> against cryptosystems as well as theoretical (and sometimes practical) <em>constructions</em> of other cryptosystems.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>Recall that it&rsquo;s easy to obtain two independent random oracles $H,H&rsquo;$ from a single oracle $H&rsquo;&rsquo;$, for example by letting $H(x)=H&rsquo;&rsquo;(0|x)$ and $H&rsquo;(x)=H&rsquo;&rsquo;(1|x)$. Similarly we can extend this to three, four or any number of oracles.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

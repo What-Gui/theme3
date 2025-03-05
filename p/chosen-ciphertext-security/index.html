@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Chosen Ciphertext Security Short recap Let&rsquo;s start by reviewing what we have learned so far:\nWe can mathematically define security for encryption schemes. A natural definition is perfect secrecy: no matter what Eve does, she can&rsquo;t learn anything about the plaintext that she didn&rsquo;t know before. Unfortunately this requires the key to be as long as the message, thus placing a severe limitation on the usability of it.\nTo get around this, we need to consider computational considerations. A basic object is a pseudorandom generator and we considered the PRG Conjecture which stipulates the existence of an efficiently computable function $G:{0,1}^n\\rightarrow{0,1}^{n+1}$ such that $G(U_n)\\approx U_{n+1}$ (where $U_m$ denotes the uniform distribution on ${0,1}^m$ and $\\approx$ denotes computational indistinguishability).^[The PRG conjecture is the name we use in this course. In the literature this is known as the conjecture of the existence of pseudorandom generators, and through the work of Håstad, Impagliazzo, Levin and Luby (HILL) it is known to be equivalent to the existence of one way functions, see Vadhan, Chapter 7.]\n">
+<title>Chosen Ciphertext Security</title>
+
+<link rel='canonical' href='http://localhost:1313/p/chosen-ciphertext-security/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Chosen Ciphertext Security">
+<meta property='og:description' content="Chosen Ciphertext Security Short recap Let&rsquo;s start by reviewing what we have learned so far:\nWe can mathematically define security for encryption schemes. A natural definition is perfect secrecy: no matter what Eve does, she can&rsquo;t learn anything about the plaintext that she didn&rsquo;t know before. Unfortunately this requires the key to be as long as the message, thus placing a severe limitation on the usability of it.\nTo get around this, we need to consider computational considerations. A basic object is a pseudorandom generator and we considered the PRG Conjecture which stipulates the existence of an efficiently computable function $G:{0,1}^n\\rightarrow{0,1}^{n+1}$ such that $G(U_n)\\approx U_{n+1}$ (where $U_m$ denotes the uniform distribution on ${0,1}^m$ and $\\approx$ denotes computational indistinguishability).^[The PRG conjecture is the name we use in this course. In the literature this is known as the conjecture of the existence of pseudorandom generators, and through the work of Håstad, Impagliazzo, Levin and Luby (HILL) it is known to be equivalent to the existence of one way functions, see Vadhan, Chapter 7.]\n">
+<meta property='og:url' content='http://localhost:1313/p/chosen-ciphertext-security/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Chosen Ciphertext Security">
+<meta name="twitter:description" content="Chosen Ciphertext Security Short recap Let&rsquo;s start by reviewing what we have learned so far:\nWe can mathematically define security for encryption schemes. A natural definition is perfect secrecy: no matter what Eve does, she can&rsquo;t learn anything about the plaintext that she didn&rsquo;t know before. Unfortunately this requires the key to be as long as the message, thus placing a severe limitation on the usability of it.\nTo get around this, we need to consider computational considerations. A basic object is a pseudorandom generator and we considered the PRG Conjecture which stipulates the existence of an efficiently computable function $G:{0,1}^n\\rightarrow{0,1}^{n+1}$ such that $G(U_n)\\approx U_{n+1}$ (where $U_m$ denotes the uniform distribution on ${0,1}^m$ and $\\approx$ denotes computational indistinguishability).^[The PRG conjecture is the name we use in this course. In the literature this is known as the conjecture of the existence of pseudorandom generators, and through the work of Håstad, Impagliazzo, Levin and Luby (HILL) it is known to be equivalent to the existence of one way functions, see Vadhan, Chapter 7.]\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#short-recap">Short recap</a></li>
+    <li><a href="#going-beyond-cpa">Going beyond CPA</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#example-the-wired-equivalence-privacy-wep">Example: The Wired Equivalence Privacy (WEP)</a></li>
+        <li><a href="#chosen-ciphertext-security-1">Chosen ciphertext security</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#constructing-cca-secure-encryption">Constructing CCA secure encryption</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#simplified-gcm-encryption">(Simplified) GCM encryption</a></li>
+    <li><a href="#padding-chopping-and-their-pitfalls-the-buffer-overflow-of-cryptography">Padding, chopping, and their pitfalls: the &ldquo;buffer overflow&rdquo; of cryptography</a></li>
+    <li><a href="#chosen-ciphertext-attack-as-implementing-metaphors">Chosen ciphertext attack as implementing metaphors</a></li>
+    <li><a href="#reading-comprehension-exercises">Reading comprehension exercises</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/chosen-ciphertext-security/">Chosen Ciphertext Security</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    25 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="chosen-ciphertext-security">Chosen Ciphertext Security
+</h1><h2 id="short-recap">Short recap
+</h2><p>Let&rsquo;s start by reviewing what we have learned so far:</p>
+<ul>
+<li>
+<p>We can mathematically define security for encryption schemes. A natural definition is <em>perfect secrecy</em>: no matter what Eve does, she can&rsquo;t learn anything about the plaintext that she didn&rsquo;t know before. Unfortunately this requires the key to be as long as the message, thus placing a severe limitation on the usability of it.</p>
+</li>
+<li>
+<p>To get around this, we need to consider computational considerations.
+A basic object is a <em>pseudorandom generator</em> and we considered the <em>PRG Conjecture</em> which stipulates the existence of an efficiently computable function $G:{0,1}^n\rightarrow{0,1}^{n+1}$
+such that $G(U_n)\approx U_{n+1}$ (where $U_m$ denotes the uniform distribution on ${0,1}^m$ and $\approx$ denotes computational indistinguishability).^[The PRG conjecture is the name we use in this course. In the literature this is known as the conjecture of the existence of pseudorandom generators, and through the work of  <a class="link" href="https://www.csc.kth.se/~johanh/prgfromowf.pdf"  target="_blank" rel="noopener"
+    >Håstad, Impagliazzo, Levin and Luby (HILL)</a> it is known to be equivalent to the existence of <em>one way functions</em>, see <a class="link" href="https://people.seas.harvard.edu/~salil/pseudorandomness/"  target="_blank" rel="noopener"
+    >Vadhan, Chapter 7</a>.]</p>
+</li>
+<li>
+<p>We showed that the PRG conjecture implies a pseudorandom generator of any polynomial output length which in particular via the stream cipher construction implies a computationally secure encryption with plaintext arbitrarily larger than the key. (The only restriction is that the plaintext is of polynomial size which is needed anyway if we want to actually be able to read and write it.)</p>
+</li>
+<li>
+<p>We then showed that the PRG conjecture actually implies a stronger object known as a <em>pseudorandom function (PRF) function collection</em>: this is a collection ${ f_s }$ of functions such that if we choose $s$ at random and fix it, and give an adversary a black box computing $i \mapsto f_s(i)$ then she can&rsquo;t tell the difference between this and a blackbox computing a random function.^[This was done by <a class="link" href="https://www.wisdom.weizmann.ac.il/~oded/X/ggm.pdf"  target="_blank" rel="noopener"
+    >Goldreich, Goldwasser and Micali</a>.]</p>
+</li>
+<li>
+<p>Pseudorandom functions turn out to be useful for <em>identification protocols</em>, <em>message authentication codes</em> and this strong notion of security of encryption known as <em>chosen plaintext attack (CPA) security</em> where we are allowed to encrypt <em>many messages of Eve&rsquo;s choice</em> and still require that the next message hides all information except for what Eve already knew before.</p>
+</li>
+</ul>
+<h2 id="going-beyond-cpa">Going beyond CPA
+</h2><p>It may seem that we have finally nailed down the security definition for encryption. After all, what could be stronger than allowing Eve unfettered access to the encryption function? Clearly an encryption satisfying this property will hide the contents of the message in all practical circumstances.
+Or will it?</p>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>Please stop and play an ominous sound track at this point.</p>
+<h3 id="example-the-wired-equivalence-privacy-wep">Example: The Wired Equivalence Privacy (WEP)
+</h3><p>The Wired Equivalence Privacy (WEP) protocol is perhaps one of the most inaccurately named protocols of all times.
+It was invented in 1999 for the purpose of securing Wi-Fi networks so that they would have virtually the same level of security as wired networks, but already early on several security flaws were pointed out.
+In particular in 2001, Fluhrer,  Mantin, and Shamir showed how the RC4 flaws we mentioned in prior lecture can be used to completely break WEP in less than one minute.
+Yet, the protocol lingered on and for many years after was still the most widely used WiFi encryption protocol as many routers had it as the default option.
+In 2007 the WEP was blamed for a hack stealing 45 million credit card numbers from T.J. Maxx.
+In 2012 (after 11 years of attacks!) it was estimated that it is still used in about a quarter of encrypted wireless networks, and in 2014 it was still the default option on many Verizon home routers.
+It is still (!) used in some routers, see <a class="link" href="" >wepusage</a>{.ref}. This is a great example of how hard it is to remove insecure protocols from practical usage (and so how important it is to get these protocols right).</p>
+<p><img src="/figure/WEP.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="WEP usage over time according to Wigle.net. Despite having documented security issues since 2001 and being officially deprecated since 2004, WEP continued to be the most popular WiFi encryption protocol up to 2012, and at the time of writing, it is still used by a non-trivial number of devices (though see this stackoverflow answer for more)."
+	
+	
+>{#wepusage}</p>
+<p>Here we will talk about a different flaw of WEP that is in fact shared by many other protocols, including the first versions of the secure socket layer (SSL) protocol that is used to protect all encrypted web traffic.</p>
+<p>To avoid superfluous details we will consider a highly abstract (and somewhat inaccurate) version of WEP that still demonstrates our main point.
+In this protocol Alice (the user) sends to Bob (the access point) an IP packet that she wants routed somewhere on the internet.</p>
+<p>Thus we can think of the message Alice sends to Bob as a string $m\in{0,1}^\ell$ of the form $m=m_1|m_2$ where $m_1$ is the IP address this packet needs to be routed to and $m_2$ is the actual message that needs to be delivered.
+In the WEP protocol, the message that Alice sends to Bob has the form
+$E_k(m|CRC(m))$ (where $|$ denotes concatenation and $CRC(m)$ is some <a class="link" href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check"  target="_blank" rel="noopener"
+    >cyclic redundancy check</a>).
+A $CRC$ is some function mapping ${0,1}^n$ to ${0,1}^t$ which is meant to enable detection of errors in typing or communication. The idea is that if a message $m$ is mistyped into $m&rsquo;$, then it is very likely that $CRC(m) \neq CRC(m&rsquo;)$. It is similar to the <a class="link" href="https://en.wikipedia.org/wiki/Luhn_algorithm"  target="_blank" rel="noopener"
+    >checksum digits</a> used in credit card numbers and many other cases. Unlike a message authentication code, a CRC does not have a secret key and is not secure against adversarial perturbations.</p>
+<p>The actual encryption WEP used was RC4, but for us it doesn&rsquo;t really matter.
+What does matter is that the encryption has the form $E_k(m&rsquo;) = pad \oplus m&rsquo;$
+where $pad$ is computed as some function of the key.
+In particular the attack we will describe works even if we use our stronger CPA secure PRF-based scheme where $pad=f_k(r)$ for some random (or counter) $r$ that is sent out separately.</p>
+<p>Now the security of the encryption means that an adversary seeing the ciphertext $c=E_k(m|CRC(m))$ will not be able to know $m$, but since this is traveling over the air, the adversary could &ldquo;spoof&rdquo; the signal and send a different ciphertext $c&rsquo;$ to Bob.
+In particular, if the adversary knows the IP address $m_1$ that Alice was using (e.g., for example, the adversary can guess that Alice is probably one of the billions of people that visit the website boazbarak.org on a regular basis) then she can XOR the ciphertext with a string of her choosing and hence convert the ciphertext $c = pad \oplus (m_1| m_2 |CRC(m_1,m_2))$ into the ciphertext $c&rsquo; = c \oplus x$ where $x = x_1|x_2|x_3$ is computed so that $x_1 \oplus m_1$ is equal to the adversary&rsquo;s own IP address!</p>
+<p>So, the adversary doesn&rsquo;t need to decrypt the message- by spoofing the ciphertext she can ensure that Bob (who is an access point, and whose job is to decrypt and then deliver packets) simply delivers it unencrypted straight into her hands.
+One issue is that Eve modifies $m_1$ then it is unlikely that the CRC code will still check out, and hence Bob would reject the packet.
+However,  <a class="link" href="https://goo.gl/5aqEHB"  target="_blank" rel="noopener"
+    >CRC 32</a> - the CRC algorithm used by WEP - is <em>linear</em> modulo $2$, that is $CRC(x \oplus x&rsquo;) = CRC(x)\oplus CRC(x&rsquo;)$.
+This means that if the original ciphertext $c$ was an encryption of the message
+$m= m_1 | m_2 | CRC(m_1,m_2)$ then $c&rsquo;=c \oplus (x_1|0^t|CRC(x_1|0^t))$ will be an encryption of the message $m&rsquo;=(m_1 \oplus x_1) |m_2 | CRC( (x_1\oplus m_1) | m_2)$ (where $0^t$ denotes a string of zeroes of the same length $t$ as $m_2$, and hence $m_2 \oplus 0^t = m_2$).
+Therefore by XOR&rsquo;ing $c$ with $x_1 |0^t | CRC(x_1|0^t)$, the adversary Mallory can ensure that Bob will deliver the message $m_2$ to the IP address $m_1 \oplus x_1$ of her choice (see <a class="link" href="" >WEPattackfig</a>{.ref}).</p>
+<p><img src="/figure/wep-attack.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="The attack on the WEP protocol allowing the adversary Mallory to read encrypted messages even when Alice uses a CPA secure encryption."
+	
+	
+>{#WEPattackfig width=90% }</p>
+<h3 id="chosen-ciphertext-security-1">Chosen ciphertext security
+</h3><p>This is not an isolated example but in fact an instance of a general pattern of many breaks in practical protocols.
+Some examples of protocols broken through similar means include <a class="link" href="http://www.nds.rub.de/media/nds/veroeffentlichungen/2011/10/22/HowToBreakXMLenc.pdf"  target="_blank" rel="noopener"
+    >XML encryption</a>,  <a class="link" href="https://www.cs.columbia.edu/~smb/papers/badesp.pdf"  target="_blank" rel="noopener"
+    >IPSec</a> (see also <a class="link" href="https://eprint.iacr.org/2005/416"  target="_blank" rel="noopener"
+    >here</a>) as well as JavaServer Faces, Ruby on Rails, ASP.NET, and the Steam gaming client (see the Wikipedia page on <a class="link" href="https://goo.gl/b5aKYg"  target="_blank" rel="noopener"
+    >Padding Oracle Attacks</a>).</p>
+<p>The point is that often our adversaries can be <em>active</em> and modify the communication between sender and receiver, which in effect gives them access not just to choose <em>plaintexts</em> of their choice to encrypt but even to have some impact on the <em>ciphertexts</em> that are decrypted. This motivates the following notion of security (see also <a class="link" href="" >CCAgamefig</a>{.ref}):</p>
+<p>::: {.definition title=&ldquo;CCA security&rdquo; #CCAdef}
+An encryption scheme $(E,D)$ is <em>chosen ciphertext attack (CCA) secure</em> if every
+efficient adversary <em>Mallory</em> wins in the following game with probability at most $1/2+ negl(n)$:</p>
+<ul>
+<li>
+<p>Mallory gets $1^n$ where $n$ is the length of the key</p>
+</li>
+<li>
+<p>For $poly(n)$ rounds, Mallory gets access to the functions $m \mapsto E_k(m)$ and $c \mapsto D_k(c)$.</p>
+</li>
+<li>
+<p>Mallory chooses a pair of messages ${ m_0,m_1 }$, a secret $b$ is chosen at random in ${0,1}$, and Mallory gets $c^* = E_k(m_b)$.</p>
+</li>
+<li>
+<p>Mallory now gets another $poly(n)$ rounds of access to the functions $m \mapsto E_k(m)$ and $c \mapsto D_k(c)$ except that she is not allowed to query $c^*$ to her second oracle.</p>
+</li>
+<li>
+<p>Mallory outputs $b&rsquo;$ and <em>wins</em> if $b&rsquo;=b$.
+:::</p>
+</li>
+</ul>
+<p><img src="/figure/cca-game.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="The CCA security game."
+	
+	
+>{#CCAgamefig   }</p>
+<p>This might seems a rather strange definition so let&rsquo;s try to digest it slowly.
+Most people, once they understand what the definition says, don&rsquo;t like it that much.
+There are two natural objections to it:</p>
+<ul>
+<li><strong>This definition seems to be too strong:</strong> There is no way we would let Mallory play with a <em>decryption box</em> - that basically amounts to letting her break the encryption scheme. Sure, she could have some impact on the ciphertexts that Bob decrypts and observe some resulting side effects, but there is a long way from that to giving her oracle access to the decryption algorithm.</li>
+</ul>
+<p>The response to this is that it is very hard to model what is the &ldquo;realistic&rdquo; information Mallory might get about the ciphertexts she might cause Bob to decrypt. The goal of a security definition is not to capture exactly the attack scenarios that occur in real life but rather to be <em>sufficiently conservative</em> so that these real life attacks could be modeled in our game. Therefore, having a too strong definition is not a bad thing (as long as it can be achieved!).
+The WEP example shows that the definition does capture a practical issue in security and similar attacks on practical protocols have been shown time and again (see for example the discussion of &ldquo;padding attacks&rdquo; in Section 3.7.2 of the Katz Lindell book.)</p>
+<ul>
+<li><strong>This definition seems to be too weak:</strong> What justification do we have for not allowing Mallory to make the query $c^<em>$ to the decryption box? After all she is an adversary so she could do whatever she wants. The answer is that the definition would be clearly impossible to achieve if Mallory could simply get the decryption of $c^</em>$ and learn whether it was an encryption of $m_0$ or $m_1$. So this restriction is the absolutely minimal one we could make without causing the notion to be obviously impossible. Perhaps surprisingly, it turns out that once we make this minimal restriction, we can in fact construct CCA-secure encryptions.</li>
+</ul>
+<p><strong>What does CCA have to do with WEP?</strong> The CCA security game is somewhat strange, and it might not be immediately clear whether it has anything to do with the attack we described on the WEP protocol. However, it turns out that using a CCA secure encryption <em>would</em> have prevented that attack. The key is the following claim:</p>
+<blockquote>
+<h1 id="ccaweplem">
+</h1></blockquote>
+<p>Suppose that $(E,D)$ is a CCA secure encryption. Then, there is no efficient algorithm that given an encryption $c$ of the plaintext $(m_1,m_2)$ outputs a ciphertext $c&rsquo;$ that decrypts to $(m&rsquo;_1,m_2)$ where $m&rsquo;_1\neq m_1$.</p>
+<p>In particular <a class="link" href="" >ccaweplem</a>{.ref} rules out the attack of transforming $c$ that encrypts a message starting with a some address $IP$ to a ciphertext that starts with a different address $IP&rsquo;$. Let us now sketch its proof.</p>
+<p>::: {.proof data-ref=&ldquo;ccaweplem&rdquo;}
+We&rsquo;ll show that such if we had an adversary $M&rsquo;$ that violates the conclusion of the claim, then there is an adversary $M$ that can win in the CCA game.</p>
+<p>The proof is simple and relies on the crucial fact that the CCA game allows $M$ to query the decryption box on <em>any</em> ciphertext of her choice, as long as it&rsquo;s not <em>exactly identical</em> to the challenge cipertext $c^<em>$. In particular, if $M&rsquo;$ is able to morph an encryption $c$ of $m$ to some encryption $c&rsquo;$ of some different $m&rsquo;$ that agrees with $m$ on some set of bits, then $M$ can do the following: in the security game, use $m_0$ to be some random message and $m_1$ to be this plaintext $m$. Then, when receiving $c^</em>$, apply $M&rsquo;$ to it to obtain a ciphertext $c&rsquo;$ (note that if the plaintext differs then the ciphertext must differ also; can you see why?) ask the decryption box to decrypt it and output $1$ if the resulting message agrees with $m$ in the corresponding set of bits (otherwise output a random bit). If $M&rsquo;$ was successful with probability $\epsilon$, then $M$ would win in the CCA game with probability at least $1/2 + \epsilon/10$ or so.
+:::</p>
+<blockquote>
+<h1 id="heading-1">
+</h1></blockquote>
+<p>The proof above is rather sketchy. However it is not very difficult and proving <a class="link" href="" >ccaweplem</a>{.ref} on your own is an excellent way to ensure familiarity with the definition of CCA security.</p>
+<h2 id="constructing-cca-secure-encryption">Constructing CCA secure encryption
+</h2><p>The definition of CCA seems extremely strong, so perhaps it is not surprising that it is useful, but can we actually construct it?
+The WEP attack shows that the CPA secure encryption we saw before (i.e., $E_k(m)=(r,f_k(r)\oplus m)$) is <em>not</em> CCA secure.
+We will see other examples of <em>non</em> CCA secure encryptions in the exercises.
+So, how <em>do</em> we construct such a scheme?
+The WEP attack actually already hints of the crux of CCA security. We want to ensure that Mallory is not able to modify the challenge ciphertext $c^*$
+to some related $c&rsquo;$.
+Another way to say it is that we need to ensure the <em>integrity</em> of messages to achieve their <em>confidentiality</em> if we want to handle <em>active</em> adversaries that might modify messages on the channel.
+Since in a great many practical scenarios, an adversary might be able to do so, this is an important message that deserves to be repeated:</p>
+<blockquote>
+<p><em>To ensure confidentiality, you need integrity.</em></p>
+</blockquote>
+<p>This is a lesson that has been time and again been shown and many protocols have been broken due to the mistaken belief that if we only care about <em>secrecy</em>, it is enough to use only
+<em>encryption</em> (and one that is only CPA secure) and there is no need for <em>authentication</em>.  <a class="link" href="http://blog.cryptographyengineering.com/2012/05/how-to-choose-authenticated-encryption.html"  target="_blank" rel="noopener"
+    >Matthew Green</a> writes this more provocatively as</p>
+<blockquote>
+<p><em>Nearly all of the symmetric encryption modes you learned about in school, textbooks, and Wikipedia are (potentially) insecure.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></em></p>
+</blockquote>
+<p>exactly because these basic modes only ensure security for <em>passive</em> eavesdropping adversaries and do not ensure chosen ciphertext security
+which is the &ldquo;gold standard&rdquo; for online applications. (For symmetric encryption people often use the name &ldquo;authenticated encryption&rdquo; in practice rather than CCA security; those are not identical but are extremely related notions.)</p>
+<p>All of this suggests that Message Authentication Codes might help us get CCA security. This turns out to be the case. But one needs to take some care exactly <em>how</em> to use MAC&rsquo;s to get CCA security. At this point, you might want to stop and think how you would do this&hellip;</p>
+<blockquote>
+<h1 id="heading-2">
+</h1></blockquote>
+<p>You should stop here and try to think how you would implement a CCA secure encryption by combining MAC&rsquo;s with a CPA secure encryption.</p>
+<p>\newpage</p>
+<blockquote>
+<h1 id="heading-3">
+</h1></blockquote>
+<p>If you didn&rsquo;t stop before, then you should really stop and think now.</p>
+<p>\newpage</p>
+<p>OK, so now that you had a chance to think about this on your own, we will describe one way that works to achieve CCA security from MACs. We will explore other approaches that may or may not work in the exercises.</p>
+<p>::: {.theorem title=&ldquo;CCA from CPA and MAC (encrypt-then-sign)&rdquo; #CCAfromCPAMACthm}
+Let $(E,D)$ be CPA-secure encryption scheme and $(S,V)$ be a CMA-secure MAC with $n$ bit keys and a canonical verification algorithm.^[By a <em>canonical verification algorithm</em> we mean that $V_k(m,\sigma)=1$ iff $S_k(m)=\sigma$.]
+Then the following encryption $(E&rsquo;,D&rsquo;)$ with keys $2n$ bits is CCA secure:</p>
+<ul>
+<li>
+<p>$E&rsquo;<em>{k_1,k_2}(m)$ is obtained by computing $c=E</em>{k_1}(m)$ , $\sigma = S_{k_2}(c)$ and outputting $(c,\sigma)$.</p>
+</li>
+<li>
+<p>$D&rsquo;<em>{k_1,k_2}(c,\sigma)$ outputs nothing (e.g., an error message) if $V</em>{k_2}(c,\sigma)\neq 1$, and otherwise outputs $D_{k_1}(c)$.
+:::</p>
+</li>
+</ul>
+<p>::: {.proof data-ref=&ldquo;CCAfromCPAMACthm&rdquo;}
+Suppose, for the sake of contradiction, that there exists an adversary $M&rsquo;$ that wins the CCA game for the scheme $(E&rsquo;,D&rsquo;)$ with probability
+at least $1/2+\epsilon$. We consider the following two cases:</p>
+<p><strong>Case I:</strong> With probability at least $\epsilon/10$, at some point during the CCA game, $M&rsquo;$ sends to its decryption box a ciphertext $(c,\sigma)$ that is
+not identical to one of the ciphertexts it previously obtained from its encryption box, and obtains from it a non-error response.</p>
+<p><strong>Case II:</strong> The event above happens with probability smaller than $\epsilon/10$.</p>
+<p>We will derive a contradiction in either case. In the first case, we will use $M&rsquo;$ to obtain an adversary that breaks the MAC $(S,V)$, while in the second case, we will use $M&rsquo;$ to obtain an adversary that breaks the CPA-security of $(E,D)$.</p>
+<p>Let&rsquo;s start with Case I: When this case holds, we will build an adversary $F$ (for &ldquo;forger&rdquo;) for the MAC $(S,V)$,  we can assume the adversary $F$ has access to the both signing and verification algorithms as black boxes for some unknown key $k_2$ that is chosen at random and fixed.^[Since we use a MAC with canonical verification, access to the signature algorithm implies access to the verification algorithm.]
+$F$ will choose $k_1$ on its own, and will also choose at random a number $i_0$ from $1$ to $T$, where $T$ is the total number of queries that $M&rsquo;$ makes to the decryption box. $F$ will run the entire CCA game with $M&rsquo;$, using $k_1$ and its access to the black boxes to execute the decryption and decryption boxes, all the way until just before $M&rsquo;$ makes the $i_0^{th}$ query $(c,\sigma)$ to its decryption box. At that point, $F$ will output $(c,\sigma)$.
+We claim that with probability at least $\epsilon/(10T)$, our forger will succeed in the CMA game in the sense that <strong>(i)</strong> the query $(c,\sigma)$ will pass verification, and <strong>(ii)</strong> the message $c$ was not previously queried before to the signing oracle.</p>
+<p>Indeed, because we are in Case I, with probability $\epsilon/10$, in this game <em>some</em> query that $M&rsquo;$ makes will be one that was not asked before and hence was <em>not</em> queried by $F$ to its signing oracle, and moreover, the returned message is not an error message, and hence the signature passes verification.
+Since $i_0$ is random, with probability $\epsilon/(10T)$ this query will be at the $i_0^{th}$ round.
+Let us assume that this above event $GOOD$ happened in which the $i_0$-th query to the decryption box is a pair $(c,\sigma)$ that both passes verification and the pair $(c,\sigma)$ was not returned before by the encryption oracle.
+Since we pass (canonical) verification, we know that $\sigma=S_{k_2}(c)$, and because all encryption queries return pairs of the form $(c&rsquo;,S_{k_2}(c&rsquo;))$, this means that no such query returned $c$ as its first element either.
+In other words, when the event $GOOD$ happens the $i_0^{th}$ query contains a pair $(c,\sigma)$ such that $c$ was not queried before to the signature box, but $(c,\sigma)$ passes verification. This is the definition of breaking $(S,V)$ in a chosen message attack, and hence we obtain a contradiction to the CMA security of $(S,V)$.</p>
+<p>Now for Case II: In this case, we will build an adversary $Eve$ for CPA-game in the original scheme $(E,D)$.  As you might expect, the adversary $Eve$ will choose by herself the key $k_2$ for the MAC scheme, and attempt to play the CCA security game with $M&rsquo;$.  When $M&rsquo;$ makes <em>encryption queries</em> this should not be a problem-
+$Eve$ can forward the plaintext $m$ to its encryption oracle to get $c=E_{k_1}(m)$ and then compute $\sigma = S_{k_2}(c)$ since she knows the signing key $k_2$.</p>
+<p>However, what does $Eve$ do when $M&rsquo;$ makes <em>decryption</em> queries? That is, suppose that $M&rsquo;$ sends a query of the form $(c,\sigma)$ to its decryption box. To simulate the algorithm $D&rsquo;$, $Eve$ will need access to a <em>decryption box</em> for $D$, but she doesn&rsquo;t get such a box in the CPA game (This is a subtle point- please pause here and reflect on it until you are sure you understand it!)</p>
+<p>To handle this issue $Eve$   will follow the common approach of &ldquo;winging it and hoping for the best&rdquo;. When $M&rsquo;$ sends a query of the form $(c,\sigma)$, $Eve$ will first check if it happens to be the case that $(c,\sigma)$ was returned before as an answer to an encryption query $m$. In this case $Eve$ will breathe a sigh of relief and simply return $m$ to $M&rsquo;$ as the answer. (This is obviously correct: if $(c,\sigma)$ is the encryption of $m$ then $m$ is the decryption of $(c,\sigma)$.) However, if the query $(c,\sigma)$ has not been returned before as an answer, then $Eve$ is in a bit of a pickle. The way out of it is for her to simply return &ldquo;error&rdquo; and hope that everything will work out.
+The crucial observation is that because we are in case II things <em>will</em> work out.
+After all, the only way $Eve$ makes a mistake is if she returns an error message
+where the original decryption box would not have done so, but this happens with probability at most $\epsilon/10$. Hence, if $M&rsquo;$ has success $1/2+\epsilon$ in the CCA game, then even if it&rsquo;s the case that $M&rsquo;$ always outputs the wrong answer when $Eve$ makes this mistake, we will still get success at least $1/2+0.9\epsilon$.
+Since $\epsilon$ is non negligible, this would contradict the CPA security of $(E,D)$ thereby concluding the proof of the theorem.
+:::</p>
+<blockquote>
+<h1 id="heading-4">
+</h1></blockquote>
+<p>This proof is emblematic of a general principle for proving CCA security.
+The idea is to show that the decryption box is completely &ldquo;useless&rdquo; for the adversary, since the only way to get a non error response from it is to feed it with a ciphertext that was received from the encryption box.</p>
+<h2 id="simplified-gcm-encryption">(Simplified) GCM encryption
+</h2><p>The construction above works as a generic construction, but it is somewhat costly in the sense that we need to evaluate both the block cipher and the MAC. In particular, if messages have $t$ blocks, then we would need to invoke two cryptographic operations (a block cipher encryption and a MAC computation) per block. The <a class="link" href="https://goo.gl/uz6WgS"  target="_blank" rel="noopener"
+    >GCM (Galois Counter Mode)</a> is a way around this. We are going to describe a simplified version of this mode.
+For simplicity, assume that the number of blocks $t$ is fixed and known (though many of the annoying but important details in block cipher modes of operations involve dealing with padding to multiple of blocks and dealing with variable block size).</p>
+<p>A <a class="link" href="https://goo.gl/jLpNtU"  target="_blank" rel="noopener"
+    >universal hash function collection</a> is a family of functions ${ h:{0,1}^\ell\rightarrow{0,1}^n }$ such that for every $x \neq x&rsquo; \in {0,1}^\ell$, the random variables $h(x)$ and $h(x&rsquo;)$ (taken over the choice of a random $h$ from this family) are pairwise independent in ${0,1}^{2n}$. That is, for every two potential outputs $y,y&rsquo;\in {0,1}^n$,
+$$
+\Pr_h[ h(x)=y ;\wedge; h(x&rsquo;)=y&rsquo;]=2^{-2n} \label{equnivhash}
+$$</p>
+<p>Universal hash functions have rather efficient constructions, and in particular if we relax the definition to allow <em>almost universal</em> hash functions (where we replace the $2^{-2n}$ factor in the righthand side of <a class="link" href="" >equnivhash</a>{.eqref} by a slightly bigger, though still negligible quantity) then the constructions become extremely efficient and the size of the description of $h$ is only related to $n$, no matter how big $\ell$ is.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>Our encryption scheme is defined as follow. The key is $(k,h)$ where $k$ is an index to a pseudorandom permutation ${ p_k }$ and $h$ is the key for a <em>universal hash function</em>.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> To encrypt a message $m = (m_1,\ldots,m_t) \in {0,1}^{nt}$  do the following:</p>
+<ul>
+<li>
+<p>Choose $IV$ at random in $[2^n]$.</p>
+</li>
+<li>
+<p>Let $z_i = E_k(IV+i)$ for $i=1,\ldots,t+1$.</p>
+</li>
+<li>
+<p>Let $c_i = z_i \oplus m_i$.</p>
+</li>
+<li>
+<p>Let $c_{t+1} = h(c_1,\ldots,c_t) \oplus z_{t+1}$.</p>
+</li>
+<li>
+<p>Output $(IV,c_1,\ldots,c_{t+1})$.</p>
+</li>
+</ul>
+<p>The communication overhead includes one additional output block plus the IV (whose transmission can often be avoided or reduced, depending on the settings; see the notion of &ldquo;nonce based encryption&rdquo;).
+This is fairly minimal. The additional computational cost on top of $t$ block-cipher evaluation is the application of $h(\cdot)$.
+For the particular choice of $h$ used in Galois Counter Mode, this function $h$ can be evaluated very efficiently- at a cost of a single multiplication in the Galois field of size $2^{128}$ per block (one can think of it as some very particular operation that maps two $128$ bit strings to a single one, and can be carried out quite efficiently).
+We leave it as an (excellent!) exercise to prove that the resulting scheme is CCA secure.</p>
+<h2 id="padding-chopping-and-their-pitfalls-the-buffer-overflow-of-cryptography">Padding, chopping, and their pitfalls: the &ldquo;buffer overflow&rdquo; of cryptography
+</h2><p>In this course we typically focus on the simplest case where messages have a <em>fixed size</em>. But in fact, in real life we often need to chop long messages into blocks, or pad messages so that their length becomes an integral multiple of the block size. Moreover, there are several subtle ways to get this wrong, and these have been used in several practical attacks.</p>
+<p><strong>Chopping into blocks:</strong> A block cipher a-priori provides a way to encrypt a message of length $n$, but we often have much longer messages and need to &ldquo;chop&rdquo; them into blocks. This is where the <em>block cipher modes</em> discussed in the previous lecture come in. However, the basic popular modes such as CBC and OFB do <em>not</em> provide security against chosen ciphertext attack, and in fact typically make it easy to <em>extend</em> a ciphertext with an additional block or to <em>remove</em> the last block from a ciphertext, both being operations which should not be feasible in a CCA secure encryption.</p>
+<p><strong>Padding:</strong> Oftentimes messages are not an integer multiple of the block size and hence need to be <em>padded</em>. The <em>padding</em> is typically a map that takes the last partial block of the message (i.e., a string $m$ of length in ${0,\ldots,n-1}$) and maps it into a full block (i.e., a string $m\in{0,1}^n$). The map needs to be invertible which in particular means that if the message is already an integer multiple of the block size we will need to add an extra block. (Since we have to map all the $1+2+\ldots+2^{n-1}$ messages of length $1,\ldots,n-1$ into the $2^n$ messages of length $n$ in a one-to-one fashion.) One approach for doing so is to pad an $n&rsquo;&lt;n$ length message with the string $10^{n-n&rsquo;-1}$. Sometimes people use a different padding which involves encoding the length of the pad.</p>
+<h2 id="chosen-ciphertext-attack-as-implementing-metaphors">Chosen ciphertext attack as implementing metaphors
+</h2><p>The classical &ldquo;metaphor&rdquo; for an encryption is a sealed envelope, but as we have seen in the WEP, this metaphor can lead you astray.
+If you placed a message $m$ in a sealed envelope, you should not be able to modify it to the message $m \oplus m&rsquo;$ without opening the envelope, and yet this is exactly what happens in the canonical CPA secure encryption $E_k(m)=(r,f_k(r) \oplus m)$.
+CCA security comes much closer to realizing the metaphor, and hence is considered as the &ldquo;gold standard&rdquo; of secure encryption.
+This is important even if you do not intend to write poetry about encryption.
+<em>Formal verification</em> of computer programs is an area that is growing in importance given that computer programs become both more complex and more mission critical.
+Cryptographic protocols can fail in subtle ways, and even published proofs of security can turn out to have bugs in them.
+Hence there is a line of research dedicated to finding ways to <em>automatically</em> prove security of cryptographic protocols.
+Much of these line of research is based on simple models to describe protocols that are known as <em>Dolev Yao models</em>, based on the first paper that proposed such models.
+These models define an <em>algebraic</em> form of security, where rather than thinking of messages, keys, and ciphertexts as binary string, we think of them as abstract entities.
+There are certain rules for manipulating these symbols.
+For example, given a key $k$ and a message $m$ you can create the ciphertext ${ m }_k$, which you can decrypt back to $m$ using the same key.
+However the assumption is that any information that cannot be obtained by such manipulation is unknown.</p>
+<p>Translating a proof of security in this algebra to a proof for real world adversaries is highly non trivial. However, to have even a fighting chance, the encryption scheme needs to be as strong as possible, and in particular it turns out that security notions such as CCA play a crucial role.</p>
+<p><img src="/figure/Dolev-Yao-intruder-rules.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="The Dolev-Yao  Algebra of what an adversary or &ldquo;intruder&rdquo; knows. Figure taken from here."
+	
+	
+>{#dolevyaofig}</p>
+<h2 id="reading-comprehension-exercises">Reading comprehension exercises
+</h2><p>I recommend students do the following exercises after reading the lecture. They do not cover all material, but can be a good way to check your understanding.</p>
+<p>::: {.exercise }
+Let $(E,D)$ be the &ldquo;canonical&rdquo; PRF-based CPA secure encryption, where $E_k(m)= (r,f_k(r)\oplus m)$ and  ${ f_k }$
+is a PRF collection and $r$ is chosen at random. Is this scheme CCA secure?</p>
+<p>a. No it is never CCA secure.</p>
+<p>b.  It is always CCA secure.</p>
+<p>c. It is sometimes CCA secure and sometimes not, depending on the properties of the PRF ${ f_k }$.</p>
+<p>:::</p>
+<p>::: {.exercise }
+Suppose that we allow a key to be as long as the message, and so we can use the one time pad.
+Would the one-time pad be:</p>
+<p>a. CPA secure</p>
+<p>b. CCA secure</p>
+<p>c. Neither CPA nor CCA secure.
+:::</p>
+<p>::: {.exercise }
+Which of the following statements is true about the proof of <a class="link" href="" >CCAfromCPAMACthm</a>{.ref}:</p>
+<p>a. Case I corresponds to breaking the MAC and Case II corresponds to breaking the CPA security of the underlying encryption scheme.</p>
+<p>b. Case I corresponds to breaking the CPA security of the underlying encryption scheme  and Case II corresponds to breaking the MAC.</p>
+<p>c. Both cases correspond to both breaking the MAC and encryption scheme</p>
+<p>d. If neither Case I nor Case II happens then we obtain an adversary breaking the security of the underlying encryption scheme.
+:::</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>I also like the part where Green says about a block cipher mode that &ldquo;if OCB was your kid, he&rsquo;d play three sports and be on his way to Harvard.&rdquo; We will have an exercise about a simplified version of the GCM mode (which perhaps only plays a single sport and is on its way to &hellip;). You can read about OCB in Exercise 9.14 in the Boneh-Shoup book; it uses the notion of a &ldquo;tweakable block cipher&rdquo; which simply means that given a single key $k$, you actually get a set ${ p_{k,1},\ldots,p_{k,t} }$ of permutations that are indistinguishable from $t$ independent random permutation (the set ${1,\ldots, t}$ is called the set of &ldquo;tweaks&rdquo; and we sometimes index it using strings instead of numbers).&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>In $\epsilon$-almost universal hash functions we require that for every $y,y&rsquo;\in {0,1}^{n}$, and $x\neq x&rsquo; \in {0,1}^\ell$, the probability that $h(x)= h(x&rsquo;)$ is at most $\epsilon$.  It can be easily shown that the analysis below extends to $\epsilon$ almost universal hash functions as long as $\epsilon$ is negligible, but we will leave verifying this to the reader.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>In practice the key $h$ is derived from the key $k$ by applying the PRP to some particular input.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

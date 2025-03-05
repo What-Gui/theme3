@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Ethical, moral, and policy dimensions to cryptography This will not be a lecture but rather a discussion on some of the questions that arise from cryptography. I would like you to read some of the sources below (and maybe others) and reflect on the following questions:\nThe discussion is often framed as weighing privacy against security, but I encourage you to look critically at both issues. It is often instructive to try to compare the current situation with both the historical past as well as some ideal desired world. It is also worthwhile to consider cryptography in the broader contexts. Some people on both the pro regulation and anti regulation camps exeggarate the role of cryptography.\nOn one hand, cryptography is likely not to bring about the &ldquo;crypto anarchy&rdquo; regime hoped for in the crypto anarchist manifesto. For example, more than the growth of bitcoin, we are seeing a turn away from cash into credit cards and other forms of much more traceable and less anonymous forms of payments (interestingly, these forms of payments are often enabled by cryptography). On the other hand, despite the fears raised by government agencies of &ldquo;going dark&rdquo; there are powerful commercial incentives to collect vast amounts of data and store them at search-warrant friendly servers. Clearly technology is shifting the landscape of relationships among individuals, as well as between individuals and large organizations and governments. Cryptography is an important component in these technologies but not the only one, and more than that, the ways technologies end up used often has more to do with social and commercial factors than with the technologies themselves.\n">
+<title>Ethical, moral and policy considerations</title>
+
+<link rel='canonical' href='http://localhost:1313/p/ethical-moral-and-policy-considerations/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Ethical, moral and policy considerations">
+<meta property='og:description' content="Ethical, moral, and policy dimensions to cryptography This will not be a lecture but rather a discussion on some of the questions that arise from cryptography. I would like you to read some of the sources below (and maybe others) and reflect on the following questions:\nThe discussion is often framed as weighing privacy against security, but I encourage you to look critically at both issues. It is often instructive to try to compare the current situation with both the historical past as well as some ideal desired world. It is also worthwhile to consider cryptography in the broader contexts. Some people on both the pro regulation and anti regulation camps exeggarate the role of cryptography.\nOn one hand, cryptography is likely not to bring about the &ldquo;crypto anarchy&rdquo; regime hoped for in the crypto anarchist manifesto. For example, more than the growth of bitcoin, we are seeing a turn away from cash into credit cards and other forms of much more traceable and less anonymous forms of payments (interestingly, these forms of payments are often enabled by cryptography). On the other hand, despite the fears raised by government agencies of &ldquo;going dark&rdquo; there are powerful commercial incentives to collect vast amounts of data and store them at search-warrant friendly servers. Clearly technology is shifting the landscape of relationships among individuals, as well as between individuals and large organizations and governments. Cryptography is an important component in these technologies but not the only one, and more than that, the ways technologies end up used often has more to do with social and commercial factors than with the technologies themselves.\n">
+<meta property='og:url' content='http://localhost:1313/p/ethical-moral-and-policy-considerations/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="Ethical, moral and policy considerations">
+<meta name="twitter:description" content="Ethical, moral, and policy dimensions to cryptography This will not be a lecture but rather a discussion on some of the questions that arise from cryptography. I would like you to read some of the sources below (and maybe others) and reflect on the following questions:\nThe discussion is often framed as weighing privacy against security, but I encourage you to look critically at both issues. It is often instructive to try to compare the current situation with both the historical past as well as some ideal desired world. It is also worthwhile to consider cryptography in the broader contexts. Some people on both the pro regulation and anti regulation camps exeggarate the role of cryptography.\nOn one hand, cryptography is likely not to bring about the &ldquo;crypto anarchy&rdquo; regime hoped for in the crypto anarchist manifesto. For example, more than the growth of bitcoin, we are seeing a turn away from cash into credit cards and other forms of much more traceable and less anonymous forms of payments (interestingly, these forms of payments are often enabled by cryptography). On the other hand, despite the fears raised by government agencies of &ldquo;going dark&rdquo; there are powerful commercial incentives to collect vast amounts of data and store them at search-warrant friendly servers. Clearly technology is shifting the landscape of relationships among individuals, as well as between individuals and large organizations and governments. Cryptography is an important component in these technologies but not the only one, and more than that, the ways technologies end up used often has more to do with social and commercial factors than with the technologies themselves.\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#reading-prior-to-lecture">Reading prior to lecture:</a></li>
+    <li><a href="#case-studies">Case studies.</a>
+      <ol>
+        <li><a href="#the-snowden-revelations">The Snowden revelations</a></li>
+        <li><a href="#fbi-vs-apple-case">FBI vs Apple case</a></li>
+        <li><a href="#juniper-backdoor-case-and-the-opm-break-in">Juniper backdoor case and the OPM break-in</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/ethical-moral-and-policy-considerations/">Ethical, moral and policy considerations</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    9 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="ethical-moral-and-policy-dimensions-to-cryptography">Ethical, moral, and policy dimensions to cryptography
+</h1><p>This will not be a lecture but rather a discussion on some of the questions that arise from cryptography.
+I would like you to read some of the sources below (and maybe others) and reflect on the following questions:</p>
+<p>The discussion is often framed as weighing privacy against security, but I encourage you to look critically at both issues.
+It is often instructive to try to compare the current situation with both the historical past as well as some ideal desired world.
+It is also worthwhile to consider cryptography in the broader contexts.
+Some people on both the pro regulation and anti regulation camps exeggarate the role of cryptography.<br>
+On one hand, cryptography is likely not to bring about the &ldquo;crypto anarchy&rdquo; regime hoped for in the crypto anarchist manifesto.
+For example, more than the growth of bitcoin, we are seeing a turn away from cash into credit cards and other forms of much more traceable and <em>less</em> anonymous forms of payments (interestingly, these forms of payments are often enabled by cryptography).
+On the other hand, despite the fears raised by government agencies of &ldquo;going dark&rdquo; there are powerful commercial incentives to collect vast amounts of data and store them at search-warrant friendly servers.
+Clearly technology is shifting the landscape of relationships among individuals, as well as between individuals and large organizations and governments.
+Cryptography is an important component in these technologies but not the only one, and more than that, the ways technologies end up <em>used</em> often has more to do with social and commercial factors than with the technologies themselves.</p>
+<p>All that said, significant changes often pose non trivial dangers, and it is important to have an informed and reasoned discussion of the ways cryptography can help or harm the general and private good.</p>
+<p>Some questions that are worth considering are:</p>
+<ul>
+<li>
+<p>Is communicating privately a basic <a class="link" href="http://www.un.org/en/universal-declaration-human-rights/"  target="_blank" rel="noopener"
+    >human right</a>? Should it extend to communicating at a distance? Should this be absolute privacy that cannot be violated even with a legal warrant? If there was a secure way to implement wiretapping only with a legal warrant, would it be morally just?</p>
+</li>
+<li>
+<p>Is privacy a basic good in its own right? Or a necessary condition for the freedom of expression, and peaceful assembly and association?</p>
+</li>
+<li>
+<p>Are we less or more secure today than in the past? In what ways did the balance between government and individuals shift in the last few decades? Do governments have more or less data and tools for monitoring individuals at their disposal? Do individuals and non-governmental groups have more or less ability to inflict harm (and hence need to be protected against)?</p>
+</li>
+<li>
+<p>Do we have more or less privacy today than in the past? Do cryptography regulation play a big part in that?</p>
+</li>
+<li>
+<p>What would be the balance between security and privacy in an ideal world?</p>
+</li>
+<li>
+<p>Is the focus on encryption misguided in that the main issue affecting privacy and security is the so called <em>meta data</em>?  Can cryptographic techniques protect such meta data? Even if they could, is there a commercial interest in doing so?</p>
+</li>
+<li>
+<p>One argument against the regulation of cryptography is that, given the mathematics of cryptography is not secret, the &ldquo;bad guys&rdquo; will always be able to access it. Is this a valid argument? Note that similar arguments are made in the context of gun control. Also,  perhaps the &ldquo;true dissidents&rdquo; will also be able to access cryptography as well and so regulation will effect the masses or &ldquo;run of the mill&rdquo; private good and not-so-good citizens?</p>
+</li>
+<li>
+<p>What would be the practical impact of regulations forbidding the use of end-to-end crypto without access by governments?</p>
+</li>
+<li>
+<p>Rogaway argues that cryptography is inherently political, and research should acknowledge this and be directed at achieving beneficial political goals. Has cryptography research failed the public? What more could be done?</p>
+</li>
+<li>
+<p>Are some cryptographic (or crypto related) tools inherently morally problematic? Rogaway suggests that this may be true for fully homomorphic encryption and differential privacy- do you agree?</p>
+</li>
+<li>
+<p>What are the most significant scenarios where cryptography can impact positively or negatively? Large scale terror attacks? &ldquo;Ordinary&rdquo; crimes (that still claim the lives of many more people than terror attacks)?  Attacks against cyber infrastructure or personal data? Political dissidents in opressive regimes? Mass government or corporate surveilance?</p>
+</li>
+<li>
+<p>How are these issues different in the U.S. as opposed to other countries? Is the debate too U.S. centric?</p>
+</li>
+</ul>
+<h2 id="reading-prior-to-lecture">Reading prior to lecture:
+</h2><ul>
+<li><a class="link" href="http://web.cs.ucdavis.edu/~rogaway/papers/moral.html"  target="_blank" rel="noopener"
+    >Moral Character of Cryptographic Work</a> - please read at least parts 1-3 (pages 1-30 in the footnoted version) - it&rsquo;s long and should not be taken uncritically, but is a very good and thought provoking read.</li>
+<li><a class="link" href="http://cyber.law.harvard.edu/pubrelease/dont-panic/"  target="_blank" rel="noopener"
+    >&ldquo;Going Dark&rdquo; Berkman report</a> - this is a report written by a committee, and as such not as exciting (though arguably more sober) than Rogaway&rsquo;s paper. Please read at least the introduction and you might also find the personal statements in Appendix A interesting.</li>
+<li><a class="link" href="https://www.digitalequilibriumproject.com/home.html"  target="_blank" rel="noopener"
+    >Digital Equilibrium project</a> - optional reading - this is a group of very senior current and former officials, in particular in government, and as such would tend to fall on the more &ldquo;establishment&rdquo; or &ldquo;pro regulation&rdquo; side. Their &ldquo;foundational paper&rdquo; has even more of a &ldquo;written by committee&rdquo; feel but is still worthwhile reading.</li>
+<li><a class="link" href="http://www.activism.net/cypherpunk/crypto-anarchy.html"  target="_blank" rel="noopener"
+    >Crypto anarchist manifesto</a> - optional reading - very much not &ldquo;written by committee&rdquo; can be an interesting read even if it sounds more like science fiction than describing actual current or near future reality.</li>
+</ul>
+<h2 id="case-studies">Case studies.
+</h2><p>Since such a discussion might be sometimes hard to hold in the abstract, let us consider some actual cases:</p>
+<h3 id="the-snowden-revelations">The Snowden revelations
+</h3><p>The impetus for the current iteration of the security vs privacy debate were the <a class="link" href="http://www.theguardian.com/us-news/the-nsa-files"  target="_blank" rel="noopener"
+    >Snowden revelations</a> on the massive scale of surveillance by the NSA on citizens in the U.S. and around the globe.
+Concurrently, in plain sight, companies such as Apple, Google, Facebook, and others are also collecting massive amounts of information on their users.
+Some of the backlash to the Snowden revelations was increased pressure on companies to support stronger &ldquo;end-to-end&rdquo; encryption such as some data does not reside on companies&rsquo; servers, that have become suspect.
+We&rsquo;re now seeing some &ldquo;backlash to the backlash&rdquo; with law enforcement and government officials around the globe trying to ban such encryption technlogoy or mandate government backdoors.</p>
+<h3 id="fbi-vs-apple-case">FBI vs Apple case
+</h3><p>We&rsquo;ve mentioned <a class="link" href="http://www.npr.org/sections/thetwo-way/2016/02/17/467096705/apple-the-fbi-and-iphone-encryption-a-look-at-whats-at-stake"  target="_blank" rel="noopener"
+    >this case</a> in the past. (I also <a class="link" href="https://windowsontheory.org/2016/03/04/the-iphones-of-terrorists/"  target="_blank" rel="noopener"
+    >blogged</a> about it.) The short summary is that an iPhone belonging to one of the San Bernardino terrorists was found by the FBI.
+The iPhone&rsquo;s memory was encrypted by a key $k$ that is obtained as $H(uid|passcode)$ where $passcode$ is the six digit passcode of the user and $uid$ is a secret $128$ bit key that is hardwired into the processor.
+The processor will only allow ten attempts at guessing the passcode before erasing all memory.
+The FBI wanted Apple&rsquo;s help in creating a digitally signed software update that essentially run a brute force search over the $10^6$ passcodes and output the key $k$.
+The software update could be restricted to run only on that particular iPhone.
+Eventually, the FBI managed to extract the information out of the iPhone without Apple&rsquo;s help. The method they used is unknown, but it may be possible to physically extract the $uid$ from the processor.
+It might also be possible to prevent erasure of the memory by disconnecting it from the processor, or rewriting it after erasure.
+Would such cases change your position on this question?</p>
+<p>Some questions that one could ask:</p>
+<ul>
+<li>
+<p>Given that the FBI had a legal warrant for the information on the iPhone, was it wrong of Apple to refuse to provide the help required?</p>
+</li>
+<li>
+<p>Was it wrong for Apple to have designed their iPhone so that they are unable to easily extract information out of it? Should they be required to make sure that such devices can be searched as a result of a legal warrant?</p>
+</li>
+<li>
+<p>If the only way for the FBI to get the information was to get Apple&rsquo;s master signature key (that allows to completely break into any iPhone, and even turn it into a recording/surveillance device), would it have been OK for them to do it? Should Apple design their device in a way that even their master signature key cannot break them? Is that even possible, given that software updates are crucial for proper functioning of such devices? (It was recently <a class="link" href="http://www.theverge.com/2016/4/14/11434926/blackberry-encryption-master-key-broken-canada-rcmp-surveillance"  target="_blank" rel="noopener"
+    >claimed</a> that Canadian police has had access to the master decryption key of Blackberry since 2010.)</p>
+</li>
+</ul>
+<p>In the San Bernardino case, the utility of breaking into the phone was questioned, given that both perpetrators were killed and there was no evidence of them receiving any assistance.
+But there are cases where things are more complicated.
+<a class="link" href="http://www.npr.org/sections/alltechconsidered/2016/03/30/472302719/mom-asks-who-will-unlock-her-murdered-daughters-iphone"  target="_blank" rel="noopener"
+    >Brittney Mills</a> was 29 years old and 8 months pregnant when she was shot and killed in April 2015 in Baton Rouge, Louisiana. Her baby was delivered via emergency C section but also died a week later.
+There was no sign of forced entry and so it is quite likely she knew her assailant.
+Her family believes that the clues to her murderer&rsquo;s identity could be found in her iPhone, but since it is locked they have no way of extracting this information.
+One can imagine other cases as well.
+Recently a mother found her kidnapped daughter using the <a class="link" href="http://www.nbcnews.com/news/us-news/find-my-iphone-icloud-lead-cops-kidnapped-teen-n521486"  target="_blank" rel="noopener"
+    >Find my iPhone</a> procedure.
+It is not hard to concieve of a case where unlocking a phone is the key to saving someone&rsquo;s life.
+Would such cases change your view of the above questions?</p>
+<h3 id="juniper-backdoor-case-and-the-opm-break-in">Juniper backdoor case and the OPM break-in
+</h3><p>We&rsquo;ve also mentioned the case of the <a class="link" href="http://www.wired.com/2015/12/juniper-networks-hidden-backdoors-show-the-risk-of-government-backdoors/"  target="_blank" rel="noopener"
+    >Juniper backdoor case</a>.
+This was a break in to the firewalls of Juniper networks by an unknown party that was crucially enabled by backdoor allegedly inserted by the NSA into the Dual EC pseudorandom generator.
+(see also <a class="link" href="https://rpw.sh/blog/2015/12/21/the-backdoored-backdoor/"  target="_blank" rel="noopener"
+    >here</a>  and <a class="link" href="http://blog.cryptographyengineering.com/2015/12/on-juniper-backdoor.html"  target="_blank" rel="noopener"
+    >here</a> for more).</p>
+<p>Because of the nature of this break in, whomever is responsible for it could have decrypted much of the traffic without leaving any traces, and so we don&rsquo;t know the damage caused, but such hacks can have much more significant consequences than forcing people to change their credit card numbers.
+When the <a class="link" href="https://www.lawfareblog.com/why-opm-hack-far-worse-you-imagine"  target="_blank" rel="noopener"
+    >federal office of personell management was hacked</a> sensitive information about millions of people who have gone through the security clearance was extracted.
+This includes fingerprints, extensive personal information from interviews and polygraph sessions, and much more.
+Such information can help then gain access to more information, whether it&rsquo;s using the fingerprint to unlock a phone or using the extensive knowledge of social connections, habits and interests to launch very targeted attacks to extract information from particular individuals.</p>
+<p>Here one could ask if stronger cryptography, and in particular cryptographic tools that would have enabled an individual to control access to his or her own data, would have helped prevent such attacks.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

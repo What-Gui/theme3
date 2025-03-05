@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Fully homomorphic encryption: Construction In the last lecture we defined fully homomorphic encryption, and showed the &ldquo;bootstrapping theorem&rdquo; that transforms a partially homomorphic encryption scheme into a fully homomorphic encryption, as long as the original scheme can homomorphically evaluate its own decryption circuit. In this lecture we will show an encryption scheme (due to Gentry, Sahai and Waters, henceforth GSW) meeting the latter property. That is, this lecture is devoted to proving1 the following theorem:\n">
+<title>FHE II: Construction</title>
+
+<link rel='canonical' href='http://localhost:1313/p/fhe-ii-construction/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="FHE II: Construction">
+<meta property='og:description' content="Fully homomorphic encryption: Construction In the last lecture we defined fully homomorphic encryption, and showed the &ldquo;bootstrapping theorem&rdquo; that transforms a partially homomorphic encryption scheme into a fully homomorphic encryption, as long as the original scheme can homomorphically evaluate its own decryption circuit. In this lecture we will show an encryption scheme (due to Gentry, Sahai and Waters, henceforth GSW) meeting the latter property. That is, this lecture is devoted to proving1 the following theorem:\n">
+<meta property='og:url' content='http://localhost:1313/p/fhe-ii-construction/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="FHE II: Construction">
+<meta name="twitter:description" content="Fully homomorphic encryption: Construction In the last lecture we defined fully homomorphic encryption, and showed the &ldquo;bootstrapping theorem&rdquo; that transforms a partially homomorphic encryption scheme into a fully homomorphic encryption, as long as the original scheme can homomorphically evaluate its own decryption circuit. In this lecture we will show an encryption scheme (due to Gentry, Sahai and Waters, henceforth GSW) meeting the latter property. That is, this lecture is devoted to proving1 the following theorem:\n">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true}, 
+                {left: "$", right: "$", display: false}  
+            ]
+        });
+    });
+</script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu13739649187745961479.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#prelude-from-vectors-to-matrices">Prelude: from vectors to matrices</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#real-world-partially-homomorphic-encryption">Real world partially homomorphic encryption</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#noise-management-via-encoding">Noise management via encoding</a></li>
+    <li><a href="#putting-it-all-together">Putting it all together</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#analysis-of-our-scheme">Analysis of our scheme</a>
+      <ol>
+        <li><a href="#correctness">Correctness</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#cpa-security">CPA Security</a></li>
+        <li><a href="#homomorphism">Homomorphism</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#shallow-decryption-circuit">Shallow decryption circuit</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#advanced-topics">Advanced topics:</a>
+      <ol>
+        <li><a href="#fully-homomorphic-encryption-for-approximate-computation-over-the-real-numbers-ckkshttpseprintiacrorg2016421pdf">Fully homomorphic encryption for approximate computation over the real numbers: <a href="https://eprint.iacr.org/2016/421.pdf">CKKS</a></a></li>
+        <li><a href="#bandwidth-efficient-fully-homomorphic-encryption-ghhttpseprintiacrorg2019733pdf">Bandwidth efficient fully homomorphic encryption <a href="https://eprint.iacr.org/2019/733.pdf">GH</a></a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#using-fully-homomorphic-encryption-to-achieve-private-information-retrieval">Using fully homomorphic encryption to achieve private information retrieval.</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/fhe-ii-construction/">FHE II: Construction</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    28 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="chapfhetwo">Fully homomorphic encryption: Construction
+</h1><p>In the last lecture we defined fully homomorphic encryption, and showed the &ldquo;bootstrapping theorem&rdquo; that transforms a partially homomorphic encryption scheme into a fully homomorphic encryption, as long as the original scheme can homomorphically evaluate its own decryption circuit.
+In this lecture we will show an encryption scheme (due to Gentry, Sahai and Waters, henceforth GSW) meeting the latter property.
+That is, this lecture is devoted to proving<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> the following theorem:</p>
+<blockquote>
+<h1 id="LWEFHEthm">
+</h1></blockquote>
+<p>Assuming the LWE conjecture, there exists a partially homomorphic public key encryption $(G,E,D,EVAL)$ that fits the conditions of the bootstrapping theorem (<a class="link" href="" >bootstrapthm</a>{.ref}).
+That is, for every two ciphertexts $c$ and $c&rsquo;$, the function $d \mapsto D_d(c); NAND; D_d(c&rsquo;)$  can be homomorphically evaluated by $EVAL$.</p>
+<p>Before the detailed description and analysis, let us first outline our strategy. The following notion of &ldquo;noisy homomorphic encryption&rdquo; will be of essential importance (see also <a class="link" href="" >noisefhefig</a>{.ref}).</p>
+<p>:::  {.definition title=&ldquo;Noisy Homomorphic Encryption&rdquo; #NoisyHEdef}
+A <em>noisy homomorphic encryption scheme</em> is a four-tuple $(G,E,D,ENAND)$ of algorithms such that $(G,E,D)$ is a CPA secure public key scheme and
+such that for every keypair $(e,d)$, there exists a function $\eta=\eta_{e,d}$ which maps any ciphertext $c$ to a number $\eta(c)\in [0, \infty)$
+(which we call the &ldquo;noise level&rdquo; of $c$) satisfying the following.</p>
+<p>For every keypair $(e,d)$, if we denote
+$$\mathcal{C}_b^\theta={c:D_d(c)=b,\eta(c)\leq\theta }.$$</p>
+<p>then</p>
+<ul>
+<li>
+<p>$E_e(b)\in \mathcal{C}_b^{\sqrt{q}}$ for any plaintext $b$. That is, &ldquo;fresh encryptions&rdquo; have noise at most $\sqrt{q}$.</p>
+</li>
+<li>
+<p>If $c\in\mathcal{C}_b^\eta$ with $\eta\leq q/4$, then $D_d(c)=b$. That is, as long as the noise is at most $q/4$ (which is $\gg \sqrt{q}$), decryption will still succeed.</p>
+</li>
+<li>
+<p>For any $c\in\mathcal{C}<em>b^\eta$ and $c&rsquo;\in\mathcal{C}</em>{b&rsquo;}^{\eta&rsquo;}$, it holds that
+$$ENAND(c,c&rsquo;)\in\mathcal{C}_{b\overline{\wedge}b&rsquo;}^{n^3\cdot \max{\eta,\eta&rsquo;}}$$
+as long as $n^3\cdot \max{\eta,\eta&rsquo;}&lt;q/4$. That is, as long as noise is not too large, applying $ENAND$ to $c$ and $c&rsquo;$ will yield an encryption of $NAND(D_d(c),D_d(c&rsquo;))$ with noise level that is not &ldquo;too much higher&rdquo; than the maximum noise of $c$ and $c&rsquo;$.
+:::</p>
+</li>
+</ul>
+<p>The noisy homomorphic encryption actually states that if $C$ and $C&rsquo;$ encrypt $b$ and $b&rsquo;$ up to error $\eta$ and $\eta&rsquo;$, respectively, then $ENAND(c,c&rsquo;)$ encrypts $NAND(b,b&rsquo;)$ up to some error which can be controlled by $\eta,\eta&rsquo;$. The coefficient $n^3$ is not essential here; we just need the order $poly(n)$. This property allows us to perform the $ENAND$ operator repeatly as long as we can guarantee the accumulated error is smaller than $q/4$, which means that the decryption can be done correctly. The next theorem tells us with what depth a circuit can be computed homomorphically.</p>
+<p><img src="/figure/fhe-noisy.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="In a noisy homomorphic encryption, every ciphertext $c$ has a &ldquo;noise&rdquo; parameter $\eta(c)$ associated with it. When we encrypt $0$ or $1$, we get a ciphertext with noise at most $\sqrt{q}$, while we are guaranteed to successfully decrypt. Applying the $ENAND$ operation to two ciphertexts $c$ and $c&rsquo;$ yields a ciphertext with noise level at most $n^3$ times the maximum noise of $c$ and $c&rsquo;$. Hence we can compose $ENAND$ operations to apply any NAND circuit of depth at most $\ell$ to fresh encryptions, and succeed in obtaining a ciphertext decrypting to the circuit output as long as $n^{3\ell}\sqrt{q} \ll q/4$."
+	
+	
+>{#noisefhefig}</p>
+<blockquote>
+<h1 id="Depththm">
+</h1></blockquote>
+<p>If there exists a noisy homomorphic encryption scheme with $q=2^{\sqrt{n}}$, then it can be extended to a homomorphic encryption scheme for any circuit with depth smaller than $polylog(n)$.</p>
+<blockquote>
+<h1 id="heading">
+</h1></blockquote>
+<p>For any function $f:{0,1}^m\rightarrow {0,1}$ which can be described by a circuit with depth $\ell$, we can compute $EVAL(f,E_e(x_1),\cdots,E_e(x_m))$ with error up to $\sqrt{q}(n^3)^\ell$. (The initial error for $E_e(x_i)$ is smaller than $\sqrt{q}$ and the error will be accumulated with rate up to $n^3$.) Thus, to guarantee that $EVAL(f,E_e(x_1),\cdots,E_e(x_m))$ can be decrypted to $f(x_1,\cdots,x_m)$ correctly, we only need $\sqrt{q}(n^3)^\ell\ll q$, i.e., $n^{3\ell}\ll \sqrt{q}=2^{\sqrt{n}/2}$. This is equalvent to $3\ell\log(n)\ll \sqrt{n}/2$, which can be guaranteed when $\ell =n^{o(1)}$ or $\ell=polylog(n)$.</p>
+<p>We will assume the LWE conjecture with $q(n) \approx 2^{\sqrt{n}}$ in the remainder of this chapter.
+With <a class="link" href="" >Depththm</a>{.ref} in hand, our goal is to construct a noisy FHE such that the decryption map (specifically the map $d \mapsto D_d(c)$ for any fixed ciphertext $c$) can be computed by a circuit with depth at most $polylog(n)$. (<a class="link" href="" >bootstrapthm</a>{.ref} refers to the map  $d \mapsto \neg(D_d(c) \wedge D_d(c&rsquo;))$, but this latter map is obtained by applying one more NAND gate to two parallel executions of $d \mapsto D_d(c)$, and hence if the map $d \mapsto D_d(c)$ has depth at most $polylog(n)$ then so does the map $d \mapsto \neg(D_d(c) \wedge D_d(c&rsquo;))$.)    Once we do this then we can obtain a fully homomorphic encryption scheme. We will head into some details show how to construct things we want in the rest of this chapter. The most technical and interesting part would be how to upper bound the noise/error.</p>
+<h2 id="prelude-from-vectors-to-matrices">Prelude: from vectors to matrices
+</h2><p>In the linear homomorphic scheme we saw in the last lecture, every ciphertext was a vector $c\in\Z_q^n$ such that $\langle c,s \rangle$  equals (up to scaling by $\floor{\tfrac{q}{2}}$)  the plaintext bit.
+We saw that adding two ciphertexts modulo $q$ corresponded to XOR&rsquo;ing (i.e., adding modulo $2$) the corresponding two plaintexts.
+That is, if we define $c \oplus c&rsquo;$ as $c+c&rsquo; \pmod{q}$ then performing the $\oplus$ operation on the ciphertexts corresponds to adding modulo $2$ the plaintexts.</p>
+<p>However, to get to a fully, or even partially, homomorphic scheme, we need to find a way to perform the NAND operation on the two plaintexts.
+The challenge is that it seems that to do that we need to find a way to evaluate <em>multiplications</em>: find a way to define some operation $\otimes$ on ciphertexts that corresponds to multiplying the plaintexts.
+Alas,  a priori, there doesn&rsquo;t seem to be a natural way to <em>multiply</em> two vectors.</p>
+<p>The GSW approach to handle this is to move from vectors to <em>matrices</em>.
+As usual, it is instructive to first consider the cryptographer&rsquo;s dream world where Gaussian elimination doesn&rsquo;t exist.
+In this case, the GSW ciphertext encrypting $b\in{0,1}$ would be an $n\times n$ matrix $C$ over $\Z_q$ such that $Cs = bs$ where $s\in\Z_q^n$ is the secret key.
+That is, the encryption of a bit $b$  is a matrix $C$ such that the secret key is an <em>eigenvector</em> (modulo $q$) of $C$ with corresponding eigenvalue $b$.
+(We defer discussion of how the encrypting party generates such a ciphertext, since this is in any case only a &ldquo;dream&rdquo; toy example.)</p>
+<blockquote>
+<h1 id="heading-1">
+</h1></blockquote>
+<p>You should make sure you understand the <em>types</em> of all the identifiers we refer to.
+In particular, above $C$ is an $n\times n$ <em>matrix</em> with entries in $\Z_q$, $s$ is a <em>vector</em> in $\Z_q^n$, and $b$ is a <em>scalar</em> (i.e., just a number) in ${0,1}$.
+See <a class="link" href="" >naivegswfig</a>{.ref} for a visual representation of the ciphertexts in this &ldquo;naive&rdquo; encryption scheme.
+Keeping track of the dimensions of all objects will become only more important in the rest of this lecture.</p>
+<p><img src="/figure/naivegsw.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="In the &ldquo;naive&rdquo; version of the GSW encryption, to encrypt a bit $b$ we output an $n\times n$ matrix $C$ such that $Cs=bs$ where $s \in \Z_q^n$ is the secret key. In this scheme we can transform encryptions $C,C&rsquo;$ of $b,b&rsquo;$ respectively to an encryption $C&rsquo;&rsquo;$ of $NAND(b,b&rsquo;)$ by letting $C&rsquo;&rsquo; = I-CC&rsquo;$."
+	
+	
+>{#naivegswfig  .margin}</p>
+<p>Given $C$ and $s$ we can recover $b$ by just checking if $Cs=s$ or $Cs=0^n$.
+The scheme allows homomorphic evaluation of both addition (modulo $q$) and multiplication, since if $Cs = bs$ and $C&rsquo;s=b&rsquo;s$ then we can define
+$C \oplus C&rsquo; = C + C&rsquo;$ (where on the righthand side, addition is simply done in $\Z_q$) and $C\otimes C&rsquo; = CC&rsquo;$ (where again this refers to matrix multiplication in $\Z_q$).</p>
+<p>Indeed, one can verify that both addition and multiplication succeed since
+$$(C+C&rsquo;)s = (b+b&rsquo;)s$$
+and
+$$CC&rsquo;s = C(b&rsquo;s) = bb&rsquo;s$$
+where all these equalities are in $\Z_q$.</p>
+<p>Addition modulo $q$ is not the same as XOR, but given these multiplication and addition operations, we can implement the NAND operation as well.
+Specifically, for every $b,b&rsquo; \in {0,1}$,  $b ; NAND ; b&rsquo; = 1-bb&rsquo;$.
+Hence we can take a ciphertext $C$ encrypting $b$ and a ciphertext $C&rsquo;$ encrypting $b&rsquo;$ and transform these two ciphertexts to the ciphertext
+$C&rsquo;&rsquo;=(I-CC&rsquo;)$ that encrypts $b; NAND ; b&rsquo;$ (where $I$ is the identity matrix).
+Thus in a world without Gaussian elimination it is not hard to get a fully homomorphic encryption.</p>
+<blockquote>
+<h1 id="privkeyfhe">
+</h1></blockquote>
+<p>We have not shown how to <em>generate</em> a ciphertext without knowledge of $s$, and hence strictly speaking we only showed in this world how to get a <em>private key</em> fully homomorphic encryption.
+Our &ldquo;real world&rdquo; scheme will be a full fledged <em>public key</em> FHE.
+However we note that private key homomorphic encryption is already very interesting and in fact sufficient for many of the &ldquo;cloud computing&rdquo; applications.
+Moreover,  <a class="link" href="http://eccc.hpi-web.de/report/2010/146/"  target="_blank" rel="noopener"
+    >Rothblum</a>  gave a generic transformation from a <em>private key</em> homomorphic encryption to a <em>public key</em> homomorphic encryption.</p>
+<h2 id="real-world-partially-homomorphic-encryption">Real world partially homomorphic encryption
+</h2><p>We now discuss how we can obtain an encryption in the real world where, as much as we&rsquo;d like to ignore it, there are people who walk among us (not to mention some computer programs) that actually know how to invert matrices.
+As usual, the idea is to &ldquo;fool Gaussian elimination with noise&rdquo; but we will see that we have to be much more careful about &ldquo;noise management&rdquo;, otherwise even for the party holding the secret key the noise will overwhelm the signal.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>The main idea is that we can expect the following problem to be hard for a random secret $s\in\Z_q^n$: distinguish between samples of random matrices $C$ and matrices where $Cs = bs + e$ for some $b\in{0,1}$ and &ldquo;short&rdquo; $e$ satisfying $|e_i| \leq \sqrt{q}$ for all $i$.
+This yields a natural candidate for an encryption scheme where we encrypt $b$ by a matrix $C$ satisfying $Cs = bs + e$ where $e$ is a &ldquo;short&rdquo; vector.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>We can now try to check what adding and multiplying two matrices does to the noise.
+If $Cs = bs+e$ and $C&rsquo;s=b&rsquo;s+e&rsquo;$ then
+$$(C+C&rsquo;)s = (b+b&rsquo;)s+(e+e&rsquo;) \label{eqhomadd}$$
+and
+$$CC&rsquo;s = C(b&rsquo;s+e&rsquo;)+e =bb&rsquo;s+ (b&rsquo;e+Ce&rsquo;);. \label{eqhommult} $$</p>
+<blockquote>
+<h1 id="heading-2">
+</h1></blockquote>
+<p>I recommend you pause here and check for yourself whether it will be the case that $C+C&rsquo;$ encrypts $b+b&rsquo;$ and $CC&rsquo;$ encrypts $bb&rsquo;$ up to small noise or not.</p>
+<p>We would have loved to say that we can define as above $C\oplus C&rsquo; = C+C&rsquo; \pmod q$ and $C\otimes C&rsquo; = CC&rsquo;\pmod q$.
+For this we would need that the vector $(C+C&rsquo;)s$ equals $(b+b&rsquo;)s$ plus a &ldquo;short&rdquo; vector and the vector $CC&rsquo;s$ equals $bb&rsquo;s$ plus a &ldquo;short&rdquo; vector.
+The former statement indeed holds.
+Looking at <a class="link" href="" >eqhommult</a>{.eqref} we see that $(C+C&rsquo;)s$ equals $(b+b&rsquo;)s$ up to the &ldquo;noise&rdquo; vector $e+e&rsquo;$, and if $e,e&rsquo;$ are &ldquo;short&rdquo; then $e+e&rsquo;$ is not too long either.
+That is, if $|e_i|&lt;\eta$ and $|e&rsquo;_i|&lt;\eta&rsquo;$ for every $i$ then $|e_i+e&rsquo;_i|&lt;\eta + \eta&rsquo;$.
+So we can at least handle a significant number of additions before the noise gets out of hand.</p>
+<p>However, if we consider <a class="link" href="" >eqhommult</a>{.eqref}, we see that $CC&rsquo;$ will be equal to $bb&rsquo;s$ plus the &ldquo;noise vector&rdquo; $b&rsquo;e + Ce&rsquo;$.
+The first component $b&rsquo;e$ of this noise vector is &ldquo;short&rdquo; (after all $b&rsquo;\in {0,1}$ and $e$ is &ldquo;short&rdquo;).
+However,   the second component $Ce&rsquo;$ could be a very large vector.
+Indeed, since $C$ looks like a random matrix in $\Z_q$, no matter how small the entries of $e&rsquo;$, many of the entries of $Ce&rsquo;$ will be large.
+Hence multiplying $e&rsquo;$ by $C$ takes us &ldquo;beyond the edge of chaos&rdquo; and makes the noise too large for decryption to be successful.</p>
+<h2 id="noise-management-via-encoding">Noise management via encoding
+</h2><p>The problem we had above is that the entries of $C$ are elements in $\Z_q$ that can be very large, while we would have loved them to be small numbers such as $0$ or $1$.
+At this point one could say</p>
+<blockquote>
+<p><em>&ldquo;If only there was some way to encode numbers between $0$ and $q-1$ using only $0$&rsquo;s and $1$&rsquo;s&rdquo;</em></p>
+</blockquote>
+<p>If you think about it hard enough, it turns out that there is something known as the &ldquo;binary basis&rdquo; that allows us to encode a number $x\in\Z_q$ as a vector $\hat{x}\in{0,1}^{\log q}$.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>
+What&rsquo;s even more surprising is that this seemingly trivial trick turns out to be immensely useful.
+We will define the <em>binary encoding</em> of a vector or matrix $x$ over $\Z_q$ by $\hat{x}$.
+That is, $\hat{x}$ is obtained by replacing every coordinate $x_i$ with $\log q$ coordinates $x_{i,0},\ldots,x_{i,\log q-1}$ such that</p>
+<p>$$x_i = \sum_{j=0}^{\log q-1}2^j x_{i,j} ;. \label{eqbinaryencoding}$$</p>
+<p>Specifically, if $s\in \Z_q^n$, then we denote by $\hat{s}$ the $n\log q$-dimensional vector with entries in ${0,1}$, such that each $\log q$-sized block of $\hat{s}$ encodes a coordinate of $s$.
+Similarly, if $C$ is an $m\times n$ matrix, then we denote by $\hat{C}$ the $m\times n\log q$ matrix with entries in ${0,1}$ that corresponds to encoding every $n$-dimensional row of $C$ by an $n\log q$-dimensional row where each $\log q$-sized block corresponds to a single entry.
+(We still think of the entries of these vectors and matrices as elements of $\Z_q$ and so all calculations are still done modulo $q$.)</p>
+<p>While encoding in the binary basis is not a linear operation, the <em>decoding</em> operation is linear as one can see in <a class="link" href="" >eqbinaryencoding</a>{.eqref}.
+We let $Q$ be the $n \times (n\log q)$ &ldquo;decoding&rdquo; matrix that maps an encoding vector $\hat{s}$ back to the original vector $s$.
+Specifically, every row of $Q$ is composed of $n$ blocks each of $\log q$ size, where the $i$-th row has only the $i$-th block nonzero, and equal to the values $(1,2,4,\ldots,2^{\log q-1})$.
+It&rsquo;s a good exercise to verify that for every vector $s\in \Z_q^n$ and matrix $C\in \Z_q^{n\times n}$, $Q\hat{s}=s$  and $\hat{C}Q^\top =C$. (See <a class="link" href="" >encodevecfig</a>{.ref} amd <a class="link" href="" >encodematrixfig</a>{.ref}.)</p>
+<p><img src="/figure/encodevec.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="We can encode a vector $s\in \Z_q^n$ as a vector $\hat{s} \in \Z_q^{n\log q}$ that has only entries in $\{0,1\}$ by using the binary encoding, replacing every coordinate of $s$ with a $\log q$-sized block in $\hat{s}$. The decoding operation is linear and so we can write $s=Q\hat{s}$ for a specific (simple) $n \times (n\log q)$ matrix $Q$."
+	
+	
+>{#encodevecfig  .margin}</p>
+<p><img src="/figure/encodematrix.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="We can encode an $n\times n$ matrix $C$ over $\Z_q$ by an $n\times (n \log q)$ matrix $\hat{C}$ using the binary basis. We have the equation $C=\hat{C}Q^\top$ where $Q$ is the same matrix we use to decode a vector."
+	
+	
+>{#encodematrixfig  .margin}</p>
+<p><strong>Our final encryption scheme:</strong> We describe below the key generation, encryption and decryption algorithms of our final homomorphic encryption scheme (FHEENC).
+It will satisfy the following properties:</p>
+<ol>
+<li>
+<p>Ciphertexts are $(n \log q)\times (n\log q)$ matrices $C$ with all coefficients in ${0,1}$.</p>
+</li>
+<li>
+<p>The secret key is a vector $s \in \Z_q^n$. We let $v \in \Z_q^{n \log q}$ be the vector $V = Q^\top s$.</p>
+</li>
+<li>
+<p>An encryption of $b\in {0,1}$ is a matrix $C$ satisfying the following &ldquo;ciphertext equation&rdquo;
+$$Cv =bv + e \label{eqciphertexteqfhe}$$
+for a &ldquo;short&rdquo; $e$.</p>
+</li>
+</ol>
+<p>Given the conditions 1,2, and 3, we can now define the addition and multiplication operations for two ciphertexts $C,C&rsquo;$ as follows:</p>
+<ul>
+<li>
+<p>$C \oplus C&rsquo; = C + C&rsquo; \pmod{q}$</p>
+</li>
+<li>
+<p>$C \otimes C&rsquo; = \widehat{(CQ^\top)}C'$</p>
+</li>
+</ul>
+<p>::: { .pause }
+Please try to verify that if $C,C&rsquo;$ are encryptions of $b,b&rsquo;$ then $C \oplus C&rsquo;$ and $C \otimes C&rsquo;$ will be encryptions of $b+b&rsquo;$ and $bb&rsquo;$ respectively.
+:::</p>
+<p><strong>Correctness of operations.</strong> Suppose that  $Cv = bv + e$ and $C&rsquo;v = b&rsquo;v + e&rsquo;$.
+Then
+$$(C\oplus C&rsquo;)v = (C+C&rsquo;)v = (b+b&rsquo;)v + (e+e&rsquo;) \label{eqfheaddfinal}$$</p>
+<p>which means that $C \oplus C&rsquo;$ satisfies the ciphertext equation <a class="link" href="" >eqciphertexteqfhe</a>{.eqref} with respect to the plaintext $b+b&rsquo;$, with the short vector $e+e&rsquo;$.</p>
+<p>Let&rsquo;s now analyze the more challenging case of $C \otimes C&rsquo;$.</p>
+<p>$$(C\otimes C&rsquo;)v = \widehat{(CQ^\top)}C&rsquo;v = \widehat{(CQ^\top)}(b&rsquo;v+e&rsquo;) ;. \label{fhemultfinaleqfirst}$$</p>
+<p>But since $v=Q^\top s$ and $\hat{A}Q^\top = A$ for every matrix $A$, the righthand side of <a class="link" href="" >fhemultfinaleqfirst</a>{.eqref} equals</p>
+<p>$$\widehat{(CQ^\top)}(b&rsquo;Q^\top s+e&rsquo;)=b&rsquo;C Q^\top s+\widehat{(CQ^\top)}e&rsquo; = b&rsquo;Cv + \widehat{(CQ^\top)}e&rsquo; \label{fhemultfinaleqsec}$$</p>
+<p>but since $\widehat{B}$ is a matrix with small coefficients for every $B$ and $e&rsquo;$ is short, the righthand side of <a class="link" href="" >fhemultfinaleqsec</a>{.eqref} equals $b&rsquo;Cv$ up to a short vector, and since $Cv=bv+e$ and $b&rsquo;e$ is short, we get that $(C\otimes C&rsquo;)v$ equals $b&rsquo;bv$ plus a short vector as desired.</p>
+<p>We can now define</p>
+<p>$$
+ENAND(C,C&rsquo;) = I - C \otimes C&rsquo; ;.
+$$</p>
+<p><strong>Keeping track of parameters.</strong> For $C$ that encrypts a plaintext $b$, let $\eta(C) = \max_{i\in [n]} |Cv -bv|$.
+Now if we can see that if $C$ encrypts $b$ with noise $\eta(C)$ and $C&rsquo;$ encrypts $b&rsquo;$ with noise $\eta(C&rsquo;)$, then $ENAND(C,C&rsquo;)$ will encrypt
+$1-bb&rsquo; = NAND(b,b&rsquo;)$ with noise of magnitude at most $O(\mu + n\log q \mu&rsquo;)$, which is smaller than $n^3\cdot \max{\eta(C),\eta(C&rsquo;)}$ for $q\approx 2^{\sqrt{n}}$.</p>
+<h2 id="putting-it-all-together">Putting it all together
+</h2><p>We now describe the full scheme.
+We are going to use a quantitatively stronger version of LWE.
+Namely,  the $q(n)$-dLWE assumption for $q(n)=2^{\sqrt{n}}$.
+It is not hard to show that we can relax our assumption to $q(n)$-LWE $q(n)=2^{polylog(n)}$  and Brakerski and Vaikuntanathan showed how to relax the assumption to standard (i.e. $q(n)=poly(n)$) LWE though we will not present this here.</p>
+<p>::: { .quote}
+<strong>FHEENC:</strong></p>
+<ul>
+<li>
+<p><strong>Key generation:</strong>  As in the scheme of last lecture the secret key is $s\in\Z_q^n$ and the public key is a generator $G_s$ such that samples from $G_s(1^n)$ are indistinguishable from independent random samples from $\Z_q^n$ but if $c$ is output by $G_s$ then $|\langle c,s \rangle|&lt;\sqrt{q}$, where the inner product (as all other computations) is done modulo $q$ and for every $x\in\Z_q={0,\ldots,q-1}$ we define $|x|=\min { x, q-x }$.
+As before, we can assume that $s_1 = \floor{q/2}$ which implies that $(Q^\top s)_1$ is also $\floor{q/2}$ since (as can be verified by direct inspection) the first row of $Q^\top$ is $(1,0,\ldots,0)$.</p>
+</li>
+<li>
+<p><strong>Encryption:</strong> To encrypt $b\in{0,1}$, let $d_1,\ldots,d_{n\log q} \leftarrow_R G_s(1^n)$ output $C=\widehat{(bQ^\top +D)}$ where $D$ is the matrix whose rows are $d_1,\ldots,d_{n\log q}$ generated from $G_s$. (See <a class="link" href="" >fheencfig</a>{.ref})</p>
+</li>
+<li>
+<p><strong>Decryption:</strong> To decrypt the ciphertext $C$, we output $0$ if $|(CQ^\top s)_1|&lt;0.1q$ and output $1$ if $0.6q&gt;|(CQ^\top s)_1|&gt;0.4q$, see <a class="link" href="" >fhedecfig</a>{.ref}. (It doesn&rsquo;t matter what we output on other cases.)</p>
+</li>
+<li>
+<p><strong>NAND evaluation:</strong> Given ciphertexts $C,C&rsquo;$, we define $C \overline{\wedge} C&rsquo;$ (sometimes also denoted as $NANDEVAL(C,C&rsquo;)$) to equal $I- \widehat{(CQ^\top)}C&rsquo;$, where $I$ is the $(n\log q)\times (n\log q)$ identity matrix.
+:::</p>
+</li>
+</ul>
+<blockquote>
+<h1 id="heading-3">
+</h1></blockquote>
+<p>Please take your time to read the definition of the scheme, and go over
+<a class="link" href="" >fheencfig</a>{.ref} and <a class="link" href="" >fhedecfig</a>{.ref} to make sure you understand it.</p>
+<p><img src="/figure/fheenc.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="In our fully homomorphic encryption, the public key is a trapdoor generator $G_s$. To encrypt a bit $b$, we output $C=\widehat{(bQ^\top &#43;D)}$ where $D$ is a $(n\log q) \times n$ matrix whose rows are generated using $G_s$."
+	
+	
+>{#fheencfig }</p>
+<p><img src="/figure/fhedec.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="We decrypt a ciphertext $C=\widehat{(bQ^\top &#43;D)}$ by looking at the first coordinate of $CQ^\top s$ (or equivalently, $CQ^\top Q\hat{s}$). If $b=0$ then this equals the first coordinate of $Ds$, which is at most $\sqrt{q}$ in magintude. If $b=1$ then we get an extra factor of $Q^\top s$ which we set to be in the interval $(0.499q,0.51q)$. We can think of either $s$ or $\hat{s}$ as our secret key."
+	
+	
+>{#fhedecfig }</p>
+<h2 id="analysis-of-our-scheme">Analysis of our scheme
+</h2><p>To show that that this scheme is a valid partially homomorphic scheme we need to show the following properties:</p>
+<ol>
+<li>
+<p><strong>Correctness:</strong> The decryption of an encryption of $b\in{0,1}$ equals $b$.</p>
+</li>
+<li>
+<p><strong>CPA security:</strong> An encryption of $0$ is computationally indistinguishable from an encryption of $1$ to someone that got the public key.</p>
+</li>
+<li>
+<p><strong>Homomorphism:</strong> If $C$ encrypts $b$ and $C&rsquo;$ encrypts $b&rsquo;$ then $C \overline{\wedge} C&rsquo;$ encrypts $b; NAND; b&rsquo;$ (with a higher amount of noise). The growth of the noise will be the reason that we will not get immediately a fully homomorphic encryption.</p>
+</li>
+<li>
+<p><strong>Shallow decryption circuit:</strong> To plug this scheme into the bootstrapping theorem we will need to show that its decryption algorithm (or more accurately, the function in the statement of the bootstrapping theorem)  can be evaluated in depth $polylog(n)$ (independently of $q$), and that moreover, the noise grows slowly enough that our scheme is homomorphic with respect to such circuits.</p>
+</li>
+</ol>
+<p>Once we obtain 1-4 above, we can plug FHEENC into the Bootstrapping Theorem (<a class="link" href="" >bootstrapthm</a>{.ref}) and thus complete the proof of existence of a fully homomorphic encryption scheme.
+We now address those points one by one.</p>
+<h3 id="correctness">Correctness
+</h3><p>Correctness of the scheme will follow from the following stronger condition:</p>
+<blockquote>
+<h1 id="fhecorrectlem">
+</h1></blockquote>
+<p>For every $b \in {0,1}$,  if $C$ is the encryption of $b$ then it is an $(n\log q)\times (n \log q)$ matrix satisfying
+$$CQ^\top s = bQ^\top s + e$$
+where $\max |e_i| \ll \sqrt{q}$.</p>
+<blockquote>
+<h1 id="heading-4">
+</h1></blockquote>
+<p>For starters, let us see that the dimensions make sense: the encryption of $b$ is computed by $C=\widehat{(bQ^\top +D)}$ where $D$ is an $(n\log q)\times n$ matrix satisfying $|Ds|_i \leq \sqrt{q}$ for every $i$.</p>
+<blockquote>
+</blockquote>
+<p>Since $Q^\top$ is also an $(n \log q) \times n$ matrix, adding $bQ^\top$ (i.e. either $Q^\top$ or the all-zeroes matrix, depending on whether or not $b=1$) to $D$ makes sense and applying the $\hat{\cdot}$ operation will transform every row to length $n\log q$ and hence $C$ is indeed a square $(n\log q)\times (n \log q)$ matrix.</p>
+<blockquote>
+</blockquote>
+<p>Let us now see what this matrix $C$ does to the vector $v=Q^\top s$.
+Using the fact that $\hat{M}Q^\top = M$ for every matrix $M$, we get that
+$$Cv = (bQ^\top + D) s = bv+  Ds$$
+but by construction $|(Ds)_i| \leq \sqrt{q}$ for every $i$.</p>
+<p><a class="link" href="" >fhecorrectlem</a>{.ref} implies correctness of decryption since by construction we ensured that $(Q^\top s)_1 \in (0.499q,0.5001q)$ and hence we get that if $b=0$ then $|(Cv)_1|=o(q)$ and if $b=1$ then $0.499q-o(q) \leq |(C_v)_1|  \leq 0.501q + o(q)$.</p>
+<h3 id="cpa-security">CPA Security
+</h3><p>To show CPA security we need to show that an encryption of $0$ is indistinguishable from an encryption of $1$.
+However, by the security of the trapdoor generator, an encryption of $b$ computed according to our algorithm will be indistinguishable from an encryption of $b$ obtained when the matrix $D$ is a random $(n\log q)\times n$ matrix.
+Now in this case the encryption is obtained by applying the $\hat{\cdot}$ operation to $bQ^\top +D$ but if $D$ is uniformly random then for every choice of $b$, $bQ^\top + D$ is uniformly random (since a fixed matrix plus a random matrix yields a random matrix) and hence the matrix $bQ^\top + D$ (and so also the matrix $\widehat{bQ^\top+D}$) contains no information about $b$.
+This completes the proof of CPA security (can you see why?).</p>
+<p>If we want to plug in this scheme in the bootstrapping theorem, then we will also assume that it is <em>circular secure</em>.
+It seems a reasonable assumption though unfortuantely at the moment we do not know how to derive it from LWE.
+(If we don&rsquo;t want to make this assumption we can still obtained a <em>leveled</em> fully homomorphic encryption as discussed in the previous lecture.)</p>
+<h3 id="homomorphism">Homomorphism
+</h3><p>Let $v=Q^\top s$, $b\in{0,1}$ and $C$ be a ciphertext such that $Cv = bv + e$.
+We define the <em>noise</em> of $C$, denoted as $\mu(C)$ to be the maximum of $|e_i|$ over all $i\in[n\log q]$.
+We make the following lemma, which we&rsquo;ll call the &ldquo;noisy homomorphism lemma&rdquo;:</p>
+<blockquote>
+<h1 id="noisehomolem">
+</h1></blockquote>
+<p>Let $C,C&rsquo;$ be ciphertexts encrypting $b,b&rsquo;$ respectively with $\mu(C),\mu(C&rsquo;)\leq q/4$.
+Then $C&rsquo;&rsquo;=C \overline{\wedge} C&rsquo;$ encrypts $b; NAND; b&rsquo;$ and satisfies
+$$\mu(C&rsquo;&rsquo;) \leq (2n\log q)\max{ \mu(C), \mu(C&rsquo;) } \label{eqnoisebound}$$</p>
+<blockquote>
+<h1 id="heading-5">
+</h1></blockquote>
+<p>This follows from the calculations we have done before.
+As we&rsquo;ve seen,
+$$\widehat{CQ^\top}C&rsquo;v = \widehat{CQ^\top}(b&rsquo;v+e&rsquo;) = b&rsquo;\widehat{CQ^\top}Q^\top s + \widehat{CQ^\top}e&rsquo; = b&rsquo;(Cv)+ \widehat{CQ^\top}e&rsquo; = bb&rsquo;v + b&rsquo;e+ \widehat{CQ^\top}e&rsquo;$$
+But since $\widehat{CQ^\top}$ is a $0/1$ matrix with every row of length $n\log q$, for every $i$  $(\widehat{CQ^\top}e&rsquo;)_i \leq (n\log q)\max_j |e_j&rsquo;|$.
+We see that the noise vector in the product has magnitude at most $\mu(C)+n\log q \mu(C&rsquo;)$.
+Adding the identity for the NAND operation adds at most $\mu(C)+\mu(C&rsquo;)$ to the noise, and so the total noise magnitude is bounded by the righthand side of <a class="link" href="" >eqnoisebound</a>{.eqref}.</p>
+<h3 id="shallow-decryption-circuit">Shallow decryption circuit
+</h3><p>Recall that to plug in our homomorphic encryption scheme into the bootstrapping theorem, we needed to show that for every ciphertext $C$ (generated by the encryption algorithm) the function $f_C:{0,1}^{n \log q} \rightarrow {0,1}$ can be computed by a circuit of sufficiently shallow, where $f_C$ is defined as
+$$f_C(d) = D_d(C)$$
+where $d$ is the secret key and $D_d(C)$ denotes the decryption algorithm applied to $C$.</p>
+<p>In our case a circuit of $polylog(n) \ll n^5$ will be &ldquo;sufficiently shallow&rdquo;.
+Specifically, by repeatedly applying the noisy homomorphism lemma (<a class="link" href="" >noisehomolem</a>{.ref}), we can show that can homorphically evaluate every circuit of NAND gates whose <em>depth</em> $\ell$  satisfies the condition $(2n\log q)^\ell \ll q$.
+If $q = 2^{\sqrt{n}}$ then (assuming $n$ is sufficiently large)  as long as $\ell &lt; n^{0.49}$ this will be satisfied.</p>
+<p>We will encode the secret key of the encryption scheme as the binary string $\hat{s}$ which describes our vector $s \in Z_q^n$ as a bit string of length $n\log q$.
+Given a ciphertext $C$, the decryption algorithm takes the dot product modulo $q$ of $s$ with the first row of $CQ^\top$.
+This can be equivalently described as taking the dot product of $\hat{s}$ with the first row of $CQ^\top Q$.
+Decryption outputs $0$ (respectively $1$) if the resulting number is small (respectively large).</p>
+<p>In particular to show that $f_C(\cdot)$ can be homomorphically evaluated it will suffice to show that for every fixed vector $c\in \Z_q^{n\log q}$ there is a $polylog(n) \ll n^{0.49}$ depth circuit $F$ that on input a string $\hat{s}\in{0,1}^{n \log q}$ will output $0$ if $|\langle c,\hat{s \rangle}|  &lt; q/10$ and output $1$ if $|\langle c,\hat{s \rangle}|  &gt; q/5$.
+(We don&rsquo;t care what $F$ does otherwise.) The above suffices since given a ciphertext $C$ we can use $F$ with the vector $c$ being the top row of $CQ^\top Q$, and hence $\langle c,\hat{s} \rangle$ would correspond to the first entry of $CQ^\top s$.</p>
+<blockquote>
+<h1 id="heading-6">
+</h1></blockquote>
+<p>Please make sure you understand the above argument.</p>
+<p>If $c=(c_1,\ldots,c_{n\log q})$ is a vector then to compute its inner product with a $0/1$ vector $\hat{s}$ we simply need to sum up the numbers $c_i$  where $\hat{s}_i=1$.
+Summing up $m$ numbers can be done via the obvious recursion in depth that is $\log m$ times the depth for a single addition of two numbers.
+However, the naive way to add two numbers in $\Z_q$ (each represented by $\log q$ bits) will have depth $O(\log q)$ which is too much for us.
+The issue is that while $m = n\log q$ is polynomial in $n$,  $q$ itself has <em>exponential</em> magnitude. In particular $\log q \approx \sqrt{n}$, and we cannot afford to use a circuit of that depth.</p>
+<blockquote>
+<h1 id="heading-7">
+</h1></blockquote>
+<p>Please stop here and see if you understand why the natural circuit to compute the addition of two numbers modulo $q$ (represented as $\log q$-length binary strings) will require depth $O(\log q)$.
+As a hint, one needs to keep track of the &ldquo;carry&rdquo;.</p>
+<p>Fortunately, because we only care about accuracy up to $q/10$, we can make the calculation &ldquo;shallower&rdquo;.
+Specifically, if we add $m$ numbers in $\Z_q$ (each represented by $\log q$ bits), we can drop all but the first $100\log m$ most significant digits of our numbers.
+The reason is that dropping this can change each number by at most $(q/m^{100})$, and so if we ignore these digits, then it would change the sum of the $m$ numbers by at most $m(q/m^{100}) \ll q$.
+Hence we can easily do this work in $poly(\log m)$  depth, which is $poly(\log n)$ since $m=poly(n)$.</p>
+<p>Let us now show this more formally:</p>
+<p>::: {.lemma #decdepthlem}
+For every $c\in\Z_q^m$ there exists some function $f:{0,1}^m\rightarrow{0,1}$ such that:</p>
+<ol>
+<li>
+<p>For every $\hat{s}\in {0,1}^n$ such that $|\langle \hat{s},c \rangle|&lt;0.1q$, $f(\hat{s})=0$</p>
+</li>
+<li>
+<p>For every $\hat{s}\in {0,1}^n$ such that $0.4q&lt;|\langle \hat{s},c \rangle|&lt;0.6q$, $f(\hat{s})=1$</p>
+</li>
+<li>
+<p>There is a circuit computing $f$ of depth at most $100(\log m)^3$.
+:::</p>
+</li>
+</ol>
+<p>::: {.proof data-ref=&ldquo;decdepthlem&rdquo;}
+For every number $x\in\Z_q$, define $\tilde{x}$ to be the number that is obtained by writing $x$ in the binary basis and setting all digits except the $10\log m$ most significant ones to zero.
+Note that $\tilde{x} \leq x \leq \tilde{x} + q/m^{10}$. The idea is that we will do the calculation by changing every number $c_i$ and the modulos $q$ into their correponding numbers $\tilde{c}_i$ and $\tilde{q}$.</p>
+<p>We define $f(\hat{s})$ to equal $1$ if $|\sum \hat{s}_i \tilde{c}_i \pmod {\tilde{q}}| \geq 0.3\tilde{q}$ and to equal $0$ otherwise (where as usual the absolute value of $x$ modulo $\tilde{q}$ is the minimum of $x$ and $\tilde{q}-x$.)
+All  numbers involved have zeroes in all but the $10\log m$ most significant digits and so these less significant digits can be ignored.
+Hence we can add any pair of such numbers modulo $\tilde{q}$ in depth $O(\log m)^2$ using the standard elementary school algorithm to add two $\ell$-digit numbers in $O(\ell^2)$ steps.</p>
+<p>Now we can add the $m$ numbers by adding pairs, and then adding up the results, and this way in a binary tree of depth $\log m$ to get a total depth of $O(\log m)^3$.
+So, all that is left to prove is that this function $f$ satisfies the conditions (1) and (2).</p>
+<p>If we look at the <em>non modular</em> sum then $|\sum \hat{s}_i \tilde{c}_i - \sum \hat{s}_i c_i | &lt; mq/m^{10} = q/m^9$ so now we want to show that the effect of taking modulo $\tilde{q}$ is not much different from taking modulo $q$.
+Indeed, note that this sum (before a modular reduction) is an integer between $0$ and $qm$. If $x$ is such an integer and we
+divide $x$ by $q$ to write $x = kq+ r$ for $r&lt;q$, then since $x&lt;qm$, $k&lt;m$, and so we can write $x = k\tilde{q} + k(q-\tilde{q})+r$ so the difference between $k \mod q$ and $k \mod{\tilde{q}}$ will be (in our standard modular metric)  at most $mq/m^{10}=q/m^9$. Overall we get that if $\sum \hat{s}_i c_i \mod{q}$ is in the interval $[0.4q, 0.6q]$ then $\sum \hat{s}_i \tilde{c}_i \pmod{\tilde{q}}$ will be in the interval $[0.4q-100q/m^9, 0.6q+100q/m^9]$ which is contained in $[0.3\tilde{q},0.7\tilde{q}]$.</p>
+<p>This completes the proof that our scheme can fit into the bootstrapping theorem (i.e., of <a class="link" href="" >LWEFHEthm</a>{.ref}), hence completing the description of the fully homomorphic encryption scheme.</p>
+<blockquote>
+<h1 id="heading-8">
+</h1></blockquote>
+<p>Now would be a good point to go back and see you understand how all the pieces fit together to obtain the complete construction of the fully homomorphic encryption scheme.</p>
+<h2 id="advanced-topics">Advanced topics:
+</h2><h3 id="fully-homomorphic-encryption-for-approximate-computation-over-the-real-numbers-ckkshttpseprintiacrorg2016421pdf">Fully homomorphic encryption for approximate computation over the real numbers: <a class="link" href="https://eprint.iacr.org/2016/421.pdf"  target="_blank" rel="noopener"
+    >CKKS</a>
+</h3><p>We have seen how a fully homomorphic encryption for a plaintext bit $b$ can be constructed and we are able to evaluate addition and multiplication of ciphertexts as well as a NAND gate in the ciphertext space. One can also extend FHEENC scheme to encrypt a plaintext message $\mu \in \Z_q$ and can evaluate multi-bit integer additions and multiplications more efficiently. Our next following question would be floating/fixed point operations. They are similar to integer operations, but we need to be able to evaluate a rounding operation following every computation. Unfortunately, it has been considered difficult to evaluate the rounding operation ensuring the correctness property. An easier solution is to assume approximate computations from the beginning and embrace errors caused by them.</p>
+<p>CKKS scheme, one of the recent schemes, addressed this challenge by allowing small errors in the decrypted results. Its correctness property is more relaxed than what we&rsquo;ve seen before. Now decryption does not necessarily be precisely the original message, and indeed, this resolved the rounding operation problem supporting approximate computation over the real numbers.
+To get more sense on its construction, recall that when we decrypt a ciphertext in the FHEENC scheme, we have $CQ^\top s = bQ^\top s + e$ where $\max |e_i| \ll \sqrt{q}$. Since $(Q^\top s)_1 \in (0.499q, 0.5001q)$, multiplying by this term places a plaintext bit near the most significant bits of the ciphertext where the plaintext cannot be polluted by the encryption noise. Therefore, we are able to precisely remove the noise $e$ we added for the security. However, this kind of separated placement actually makes an evaluation of the rounding operation difficult.
+On the other hand, the CKKS scheme doesn&rsquo;t clearly separate the plaintext message and noise in its decryption structure. Specifically, we have the form of $c^\top s = m + e$ and the noise lies with the LSB part of the message and does pollute the lowest bits of the message. Note that this is acceptable as long as it preserves enough precision. Now we can evaluate rounding(i.e., rescaling in the paper) homomorphically, by dividing both a ciphertext $c$ and the parameter $q$ by some factor $p$. The concept of handling ciphertexts with a different encryption parameter $q&rsquo;=q/p$ is already known to be possible. You can find more details on this modulus switching technique in this <a class="link" href="https://eprint.iacr.org/2011/277.pdf"  target="_blank" rel="noopener"
+    >paper</a> if you are interested.
+Besides, it is also proved that the precision loss of the decrypted evaluation result is at most one more bit loss compared to the plaintext computation result, which means the scheme&rsquo;s precision guarantee is nearly optimal.
+This scheme offers an efficient homomorphic encryption setting for many practical data science and machine learning applications which does not require precise values, but approximate ones. You may check existing open source libraries, such as <a class="link" href="https://www.microsoft.com/en-us/research/project/microsoft-seal/"  target="_blank" rel="noopener"
+    >MS SEAL</a> and <a class="link" href="https://github.com/snucrypto/HEAAN"  target="_blank" rel="noopener"
+    >HEAAN</a>, of this scheme as well as many practical applications including <a class="link" href="https://eprint.iacr.org/2018/254.pdf"  target="_blank" rel="noopener"
+    >logistic regression</a> in the literature.</p>
+<h3 id="bandwidth-efficient-fully-homomorphic-encryption-ghhttpseprintiacrorg2019733pdf">Bandwidth efficient fully homomorphic encryption <a class="link" href="https://eprint.iacr.org/2019/733.pdf"  target="_blank" rel="noopener"
+    >GH</a>
+</h3><p>When we define homomorphic encryption in <a class="link" href="" >partialhomdef</a>{.ref}, we only consider a class of single-output functions $\mathcal{F}$. Now we want to extend the difinition to multiple-output function and consider how bandwidth-efficient the fully homomorphic encryption can be. More specifically, if we want to guarantee that the result of decryption is (or contains) $f(x_1,\ldots,x_\ell)$, what will be the minimal possible length of the ciphertext? Let us first define the compressible fully homomorphic encryption scheme.</p>
+<p>::: {.definition title=&ldquo;Compressible Fully Homomorphic Encryption&rdquo; #compFHE}<br>
+A <em>compressible fully homomorphic public key encryption scheme</em>  is a CPA secure public key encryption scheme $(G,E,D)$ such that there exist polynomial-time algorithms $EVAL, COMP:{0,1}^* \rightarrow {0,1}^<em>$ such that for every $(e,d)=G(1^n)$, $\ell=poly(n)$, $x_1,\ldots,x_\ell \in {0,1}$, and $f:{0,1}^\ell\rightarrow {0,1}^</em>$ which can be described by a circuit, it holds that:</p>
+<ul>
+<li>
+<p>$c=EVAL_e(f,E_e(x_1),\ldots,E_e(x_\ell))$.</p>
+</li>
+<li>
+<p>$c^*=COMP(c)$.</p>
+</li>
+<li>
+<p>$f(x_1,\ldots,x_\ell)$ is a prefix of $D_d(c^*)$.
+:::</p>
+</li>
+</ul>
+<p>This definition is similar to the standard fully homomorphic encryption except an additional compression step. The bandwidth efficiency of a compressible fully homomorphic encryption is often described by the rate which is defined as follows:</p>
+<p>::: {.definition title=&ldquo;Rate of Compressible Fully Homomorphic Encryption&rdquo; #ratecompFHE}<br>
+A compressible fully homomorphic public key encryption scheme has <em>rate</em> $\alpha=\alpha(n)$ if for every $(e,d)=G(1^n)$, $\ell=poly(n)$, $x_1,\ldots,x_\ell \in {0,1}$, and $f:{0,1}^\ell\rightarrow {0,1}^<em>$ with sufficiently long output, it holds that
+$$\alpha |c^</em>|\leq |f(x_1,\ldots,x_\ell)|.$$
+:::</p>
+<p>The following theorem by <a class="link" href="https://eprint.iacr.org/2019/733.pdf"  target="_blank" rel="noopener"
+    >Gentry and Halevi 2019</a> answers the earlier question, which states that the nearly optimal rate, say a rate arbitrarily close to 1, can be achieved.</p>
+<blockquote>
+<h1 id="optrate">
+</h1></blockquote>
+<p>For any $\epsilon&gt;0$, there exists a compressive fully homomorphic encryption scheme with rate being $1-\epsilon$ under the LWE assumption.</p>
+<h3 id="using-fully-homomorphic-encryption-to-achieve-private-information-retrieval">Using fully homomorphic encryption to achieve private information retrieval.
+</h3><p>Private information retrieval (PIR) allows the client to retrive the $i$-th entry of a database which has totally $n$ entries without letting the server know $i$. We only consider the single-server case here. Obviously, a trivial solution is that the server sends the entire database to the client.</p>
+<p>One simple case of PIR is that each entry is a bit, for which the trivial solution above has the communication complexity being $n$. <a class="link" href="https://web.cs.ucla.edu/~rafail/PUBLIC/34.pdf"  target="_blank" rel="noopener"
+    >Kushilevitz and Ostrovsky 1997</a> reduced the the complexity to be smaller than $O(n^\epsilon)$ for any $\epsilon&gt;0$. After that, another work (<a class="link" href="https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Private%20Information%20Retrieval/Computationally%20Private%20Information%20Retrieval%20with%20Polylogarithmic%20Communication.pdf"  target="_blank" rel="noopener"
+    >Cachin et al. 1999</a>) further reduced the complexity to $polylog(n)$. More discussion about PIR and related FHE techniques can be found in <a class="link" href="https://eprint.iacr.org/2007/059.pdf"  target="_blank" rel="noopener"
+    >Ostrovsky and Skeith 2007</a>, <a class="link" href="https://ieeexplore.ieee.org/document/6189348"  target="_blank" rel="noopener"
+    >Yi et al. 2013</a> and references therein.</p>
+<p>One interesting observation is that fully homomorphic encryption can be applied to the single-server PIR via the following procedures:</p>
+<ul>
+<li>
+<p>The client computes $E_e(i)$ and sends it to the server.</p>
+</li>
+<li>
+<p>The server evaluates $c=EVAL(f,E_e(i))$, where $f(i)$ returns the $i$-th entry of the database, and sends it (or its compressed version $c^*$) back to the client.</p>
+</li>
+<li>
+<p>The client decrypts $D_d(c)$ or $D_d(c^*)$ and obtains the $i$-th entry of the database.</p>
+</li>
+</ul>
+<ul>
+<li>Bandwidth efficient fully homomorphic encryption <a class="link" href="https://eprint.iacr.org/2019/733.pdf"  target="_blank" rel="noopener"
+    >GH</a></li>
+</ul>
+<p>Since there exists compressive fully homomorphic encryption scheme with nearly optimal rate, say rate arbitrary close to $1$ (see <a class="link" href="" >optrate</a>{.ref}), we can immediately get rate-$(1-\epsilon)$ PIR for any $\epsilon$. (Note that this result holds only for database whose entries is quite large, since the rate is defined for circuits with sufficiently long output.) Prior to the theorem by <a class="link" href="https://eprint.iacr.org/2019/733.pdf"  target="_blank" rel="noopener"
+    >Gentry and Halevi 2019</a>, <a class="link" href="https://petsymposium.org/2015/papers/23_Kiayias.pdf"  target="_blank" rel="noopener"
+    >Kiayias et al. 2015</a> also constructed a PIR scheme with a nearly optimal rate/bandwidth efficiency. The application of fully homomorphic encryption to PIR is a fascinating field; not only limited to the bandwidth efficiency, you may be also interested in the computational cost. We refer to <a class="link" href="https://eprint.iacr.org/2019/733.pdf"  target="_blank" rel="noopener"
+    >Gentry and Halevi 2019</a> for more details.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>This theorem as stated was proven by Brakerski and Vaikuntanathan (ITCS 2014) building a line of work initiated by Gentry&rsquo;s original STOC 2009 work. We will actually prove a weaker version of this theorem, due to Brakerski and Vaikuntanathan (FOCS 2011), which assumes a quantitative strengthening of LWE. However, we will not follow the proof of Brakerski and Vaikuntanathan but rather a scheme of Gentry, Sahai and Waters (CRYPTO 2013).  Also note that, as noted in the previous lecture, all of these results require the extra assumption of <em>circular security</em> on top of LWE to achieve a non-leveled fully homomorphic encryption scheme.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>For this reason, Craig Gentry called his highly recommended survey on fully homomorphic encryption and other advanced constructions <a class="link" href="https://eprint.iacr.org/2014/610"  target="_blank" rel="noopener"
+    >computing on the edge of chaos</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>We deliberately leave some flexibility in the definition of &ldquo;short&rdquo;. While initially &ldquo;short&rdquo; might mean that $|e_i|&lt;\sqrt{q}$ for every $i$, decryption will succeed as long as $|e_i|$ is, say, at most $q/100n$.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>If we were being pedantic the length of the vector (and other constant below) should be the integer $\ceil{\log q}$ but I omit the ceiling symbols for simplicity of notation.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
